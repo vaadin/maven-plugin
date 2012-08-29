@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
   <!--
-    ~ Licensed to the Apache Software Foundation (ASF) under one
-    ~ or more contributor license agreements. See the NOTICE file
-    ~ distributed with this work for additional information
-    ~ regarding copyright ownership. The ASF licenses this file
-    ~ to you under the Apache License, Version 2.0 (the
-    ~ "License"); you may not use this file except in compliance
-    ~ with the License. You may obtain a copy of the License at
+    ~ Licensed under the Apache License, Version 2.0 (the "License"); you may not
+    ~ use this file except in compliance with the License. You may obtain a copy of
+    ~ the License at
     ~
     ~ http://www.apache.org/licenses/LICENSE-2.0
     ~
-    ~ Unless required by applicable law or agreed to in writing,
-    ~ software distributed under the License is distributed on an
-    ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    ~ KIND, either express or implied. See the License for the
-    ~ specific language governing permissions and limitations
-    ~ under the License.
+    ~ Unless required by applicable law or agreed to in writing, software
+    ~ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    ~ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+    ~ License for the specific language governing permissions and limitations under
+    ~ the License.
+
+    ~ NOTE: For help with the syntax of this file, see:
+    ~ http://maven.apache.org/doxia/references/apt-format.html
+    ~
+    ~
+    ~ Based on the gwt-maven-plugin. 
+    ~ See mojo.codehaus.org/gwt-maven-plugin/
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.codehaus.mojo</groupId>
+    <groupId>com.vaadin</groupId>
     <artifactId>mojo-parent</artifactId>
     <version>30</version>
   </parent>
-  <artifactId>gwt-maven-plugin</artifactId>
+  <artifactId>vaadin-maven-plugin</artifactId>
   <version>2.5.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
-  <name>Maven GWT Plugin</name>
+  <name>Vaadin Plug-in for Maven</name>
   <description>
-    Maven plugin for the Google Web Toolkit.
+    Maven plugin for Vaadin.
   </description>
-  <url>http://mojo.codehaus.org/gwt-maven-plugin</url>
-  <inceptionYear>2007</inceptionYear>
+  <url>http://vaadin.com</url>
+  <inceptionYear>2012</inceptionYear>
   <prerequisites>
     <maven>2.1</maven>
   </prerequisites>
@@ -44,6 +46,11 @@
     </license>
   </licenses>
   <developers>
+    <developer>
+      <id>artur.signell</id>
+      <name>Artur Signell</name>
+      <email>artur@vaadin.com</email>
+    </developer>
     <developer>
       <id>charlie.collins</id>
       <name>Charlie Collins</name>
@@ -72,65 +79,36 @@
       <email>jieryn@gmail.com</email>
     </contributor>
   </contributors>
-  <mailingLists>
-    <mailingList>
-      <name>gwt-maven-plugin User List</name>
-      <subscribe>codehaus-mojo-gwt-maven-plugin-users+subscribe@googlegroups.com</subscribe>
-      <unsubscribe>codehaus-mojo-gwt-maven-plugin-users+unsubscribe@googlegroups.com</unsubscribe>
-      <post>codehaus-mojo-gwt-maven-plugin-users@googlegroups.com</post>
-      <archive>http://groups.google.com/group/codehaus-mojo-gwt-maven-plugin-users</archive>
-    </mailingList>
-    <mailingList>
-      <name>General Mojo User List</name>
-      <subscribe>user-subscribe@mojo.codehaus.org</subscribe>
-      <unsubscribe>user-unsubscribe@mojo.codehaus.org</unsubscribe>
-      <post>user@mojo.codehaus.org</post>
-      <archive>http://archive.codehaus.org/lists/org.codehaus.mojo.user</archive>
-      <otherArchives>
-        <otherArchive>http://old.nabble.com/mojo---dev-f11981.html</otherArchive>
-        <otherArchive>http://markmail.org/list/org.codehaus.mojo.user</otherArchive>
-      </otherArchives>
-    </mailingList>
-    <mailingList>
-      <name>General Mojo Development List</name>
-      <subscribe>dev-subscribe@mojo.codehaus.org</subscribe>
-      <unsubscribe>dev-unsubscribe@mojo.codehaus.org</unsubscribe>
-      <post>dev@mojo.codehaus.org</post>
-      <archive>http://archive.codehaus.org/lists/org.codehaus.mojo.dev</archive>
-      <otherArchives>
-        <otherArchive>http://www.nabble.com/mojo---dev-f11981.html</otherArchive>
-        <otherArchive>http://markmail.org/list/org.codehaus.mojo.dev</otherArchive>
-      </otherArchives>
-    </mailingList>
-  </mailingLists>
   <scm>
-    <connection>scm:git:git@github.com:gwt-maven-plugin/gwt-maven-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:gwt-maven-plugin/gwt-maven-plugin.git</developerConnection>
-    <url>https://github.com/gwt-maven-plugin/gwt-maven-plugin</url>
+    <connection>scm:http:http://dev.vaadin.com/git/integration/maven/vaadin-maven-plugin.git</connection>
+    <developerConnection>scm:ssh:git@dev.vaadin.com/integration/maven/vaadin-maven-plugin</developerConnection>
+    <url>http://dev.vaadin.com/git/?p=integration/maven/vaadin-maven-plugin.git</url>
   </scm>
   <issueManagement>
-    <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MGWT</url>
+    <system>trac</system>
+    <url>http://dev.vaadin.com</url>
   </issueManagement>
-  <ciManagement>
+<!--  <ciManagement>
     <system>buildhive</system>
     <url>https://buildhive.cloudbees.com/job/gwt-maven-plugin/job/gwt-maven-plugin/</url>
   </ciManagement>
+-->
   <properties>
-    <maven.compiler.source>1.5</maven.compiler.source>
-    <maven.compiler.target>1.5</maven.compiler.target>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
     <!-- This property is used in a filtered resources to check the version compatibility -->
-    <gwt.version>2.5.0-rc1</gwt.version>
+    <vaadin.version>2.5.0-rc1</vaadin.version>
     <!--  apt filterting doesn't support dot -->
-    <gwtVersion>${gwt.version}</gwtVersion>
+    <vaadinVersion>${vaadin.version}</vaadinVersion>
     <mavenVersion>2.0.9</mavenVersion>
-    <mojo.java.target>1.5</mojo.java.target>
+    <mojo.java.target>1.6</mojo.java.target>
     <sitePluginVersion>2.1.1</sitePluginVersion>
     <doxia-sitetoolsVersion>1.1.4</doxia-sitetoolsVersion>
     <!--  to be able on powerfull ci machine to change it tru the cli :-) -->
     <it.localWorkers>-1</it.localWorkers>
-    <stagingSiteRepositoryId>codehaus</stagingSiteRepositoryId>
+<!--    <stagingSiteRepositoryId>codehaus</stagingSiteRepositoryId>
     <stagingSiteURL>dav:https://dav.codehaus.org/mojo/${project.artifactId}-${project.version}</stagingSiteURL>
+-->
     <invokerPluginVersion>1.5</invokerPluginVersion>    
   </properties>
 
@@ -218,19 +196,14 @@
       <version>2.3.6</version>
     </dependency>
     <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-dev</artifactId>
-      <version>${gwt.version}</version>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-client</artifactId>
+      <version>${vaadin.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-codeserver</artifactId>
-      <version>${gwt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-      <version>${gwt.version}</version>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-client-compiler</artifactId>
+      <version>${vaadin.version}</version>
     </dependency>
     <dependency>
       <!-- used to unpack gwt native libs -->

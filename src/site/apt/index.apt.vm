@@ -40,7 +40,7 @@ GWT Maven Plugin
  or by reading the online
  {{{http://www.sonatype.com/books/mvnref-book/reference/public-book.html}reference book}}.
  
- << This mojo has been developped and tested with the gwt version ${gwtVersion} >>
+ << This mojo has been developped and tested with Vaadin version ${vaadinVersion} >>
  
  << {{{./whats_new.html}What's new in ${project.version} ?}} >>
   
