@@ -19,11 +19,11 @@ package org.codehaus.mojo.gwt.shell;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-
-import java.io.File;
 
 /**
  * EXPERIMENTAL: Runs GWT modules with Super Dev Mode.
@@ -72,8 +72,7 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo
         if ( gwtSdkFirstInClasspath )
         {
             cmd.withinClasspath( getGwtUserJar() )
-                .withinClasspath( getGwtDevJar() )
-                .withinClasspath( getGwtCodeServerJar() );
+                .withinClasspath( getGwtDevJar() );
         }
 
         cmd.withinScope( Artifact.SCOPE_COMPILE );
@@ -83,8 +82,7 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo
         if ( !gwtSdkFirstInClasspath )
         {
             cmd.withinClasspath( getGwtUserJar() )
-                .withinClasspath( getGwtDevJar() )
-                .withinClasspath( getGwtCodeServerJar() );
+                .withinClasspath( getGwtDevJar() );
         }
 
         // FIXME: add it when CodeServer has it

@@ -28,7 +28,7 @@
   </parent>
   <groupId>com.vaadin</groupId>
   <artifactId>vaadin-maven-plugin</artifactId>
-  <version>7.0.0-SNAPSHOT</version>
+  <version>7.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Vaadin Plug-in for Maven</name>
   <description>
@@ -342,6 +342,18 @@
     </dependency>
 
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-server</artifactId>
+      <version>${vaadin.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
       <version>1.0-beta-1</version>
@@ -404,7 +416,7 @@
     <profile>
       <id>grid</id>
       <properties>
-        <invokerPluginVersion>1.6-SNAPSHOT</invokerPluginVersion>
+        <invokerPluginVersion>1.6</invokerPluginVersion>
         <itParallelThreads>1</itParallelThreads>
       </properties>
       <build>
@@ -519,6 +531,40 @@
       </resource>
     </resources>
     <plugins>
+<!--
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>1.0-alpha-2</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>read-project-properties</goal>
+            </goals>
+            <configuration>
+              <files>
+                <file>${gpg.passphrase.file}</file>
+              </files>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+-->
+
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>

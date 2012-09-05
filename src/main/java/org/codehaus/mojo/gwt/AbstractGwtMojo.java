@@ -64,6 +64,7 @@ public abstract class AbstractGwtMojo
 {
     /** GWT artifacts groupId */
     public static final String GWT_GROUP_ID = "com.google.gwt";
+    public static final String VAADIN_GROUP_ID = "com.vaadin";
 
     // --- Some Maven tools ----------------------------------------------------
 
@@ -162,7 +163,7 @@ public abstract class AbstractGwtMojo
      * @parameter default-value="false" expression="${gwt.inplace}"
      */
     private boolean inplace;
-    
+
     /**
      * The forked command line will use gwt sdk jars first in classpath.
      * see issue http://code.google.com/p/google-web-toolkit/issues/detail?id=5290
@@ -253,16 +254,11 @@ public abstract class AbstractGwtMojo
     protected File getGwtDevJar()
         throws MojoExecutionException
     {
-        checkGwtDevAsDependency();
-        checkGwtUserVersion();
-        return getArtifact( "com.google.gwt", "gwt-dev" ).getFile();
-    }
-
-    protected File getGwtCodeServerJar()
-        throws MojoExecutionException
-    {
-        checkGwtUserVersion();
-        return getArtifact( "com.google.gwt", "gwt-codeserver" ).getFile();
+        // TODO
+        // checkGwtDevAsDependency();
+        // checkGwtUserVersion();
+        // return getArtifact( "com.google.gwt", "gwt-dev" ).getFile();
+        return getArtifact( VAADIN_GROUP_ID, "vaadin-client-compiler" ).getFile();
     }
 
     protected Artifact getArtifact( String groupId, String artifactId )
@@ -273,8 +269,10 @@ public abstract class AbstractGwtMojo
     protected File[] getGwtUserJar()
             throws MojoExecutionException
     {
-        checkGwtUserVersion();
-        Artifact gwtUserArtifact = getArtifact( "com.google.gwt", "gwt-user" );
+        // TODO
+        // checkGwtUserVersion();
+        // Artifact gwtUserArtifact = getArtifact( "com.google.gwt", "gwt-user" );
+        Artifact gwtUserArtifact = getArtifact( VAADIN_GROUP_ID, "vaadin-client" );
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         ArtifactResolutionResult result = null;
