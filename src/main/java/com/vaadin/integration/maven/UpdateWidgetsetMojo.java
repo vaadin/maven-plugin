@@ -53,8 +53,10 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
 
         getLog().info("Updating widgetset " + module);
 
-        JavaCommand cmd = new JavaCommand(WIDGETSET_BUILDER_CLASS)
-                .withinScope(Artifact.SCOPE_COMPILE);
+        JavaCommand cmd = new JavaCommand(WIDGETSET_BUILDER_CLASS);
+        cmd.withinScope( Artifact.SCOPE_COMPILE );
+        cmd.withinClasspath(getGwtUserJar()).withinClasspath(getGwtDevJar());
+
         cmd.arg(module);
         cmd.execute();
     }

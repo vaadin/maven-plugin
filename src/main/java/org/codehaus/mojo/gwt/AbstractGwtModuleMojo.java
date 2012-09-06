@@ -182,12 +182,21 @@ public abstract class AbstractGwtModuleMojo
         try
         {
             Collection<File> classpath = getClasspath( Artifact.SCOPE_COMPILE );
-            URL[] urls = new URL[classpath.size()];
+            // also use Vaadin client package
+            File[] gwtUserJars = getGwtUserJar();
+
+            URL[] urls = new URL[classpath.size() + gwtUserJars.length];
             int i = 0;
             for ( File file : classpath )
             {
                 urls[i++] = file.toURI().toURL();
             }
+            for ( File file : gwtUserJars )
+            {
+                urls[i++] = file.toURI().toURL();
+            }
+
+
             InputStream stream = new URLClassLoader( urls ).getResourceAsStream( modulePath );
             if ( stream != null )
             {
