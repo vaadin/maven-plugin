@@ -125,7 +125,7 @@ public class EclipseTestMojo
 
         try
         {
-            context.put( "gwtDevJarPath", getGwtDevJar().getAbsolutePath() );
+//            context.put( "gwtDevJarPath", getGwtDevJar().getAbsolutePath() );
             Writer configWriter = WriterFactory.newXmlWriter( launchFile );
             Template template = cfg.getTemplate( "test-launch.fm", "UTF-8" );
             template.process( context, configWriter );

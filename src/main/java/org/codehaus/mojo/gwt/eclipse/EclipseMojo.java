@@ -281,7 +281,7 @@ public class EclipseMojo
             context.put( "extraJvmArgs", extraJvmArgs );
             context.put( "project", eclipseUtil.getProjectName( getProject() ) );
 
-            context.put( "gwtDevJarPath", getGwtDevJar().getAbsolutePath().replace( '\\', '/' ) );
+//            context.put( "gwtDevJarPath", getGwtDevJar().getAbsolutePath().replace( '\\', '/' ) );
             Writer configWriter = WriterFactory.newXmlWriter( launchFile );
             String templateName = useGoogleEclipsePlugin ? "google.fm" : "launch.fm";
             Template template = cfg.getTemplate( templateName, "UTF-8" );

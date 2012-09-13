@@ -251,17 +251,17 @@ public abstract class AbstractGwtMojo
 
 
     // FIXME move to GwtDevHelper stuff to avoid duplicates
-    protected File getGwtDevJar()
+    protected File[] getGwtDevJar()
         throws MojoExecutionException
     {
         // TODO
         // checkGwtDevAsDependency();
         // checkGwtUserVersion();
         // return getArtifact( "com.google.gwt", "gwt-dev" ).getFile();
-        return getArtifact( VAADIN_GROUP_ID, "vaadin-client-compiler" ).getFile();
+        return getJarAndDependencies("vaadin-client-compiler");
     }
 
-    protected Artifact getArtifact( String groupId, String artifactId )
+    protected Artifact getArtifact( String groupId, String artifactId ) 
     {
         return getArtifact( groupId, artifactId, null );
     }
@@ -269,10 +269,16 @@ public abstract class AbstractGwtMojo
     protected File[] getGwtUserJar()
             throws MojoExecutionException
     {
+        return getJarAndDependencies("vaadin-client");
+    }
+    
+    protected File[] getJarAndDependencies(String artifactId) throws MojoExecutionException {
+    
         // TODO
         // checkGwtUserVersion();
         // Artifact gwtUserArtifact = getArtifact( "com.google.gwt", "gwt-user" );
-        Artifact gwtUserArtifact = getArtifact( VAADIN_GROUP_ID, "vaadin-client" );
+        
+        Artifact gwtUserArtifact = getArtifact( VAADIN_GROUP_ID, artifactId );
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         ArtifactResolutionResult result = null;
