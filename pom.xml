@@ -531,7 +531,6 @@
       </resource>
     </resources>
     <plugins>
-<!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>properties-maven-plugin</artifactId>
@@ -563,7 +562,6 @@
           </execution>
         </executions>
       </plugin>
--->
 
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
