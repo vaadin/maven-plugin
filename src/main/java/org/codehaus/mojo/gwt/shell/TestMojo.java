@@ -328,7 +328,9 @@ public class TestMojo
     {
         classpath.add( getClassPathElementFor( TestMojo.class ) );
         classpath.add( getClassPathElementFor( ReporterManager.class ) );
-        classpath.add( getGwtDevJar() );
+        for (File f : getGwtDevJar()) {
+            classpath.add(f);
+        }
     }
 
     /**
