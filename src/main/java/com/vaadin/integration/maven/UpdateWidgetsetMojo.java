@@ -59,10 +59,12 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
         JavaCommand cmd = new JavaCommand(WIDGETSET_BUILDER_CLASS);
         // make sure source paths are first on the classpath to update the .gwt.xml there, not in target
         Collection<String> sourcePaths = getProject().getCompileSourceRoots();
-        for (String sourcePath : sourcePaths) {
-            File sourceDirectory = new File(sourcePath);
-            if ( sourceDirectory.exists() ) {
-                cmd.withinClasspath(sourceDirectory);
+        if (null != sourcePaths) {
+            for (String sourcePath : sourcePaths) {
+                File sourceDirectory = new File(sourcePath);
+                if ( sourceDirectory.exists() ) {
+                    cmd.withinClasspath(sourceDirectory);
+                }
             }
         }
         cmd.withinScope( Artifact.SCOPE_COMPILE );
