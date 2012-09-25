@@ -1,8 +1,5 @@
 package com.vaadin.integration.maven;
 
-import java.io.File;
-import java.util.Collection;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -57,16 +54,16 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
         getLog().info("Updating widgetset " + module);
 
         JavaCommand cmd = new JavaCommand(WIDGETSET_BUILDER_CLASS);
-        // make sure source paths are first on the classpath to update the .gwt.xml there, not in target
-        Collection<String> sourcePaths = getProject().getCompileSourceRoots();
-        if (null != sourcePaths) {
-            for (String sourcePath : sourcePaths) {
-                File sourceDirectory = new File(sourcePath);
-                if ( sourceDirectory.exists() ) {
-                    cmd.withinClasspath(sourceDirectory);
-                }
-            }
-        }
+//        // make sure source paths are first on the classpath to update the .gwt.xml there, not in target
+//        Collection<String> sourcePaths = getProject().getCompileSourceRoots();
+//        if (null != sourcePaths) {
+//            for (String sourcePath : sourcePaths) {
+//                File sourceDirectory = new File(sourcePath);
+//                if ( sourceDirectory.exists() ) {
+//                    cmd.withinClasspath(sourceDirectory);
+//                }
+//            }
+//        }
         cmd.withinScope( Artifact.SCOPE_COMPILE );
         cmd.withinClasspath(getGwtUserJar()).withinClasspath(getGwtDevJar());
 
