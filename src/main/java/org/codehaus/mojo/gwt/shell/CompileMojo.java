@@ -50,6 +50,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @phase prepare-package
  * @goal compile
  * @requiresDependencyResolution compile
+ * @execute phase=process-resources
  * @version $Id$
  * @author cooper
  * @author ccollins
@@ -475,6 +476,7 @@ public class CompileMojo
                 }
                 try
                 {
+                    // TODO only look into client side code!
                     if ( !scanner.getIncludedSources( sourceRoot, output ).isEmpty() )
                     {
                         getLog().debug( "found stale source in " + sourceRoot + " compared with " + output );
