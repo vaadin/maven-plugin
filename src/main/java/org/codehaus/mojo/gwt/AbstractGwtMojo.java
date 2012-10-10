@@ -277,14 +277,14 @@ public abstract class AbstractGwtMojo
         // TODO
         // checkGwtUserVersion();
         // Artifact gwtUserArtifact = getArtifact( "com.google.gwt", "gwt-user" );
-        
-        Artifact gwtUserArtifact = getArtifact( VAADIN_GROUP_ID, artifactId );
+
+        Artifact rootArtifact = getArtifact( VAADIN_GROUP_ID, artifactId );
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         ArtifactResolutionResult result = null;
         try
         {
-            result = resolver.resolveTransitively( artifacts, gwtUserArtifact,
+            result = resolver.resolveTransitively( artifacts, rootArtifact,
                     remoteRepositories, localRepository, artifactMetadataSource );
         }
         catch (ArtifactResolutionException e)
@@ -299,7 +299,7 @@ public abstract class AbstractGwtMojo
         Collection<Artifact> resolved = result.getArtifacts();
         int i = 0;
         File[] files = new File[ resolved.size() + 1 ];
-        files[i++] = gwtUserArtifact.getFile();
+        files[i++] = rootArtifact.getFile();
         for ( Artifact artifact : resolved )
         {
             files[i++] = artifact.getFile();
