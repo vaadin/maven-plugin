@@ -48,6 +48,8 @@ public class ServletAnnotationFinder
     extends AbstractLogEnabled
 {
 
+    private static final String REMOTE_SERVICE_RELATIVE_PATH_ANNOTATION_NAME = "com.google.gwt.user.client.rpc.RemoteServiceRelativePath";
+
     public ServletAnnotationFinder()
     {
         // no op
@@ -75,10 +77,10 @@ public class ServletAnnotationFinder
             getLogger().debug( "springresource " + resource.getFilename() );
             MetadataReader metadataReader = simpleMetadataReaderFactory.getMetadataReader( resource );
 
-            if ( metadataReader.getAnnotationMetadata().hasAnnotation( RemoteServiceRelativePath.class.getName() ) )
+            if ( metadataReader.getAnnotationMetadata().hasAnnotation( REMOTE_SERVICE_RELATIVE_PATH_ANNOTATION_NAME ) )
             {
                 Map<String, Object> annotationAttributes = metadataReader.getAnnotationMetadata()
-                    .getAnnotationAttributes( RemoteServiceRelativePath.class.getName() );
+                    .getAnnotationAttributes( REMOTE_SERVICE_RELATIVE_PATH_ANNOTATION_NAME );
                 getLogger().debug( "found RemoteServiceRelativePath annotation for class "
                                        + metadataReader.getClassMetadata().getClassName() );
                 if ( StringUtils.isNotBlank( startPath ) )
