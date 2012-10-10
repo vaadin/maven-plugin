@@ -33,12 +33,10 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
 import org.springframework.util.ClassUtils;
 
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-
 
 
 /**
- * The goal is to find classed annotated with {@link RemoteServiceRelativePath}
+ * The goal is to find classed annotated with RemoteServiceRelativePath
  * to generated {@link ServletDescriptor}
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  * @plexus.component role="org.codehaus.mojo.gwt.webxml.ServletAnnotationFinder"
