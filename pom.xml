@@ -28,7 +28,7 @@
   </parent>
   <groupId>com.vaadin</groupId>
   <artifactId>vaadin-maven-plugin</artifactId>
-  <version>7.0-SNAPSHOT</version>
+  <version>7.0.0.beta4</version>
   <packaging>maven-plugin</packaging>
   <name>Vaadin Plug-in for Maven</name>
   <description>
@@ -106,11 +106,9 @@
   <properties>
     <maven.compiler.source>1.6</maven.compiler.source>
     <maven.compiler.target>1.6</maven.compiler.target>
-    <!-- This is used in testing or the archetype at compile time -->
-    <vaadin.test.version>LATEST</vaadin.test.version>
-    <!-- TODO this would only be used in an archetype, currently broken -->
+    <!-- TODO this would also be used in an archetype, currently broken -->
     <!-- This property is used in a filtered resources to check the version compatibility -->
-    <vaadin.version>${version}</vaadin.version>
+    <vaadin.version>7.0.0.beta4</vaadin.version>
     <!--  apt filtering doesn't support dot -->
     <vaadinVersion>${vaadin.version}</vaadinVersion>
     <mavenVersion>2.0.9</mavenVersion>
@@ -254,6 +252,16 @@
       <version>2.3.6</version>
     </dependency>
     <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-client</artifactId>
+      <version>${vaadin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-client-compiler</artifactId>
+      <version>${vaadin.version}</version>
+    </dependency>
+    <dependency>
       <!-- used to unpack gwt native libs -->
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
@@ -340,19 +348,6 @@
       <version>2.5</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-client</artifactId>
-      <version>LATEST</version>
-      <scope>test</scope>
-    </dependency>
-<!--
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-client-compiler</artifactId>
-      <version>LATEST</version>
-    </dependency>
--->
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
