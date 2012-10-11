@@ -284,6 +284,9 @@ public abstract class AbstractGwtMojo
         ArtifactResolutionResult result = null;
         try
         {
+            // TODO this adds too much on the compile classpath
+            artifacts.addAll(pluginArtifacts);
+
             result = resolver.resolveTransitively( artifacts, rootArtifact,
                     remoteRepositories, localRepository, artifactMetadataSource );
         }
