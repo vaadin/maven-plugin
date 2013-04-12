@@ -520,6 +520,7 @@
     <profile>
       <id>release</id>
       <build>
+        <plugins>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>properties-maven-plugin</artifactId>
@@ -551,6 +552,7 @@
             </execution>
           </executions>
         </plugin>
+        </plugins>
       </build>
     </profile>
 
