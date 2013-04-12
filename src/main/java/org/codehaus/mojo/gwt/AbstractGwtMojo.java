@@ -38,7 +38,9 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.metadata.ResolutionGroup;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -261,7 +263,7 @@ public abstract class AbstractGwtMojo
         return getJarAndDependencies("vaadin-client-compiler");
     }
 
-    protected Artifact getArtifact( String groupId, String artifactId ) 
+    protected Artifact getArtifact( String groupId, String artifactId )
     {
         return getArtifact( groupId, artifactId, null );
     }
@@ -271,40 +273,50 @@ public abstract class AbstractGwtMojo
     {
         return getJarAndDependencies("vaadin-client");
     }
-    
-    protected File[] getJarAndDependencies(String artifactId) throws MojoExecutionException {
-    
-        // TODO
-        // checkGwtUserVersion();
-        // Artifact gwtUserArtifact = getArtifact( "com.google.gwt", "gwt-user" );
 
-        Artifact rootArtifact = getArtifact( VAADIN_GROUP_ID, artifactId );
+    protected File[] getJarAndDependencies(String artifactId)
+            throws MojoExecutionException {
 
-        Set<Artifact> artifacts = new HashSet<Artifact>();
+        Artifact rootArtifact = getArtifact(VAADIN_GROUP_ID, artifactId);
+
         ArtifactResolutionResult result = null;
-        try
-        {
-            // TODO this adds too much on the compile classpath
-            artifacts.addAll(pluginArtifacts);
 
-            result = resolver.resolveTransitively( artifacts, rootArtifact,
-                    remoteRepositories, localRepository, artifactMetadataSource );
-        }
-        catch (ArtifactResolutionException e)
-        {
-            throw new MojoExecutionException( "Failed to resolve artifact", e);
-        }
-        catch (ArtifactNotFoundException e)
-        {
-            throw new MojoExecutionException( "Failed to resolve artifact", e);
+        try {
+            Set<Artifact> artifacts = new HashSet<Artifact>();
+
+            if (rootArtifact == null) {
+                // assume that artifact is not in project - try to resolve with
+                // version number from vaadin-shared
+                Artifact vaadinSharedArtifact = getArtifact(VAADIN_GROUP_ID,
+                        "vaadin-shared");
+
+                rootArtifact = artifactFactory.createArtifact( VAADIN_GROUP_ID, artifactId, vaadinSharedArtifact.getBaseVersion(), "provided", "jar" );
+                resolver.resolveAlways(rootArtifact, remoteRepositories,
+                        localRepository);
+
+                // metadata (POM) for rootArtifact not in memory in this case => need this to resolve transitive dependencies!
+                ResolutionGroup resolutionGroup = artifactMetadataSource.retrieve(rootArtifact, localRepository, remoteRepositories);
+                artifacts.addAll(resolutionGroup.getArtifacts());
+            }
+
+            result = resolver
+                    .resolveTransitively(artifacts, rootArtifact,
+                            remoteRepositories, localRepository,
+                            artifactMetadataSource);
+        } catch (ArtifactResolutionException e) {
+            throw new MojoExecutionException("Failed to resolve artifact "+artifactId, e);
+        } catch (ArtifactNotFoundException e) {
+            throw new MojoExecutionException("Failed to resolve artifact "+artifactId, e);
+        } catch (ArtifactMetadataRetrievalException e) {
+            throw new MojoExecutionException("Failed to retrieve metadata for artifact "+artifactId, e);
         }
 
+        @SuppressWarnings("unchecked")
         Collection<Artifact> resolved = result.getArtifacts();
         int i = 0;
-        File[] files = new File[ resolved.size() + 1 ];
+        File[] files = new File[resolved.size() + 1];
         files[i++] = rootArtifact.getFile();
-        for ( Artifact artifact : resolved )
-        {
+        for (Artifact artifact : resolved) {
             files[i++] = artifact.getFile();
         }
 
@@ -313,7 +325,7 @@ public abstract class AbstractGwtMojo
 
     protected Artifact getArtifact( String groupId, String artifactId, String classifier )
     {
-        for ( Artifact artifact : pluginArtifacts )
+        for ( Artifact artifact : getProjectArtifacts() )
         {
             if ( groupId.equals( artifact.getGroupId() ) && artifactId.equals( artifact.getArtifactId() ) )
             {
@@ -431,12 +443,12 @@ public abstract class AbstractGwtMojo
 
     public ArtifactRepository getLocalRepository()
     {
-        return this.localRepository;
+        return localRepository;
     }
 
     public List<ArtifactRepository> getRemoteRepositories()
     {
-        return this.remoteRepositories;
+        return remoteRepositories;
     }
 
     public File getGenerateDirectory()

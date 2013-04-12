@@ -251,16 +251,21 @@
       <artifactId>freemarker</artifactId>
       <version>2.3.6</version>
     </dependency>
+
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-client</artifactId>
       <version>${vaadin.version}</version>
+      <scope>test</scope>
     </dependency>
+<!--
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-client-compiler</artifactId>
       <version>${vaadin.version}</version>
     </dependency>
+-->
+
     <dependency>
       <!-- used to unpack gwt native libs -->
       <groupId>org.codehaus.plexus</groupId>
