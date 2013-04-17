@@ -285,6 +285,8 @@ public abstract class AbstractGwtMojo
             Set<Artifact> artifacts = new HashSet<Artifact>();
 
             if (rootArtifact == null) {
+                getLog().warn( "Failed to retrieve " + VAADIN_GROUP_ID + ":" + artifactId + " based on project POM" );
+
                 // assume that artifact is not in project - try to resolve with
                 // version number from vaadin-shared
                 Artifact vaadinSharedArtifact = getArtifact(VAADIN_GROUP_ID,
@@ -293,6 +295,8 @@ public abstract class AbstractGwtMojo
                 rootArtifact = artifactFactory.createArtifact( VAADIN_GROUP_ID, artifactId, vaadinSharedArtifact.getBaseVersion(), "provided", "jar" );
                 resolver.resolveAlways(rootArtifact, remoteRepositories,
                         localRepository);
+
+                getLog().info( "Using " + rootArtifact.getGroupId() + ":" + rootArtifact.getArtifactId() + " version " + rootArtifact.getVersion() );
 
                 // metadata (POM) for rootArtifact not in memory in this case => need this to resolve transitive dependencies!
                 ResolutionGroup resolutionGroup = artifactMetadataSource.retrieve(rootArtifact, localRepository, remoteRepositories);
@@ -339,7 +343,6 @@ public abstract class AbstractGwtMojo
                 }
             }
         }
-        getLog().error( "Failed to retrieve " + groupId + ":" + artifactId + ":" + classifier );
         return null;
     }
 

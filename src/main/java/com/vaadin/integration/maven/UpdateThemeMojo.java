@@ -99,10 +99,18 @@ public class UpdateThemeMojo extends AbstractGwtMojo {
             cmd.withinClasspath(artifact);
         }
 
+        // add vaadin-client-compiler - the scanner class is currently there
+        File[] clientCompilerJars = getGwtDevJar();
+        for (File artifact : clientCompilerJars) {
+            getLog().debug("  " + artifact.getAbsolutePath());
+        }
+        cmd.withinClasspath(clientCompilerJars);
+
         cmd.arg(new File(warSourceDirectory.getAbsolutePath(), theme).getAbsolutePath());
 
         try {
             cmd.execute();
+            getLog().info("Theme \"" + theme + "\" updated");
         } catch (JavaCommandException e) {
             getLog().error("Updating theme \"" + theme + "\" failed", e);
             throw new MojoExecutionException("Updating theme \"" + theme + "\" failed", e);
