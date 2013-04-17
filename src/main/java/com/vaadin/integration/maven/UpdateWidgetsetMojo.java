@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.mojo.gwt.shell.AbstractGwtShellMojo;
@@ -57,6 +58,7 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
         getLog().info("Updating widgetset " + module);
 
         JavaCommand cmd = new JavaCommand(WIDGETSET_BUILDER_CLASS);
+
         // make sure source paths are first on the classpath to update the .gwt.xml there, not in target
         Collection<String> sourcePaths = getProject().getCompileSourceRoots();
         if (null != sourcePaths) {
@@ -67,6 +69,26 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
                 }
             }
         }
+
+        // also add resource paths early on the classpath to update the .gwt.xml there, not in target
+        Collection<?> resources = getProject().getResources();
+        if (null != resources) {
+            for (Object resObj : resources) {
+                Resource res = (Resource) resObj;
+                File resourceDirectory = new File(res.getDirectory());
+                if (resourceDirectory.exists()) {
+                    getLog().info(
+                            "Adding resource directory to command classpath: "
+                                    + resourceDirectory);
+                    cmd.withinClasspath(resourceDirectory);
+                } else {
+                    getLog().warn(
+                            "Ignoring missing resource directory: "
+                                    + resourceDirectory);
+                }
+            }
+        }
+
         cmd.withinScope( Artifact.SCOPE_COMPILE );
         cmd.withinClasspath(getGwtUserJar()).withinClasspath(getGwtDevJar());
 
