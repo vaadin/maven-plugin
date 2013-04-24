@@ -255,7 +255,7 @@
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-client</artifactId>
-      <version>${vaadin.version}</version>
+      <version>LATEST</version>
       <scope>test</scope>
     </dependency>
 <!--
