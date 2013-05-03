@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.Collection;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.mojo.gwt.AbstractGwtMojo;
@@ -63,16 +61,27 @@ public class UpdateThemeMojo extends AbstractGwtMojo {
         for (Artifact artifact : getProjectArtifacts()) {
             if (VAADIN_GROUP_ID.equals(artifact.getGroupId())
                     && "vaadin-shared".equals(artifact.getArtifactId())) {
-                ArtifactVersion version71 = new DefaultArtifactVersion(
-                        "7.1");
-                ArtifactVersion vaadinSharedArtifactVersion = new DefaultArtifactVersion(
-                        artifact.getVersion());
-                if (vaadinSharedArtifactVersion.compareTo(version71) < 0) {
+                // TODO this is an ugly hack because Maven does not tolerate
+                // version numbers of the form "7.1.0.beta1"
+                String artifactVersion = artifact.getVersion();
+                String[] versionParts = artifactVersion.split("[.-]");
+                boolean isNewer = false;
+                if (versionParts.length >= 2) {
+                    try {
+                        int majorVersion = Integer.parseInt(versionParts[0]);
+                        int minorVersion = Integer.parseInt(versionParts[1]);
+                        if (majorVersion > 7 || (majorVersion == 7 && minorVersion >= 1)) {
+                            isNewer = true;
+                        }
+                    } catch (NumberFormatException e) {
+                        getLog().info("Failed to parse vaadin-shared version number "+artifactVersion);
+                    }
+                }
+                if (!isNewer) {
                     getLog().warn(
-                            "You're project declares dependency on vaadin-shared "
-                                    + artifact.getVersion()
-                                    + ". This plugin is designed for at least Vaadin version "
-                                    + version71);
+                            "Your project declares dependency on vaadin-shared "
+                                    + artifactVersion
+                                    + ". This plugin is designed for at least Vaadin version 7.1");
                 } else {
                     return true;
                 }
