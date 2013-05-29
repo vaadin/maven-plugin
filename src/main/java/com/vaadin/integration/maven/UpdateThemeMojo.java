@@ -108,13 +108,6 @@ public class UpdateThemeMojo extends AbstractGwtMojo {
             cmd.withinClasspath(artifact);
         }
 
-        // add vaadin-client-compiler - the scanner class is currently there
-        File[] clientCompilerJars = getGwtDevJar();
-        for (File artifact : clientCompilerJars) {
-            getLog().debug("  " + artifact.getAbsolutePath());
-        }
-        cmd.withinClasspath(clientCompilerJars);
-
         cmd.arg(new File(warSourceDirectory.getAbsolutePath(), theme).getAbsolutePath());
 
         try {
