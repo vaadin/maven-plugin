@@ -14,7 +14,7 @@ import org.codehaus.mojo.gwt.shell.JavaCommandRequest;
  *
  * @goal compile-theme
  * @requiresDependencyResolution compile
- * @phase process-classes
+ * @phase generate-resources
  */
 public class CompileThemeMojo extends AbstractThemeMojo {
     public static final String THEME_COMPILE_CLASS = "com.vaadin.sass.SassCompiler";

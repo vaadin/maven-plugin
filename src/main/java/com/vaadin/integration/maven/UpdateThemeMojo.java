@@ -12,9 +12,11 @@ import org.codehaus.mojo.gwt.shell.JavaCommandRequest;
 /**
  * Updates Vaadin themes based on addons containing themes on the classpath.
  *
+ * This goal is linked to phase generate-sources to make sure it is executed before compile-theme.
+ *
  * @goal update-theme
  * @requiresDependencyResolution compile
- * @phase process-classes
+ * @phase generate-sources
  */
 public class UpdateThemeMojo extends AbstractThemeMojo {
     public static final String THEME_UPDATE_CLASS = "com.vaadin.server.themeutils.SASSAddonImportFileCreator";
