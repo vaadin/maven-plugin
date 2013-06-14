@@ -32,6 +32,7 @@ import org.codehaus.plexus.util.FileUtils;
  *
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  * @goal clean
+ * @phase clean
  */
 public class GwtCleanMojo
     extends AbstractGwtModuleMojo
