@@ -216,6 +216,18 @@ public abstract class AbstractGwtShellMojo
                 extra.add( extraArg );
             }
         }
+
+        // Pass through any license info for the compiler
+        Properties props = System.getProperties();
+        for (Object o : props.keySet())
+        {
+            String key = (String) o;
+            if (key != null && key.endsWith(".developer.license"))
+            {
+                extra.add( "-D" + key + "=" + System.getProperty(key) );
+            }
+        }
+
         return extra;
     }
 
