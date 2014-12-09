@@ -161,6 +161,13 @@ extends AbstractMojo
     @Parameter(defaultValue = "false", property = "gwt.gwtSdkFirstInClasspath")
     protected boolean gwtSdkFirstInClasspath;
 
+    /**
+     * List of requested artifacts for which there was no version information
+     * available. This is used to prevent duplicate messages about the same
+     * artifacts
+     */
+    private Set<String> artifactsWithoutVersion = new HashSet<String>();
+
     public File getOutputDirectory()
     {
         File out = inplace ? warSourceDirectory : webappDirectory;
@@ -320,7 +327,17 @@ extends AbstractMojo
 
             // TODO can these branches be unified/cleaned up?
             if (rootArtifact == null) {
-                getLog().warn( "Failed to retrieve " + VAADIN_GROUP_ID + ":" + artifactId + " based on project POM" );
+                // only log implicit version checks once per artifact
+                boolean logVersion = artifactsWithoutVersion.add(artifactId);
+
+                if (logVersion) {
+                    getLog().debug(
+                            "Trying to resolve the version of "
+                                    + VAADIN_GROUP_ID
+                                    + ":"
+                                    + artifactId
+                                    + " based on the version of vaadin-shared in the project POM");
+                }
 
                 // assume that artifact is not in project - try to resolve with
                 // version number from vaadin-shared
@@ -336,7 +353,12 @@ extends AbstractMojo
                 resolver.resolveAlways(rootArtifact, remoteRepositories,
                         localRepository);
 
-                getLog().info( "Using " + rootArtifact.getGroupId() + ":" + rootArtifact.getArtifactId() + " version " + rootArtifact.getVersion() );
+                if (logVersion) {
+                    getLog().info(
+                            "Using " + rootArtifact.getGroupId() + ":"
+                                    + rootArtifact.getArtifactId()
+                                    + " version " + rootArtifact.getVersion());
+                }
 
                 // metadata (POM) for rootArtifact not in memory in this case => need this to resolve transitive dependencies!
                 ResolutionGroup resolutionGroup = artifactMetadataSource.retrieve(rootArtifact, localRepository, remoteRepositories);
