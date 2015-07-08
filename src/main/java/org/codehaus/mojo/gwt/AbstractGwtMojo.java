@@ -291,6 +291,11 @@ public abstract class AbstractGwtMojo
                 // version number from vaadin-shared
                 Artifact vaadinSharedArtifact = getArtifact(VAADIN_GROUP_ID,
                         "vaadin-shared");
+                if (vaadinSharedArtifact == null) {
+                    // No vaadin-shared found, this is possibly when running clean and artifacts have not been resolved
+                    // https://maven.apache.org/ref/3.2.3/apidocs/org/apache/maven/project/MavenProject.html#getArtifacts()
+                    return new File[]{};
+                }
 
                 rootArtifact = artifactFactory.createArtifact( VAADIN_GROUP_ID, artifactId, vaadinSharedArtifact.getBaseVersion(), "provided", "jar" );
                 resolver.resolveAlways(rootArtifact, remoteRepositories,

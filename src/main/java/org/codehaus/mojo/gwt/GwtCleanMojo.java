@@ -46,20 +46,18 @@ public class GwtCleanMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        try
+        for ( String name : getModules() )
         {
-            for ( String name : getModules() )
-            {
+            try {
                 File output = new File( getOutputDirectory(), readModule( name ).getPath() );
                 clean( output );
+            } catch (GwtModuleReaderException e) {
+                // Only log info if a defined module is not found
+                getLog().info(e.getMessage());
             }
-            clean( new File( getOutputDirectory(), ".gwt-tmp" ) );
-            clean( new File( getOutputDirectory(), "../gwt-unitCache" ) );
         }
-        catch ( GwtModuleReaderException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
+        clean( new File( getOutputDirectory(), ".gwt-tmp" ) );
+        clean( new File( getOutputDirectory(), "../gwt-unitCache" ) );
     }
 
     private void clean( File output )
