@@ -28,7 +28,7 @@
   </parent>
   <groupId>com.vaadin</groupId>
   <artifactId>vaadin-maven-plugin</artifactId>
-  <version>7.1-SNAPSHOT</version>
+  <version>7.6-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Vaadin Plug-in for Maven</name>
   <description>

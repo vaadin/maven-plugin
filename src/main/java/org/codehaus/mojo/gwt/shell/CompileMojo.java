@@ -23,6 +23,10 @@ package org.codehaus.mojo.gwt.shell;
  *
  */
 
+import java.io.File;
+import java.util.Collection;
+import java.util.HashSet;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -37,20 +41,12 @@ import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SingleTargetSourceMapping;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
-
 /**
  * Invokes the GWT Compiler for the project source.
  * See compiler options :
  * http://www.gwtproject.org/doc/latest/DevGuideCompilingAndDebugging.html#DevGuideCompilerOptions
  *
- * @phase prepare-package
- * @goal compile
- * @requiresDependencyResolution compile
  * @execute phase=process-resources
- * @threadSafe
  * @version $Id$
  * @author cooper
  * @author ccollins
@@ -179,7 +175,6 @@ public class CompileMojo
      * <p>
      * Can be set from command line using '-Dgwt.compiler.optimizationLevel=n'.
      * </p>
-     * @parameter default-value="-1" expression="${gwt.compiler.optimizationLevel}"
      * @since 2.1.0-1
      */
     @Parameter(defaultValue = "-1", property = "gwt.compiler.optimizationLevel")
@@ -228,6 +223,7 @@ public class CompileMojo
      * @since 2.5.0-rc1
      * @deprecated since 2.6.0-rc1
      */
+    @Deprecated
     @Parameter(defaultValue = "false", property = "gwt.compiler.disableAggressiveOptimization")
     private boolean disableAggressiveOptimization;
 
@@ -403,6 +399,7 @@ public class CompileMojo
     @Parameter(defaultValue = "NONE", property = "gwt.compiler.methodNameDisplayMode")
     private String methodNameDisplayMode;
 
+    @Override
     public void doExecute( )
         throws MojoExecutionException, MojoFailureException
     {
@@ -412,9 +409,9 @@ public class CompileMojo
             return;
         }
 
-        if ( !this.getOutputDirectory().exists() )
+        if ( !getOutputDirectory().exists() )
         {
-            this.getOutputDirectory().mkdirs();
+            getOutputDirectory().mkdirs();
         }
 
         compile( getModules() );

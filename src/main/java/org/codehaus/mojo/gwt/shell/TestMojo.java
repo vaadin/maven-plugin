@@ -19,6 +19,10 @@ package org.codehaus.mojo.gwt.shell;
  * under the License.
  */
 
+import java.io.File;
+import java.net.URL;
+import java.util.Collection;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -31,10 +35,6 @@ import org.codehaus.mojo.gwt.test.MavenTestRunner;
 import org.codehaus.mojo.gwt.test.TestTemplate;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-import java.net.URL;
-import java.util.Collection;
-
 /**
  * Mimic surefire to run GWTTestCases during integration-test phase, until SUREFIRE-508 is fixed
  *
@@ -44,7 +44,7 @@ import java.util.Collection;
  */
 @Mojo(name = "test", defaultPhase = LifecyclePhase.INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 public class TestMojo
-    extends AbstractGwtShellMojo
+extends AbstractGwtShellMojo
 {
 
     /**
@@ -85,7 +85,7 @@ public class TestMojo
 
     /**
      * run tests using web mode rather than developer (a.k.a. hosted) mode
-     * 
+     *
      * @deprecated Use productionMode instead.
      */
     @Deprecated
@@ -94,7 +94,7 @@ public class TestMojo
 
     /**
      * run tests using production mode rather than development (a.k.a. hosted) mode.
-     * 
+     *
      * @see http://code.google.com/intl/fr-FR/webtoolkit/doc/latest/DevGuideCompilingAndDebugging.html#DevGuideProdMode
      */
     @Parameter(defaultValue = "false", property = "gwt.test.prod")
@@ -111,7 +111,7 @@ public class TestMojo
     /**
      * Configure options to run tests with HTMLUnit. The value must descrivbe the browser emulation
      * to be used, FF17, IE8, IE9 or Chrome (possible multiple values separated by comas).
-     * 
+     *
      * @see http://code.google.com/intl/fr/webtoolkit/doc/latest/DevGuideTestingHtmlUnit.html
      */
     @Parameter(defaultValue = "FF17", property = "gwt.test.htmlunit")
@@ -120,7 +120,7 @@ public class TestMojo
     /**
      * Configure options to run tests with Selenium. The value must describe the Selenium Remote
      * Control target
-     * 
+     *
      * @see http://code.google.com/intl/fr/webtoolkit/doc/latest/DevGuideTestingRemoteTesting.html#Selenium
      */
     @Parameter(property = "gwt.test.selenium")
@@ -156,22 +156,22 @@ public class TestMojo
      */
     @Parameter(defaultValue = "${project.build.directory}/surefire-reports")
     private File reportsDirectory;
-    
+
     /**
      * Specify the user agents to reduce the number of permutations in '-prod' mode;
      * e.g. ie8,safari,gecko1_8
-     * 
+     *
      * @since 2.5.0-rc1
      */
     @Parameter(property = "gwt.test.userAgents")
     private String userAgents;
-    
+
     /**
      * Configure batch execution of tests.
      * <p>
      * Value must be one of 'none', 'class' or 'module'.
      * </p>
-     * 
+     *
      * @since 2.5.0-rc1
      */
     @Parameter(property = "gwt.test.batch")
@@ -179,7 +179,7 @@ public class TestMojo
 
     /**
      * Causes the log window and browser windows to be displayed; useful for debugging.
-     * 
+     *
      * @since 2.6.0-rc1
      */
     @Parameter(defaultValue = "false", property = "gwt.test.showUi")
@@ -195,7 +195,7 @@ public class TestMojo
 
     /**
      * Logs to a file in the given directory
-     * 
+     *
      * @since 2.6.0-rc1
      */
     @Parameter
@@ -325,7 +325,7 @@ public class TestMojo
 
     /**
      * Set the test method timeout, in minutes
-     * 
+     *
      * @since 2.6.0-rc1
      */
     @Parameter(defaultValue = "5", property = "gwt.testMethodTimeout")
@@ -333,7 +333,7 @@ public class TestMojo
 
     /**
      * Set the test begin timeout (time for clients to contact server), in minutes
-     * 
+     *
      * @since 2.6.0-rc1
      */
     @Parameter(defaultValue = "1", property = "gwt.testBeginTimeout")
@@ -343,7 +343,7 @@ public class TestMojo
      * Precompile modules as tests are running (speeds up remote tests but requires more memory)
      * <p>
      * The value is one of <tt>simple</tt>, <tt>all</tt>, or <tt>parallel</tt>.
-     * 
+     *
      * @since 2.6.0-rc1
      */
     @Parameter(defaultValue = "simple", property = "gwt.test.precompile")
@@ -351,7 +351,7 @@ public class TestMojo
 
     /**
      * EXPERIMENTAL: Sets the maximum number of attempts for running each test method
-     * 
+     *
      * @since 2.6.0-rc1
      */
     @Parameter(defaultValue = "1", property = "gwt.test.tries")
@@ -363,7 +363,7 @@ public class TestMojo
      * Value is one of PACKAGE or NONE.
      * <p>
      * Default: PACKAGE for -draftCompile, otherwise NONE
-     * 
+     *
      * @since 2.7.0-rc1
      */
     @Parameter
@@ -371,7 +371,7 @@ public class TestMojo
 
     /**
      * Compiles faster by reusing data from the previous compile.
-     * 
+     *
      * @since 2.7.0-rc1
      */
     @Parameter(alias = "compilePerFile", defaultValue = "false", property = "gwt.compiler.incremental")
@@ -379,7 +379,7 @@ public class TestMojo
 
     /**
      * EXPERIMENTAL: Specifies JsInterop mode, either NONE, JS, or CLOSURE.
-     * 
+     *
      * @since 2.7.0-rc1
      */
     @Parameter(defaultValue = "NONE")
@@ -390,7 +390,7 @@ public class TestMojo
 
     @Override
     public void doExecute()
-        throws MojoExecutionException, MojoFailureException
+            throws MojoExecutionException, MojoFailureException
     {
         if ( skip || skipTests || skipExec )
         {
@@ -398,8 +398,9 @@ public class TestMojo
         }
         new TestTemplate( getProject(), includes, excludes, new TestTemplate.CallBack()
         {
+            @Override
             public void doWithTest( File sourceDir, String test )
-                throws MojoExecutionException
+                    throws MojoExecutionException
             {
                 forkToRunTest( test );
             }
@@ -410,7 +411,7 @@ public class TestMojo
             if ( testFailureIgnore )
             {
                 getLog().error( "There are test failures.\n\nPlease refer to " + reportsDirectory
-                                    + " for the individual test results." );
+                        + " for the individual test results." );
             }
             else
             {
@@ -426,7 +427,7 @@ public class TestMojo
      * @throws MojoExecutionException some error occured
      */
     private void forkToRunTest( String test )
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         test = test.substring( 0, test.length() - 5 );
         test = StringUtils.replace( test, File.separator, "." );
@@ -444,17 +445,17 @@ public class TestMojo
             try
             {
                 JavaCommand cmd = createJavaCommand()
-                    .setMainClass( MavenTestRunner.class.getName() );
+                        .setMainClass( MavenTestRunner.class.getName() );
                 if ( gwtSdkFirstInClasspath )
                 {
                     cmd.addToClasspath( getGwtUserJar() )
-                       .addToClasspath( getGwtDevJar() );
+                    .addToClasspath( getGwtDevJar() );
                 }
                 cmd.addToClasspath( getClasspath( Artifact.SCOPE_TEST ) );
                 if ( !gwtSdkFirstInClasspath )
                 {
                     cmd.addToClasspath( getGwtUserJar() )
-                       .addToClasspath( getGwtDevJar() );
+                    .addToClasspath( getGwtDevJar() );
                 }
 
                 addCompileSourceArtifacts( cmd );
@@ -563,8 +564,12 @@ public class TestMojo
     {
         classpath.add( getClassPathElementFor( TestMojo.class ) );
         classpath.add( getClassPathElementFor( ReporterManager.class ) );
-        for (File f : getGwtDevJar()) {
-            classpath.add(f);
+        try {
+            for (File f : getGwtDevJar()) {
+                classpath.add(f);
+            }
+        } catch (MojoExecutionException e) {
+            getLog().error("Processing classpath for test mojo failed", e);
         }
     }
 
@@ -583,7 +588,7 @@ public class TestMojo
         URL url = cl.getResource( classFile );
         getLog().debug( "getClassPathElementFor " + clazz.getName() + " file " + url.toString() );
         String path = url.toString();
-    
+
         if ( path.startsWith( "jar:" ) )
         {
             path = path.substring( 4, path.indexOf( "!" ) );

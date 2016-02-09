@@ -13,13 +13,13 @@ public abstract class AbstractThemeMojo extends AbstractGwtMojo {
     /**
      * A single theme. Option to specify a single module from command line
      *
-     * @parameter expression="${vaadin.theme}"
+     * @parameter property="vaadin.theme"
      */
     private String theme;
 
     @Override
     public final void execute() throws MojoExecutionException,
-            MojoFailureException {
+    MojoFailureException {
         if ("pom".equals(getProject().getPackaging())) {
             getLog().info("Theme processing is skipped");
             return;

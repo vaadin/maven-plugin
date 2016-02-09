@@ -5,17 +5,16 @@ import java.util.Collection;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.mojo.gwt.shell.JavaCommand;
 import org.codehaus.mojo.gwt.shell.JavaCommandException;
-import org.codehaus.mojo.gwt.shell.JavaCommandRequest;
 
 /**
  * Updates Vaadin themes based on addons containing themes on the classpath.
- *
- * @goal compile-theme
- * @requiresDependencyResolution compile
- * @phase generate-resources
  */
+@Mojo(name = "compile-theme", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class CompileThemeMojo extends AbstractThemeMojo {
     public static final String THEME_COMPILE_CLASS = "com.vaadin.sass.SassCompiler";
 
@@ -32,19 +31,19 @@ public class CompileThemeMojo extends AbstractThemeMojo {
     protected void processTheme(String theme) throws MojoExecutionException {
         getLog().info("Updating theme " + theme);
 
-        JavaCommandRequest javaCommandRequest = new JavaCommandRequest()
-                .setClassName(THEME_COMPILE_CLASS).setLog(getLog());
-        JavaCommand cmd = new JavaCommand(javaCommandRequest);
+        JavaCommand cmd = new JavaCommand();
+        cmd.setMainClass(THEME_COMPILE_CLASS);
+        cmd.setLog(getLog());
 
         // src/main/webapp first on classpath
-        cmd.withinClasspath(warSourceDirectory);
+        cmd.addToClasspath(warSourceDirectory);
 
         // rest of classpath (elements both from plugin and from project)
         Collection<File> classpath = getClasspath(Artifact.SCOPE_COMPILE);
         getLog().debug("Additional classpath elements for vaadin:compile-theme:");
         for (File artifact : classpath) {
             getLog().debug("  " + artifact.getAbsolutePath());
-            cmd.withinClasspath(artifact);
+            cmd.addToClasspath(artifact);
         }
 
         File themeDir = new File(warSourceDirectory.getAbsolutePath(), theme);

@@ -54,8 +54,8 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
  * @version $Id$
  */
 public abstract class AbstractGwtModuleMojo
-    extends AbstractGwtMojo
-    implements GwtModuleReader
+extends AbstractGwtMojo
+implements GwtModuleReader
 {
     /**
      * The project GWT modules. If not set, the plugin will scan the project for <code>.gwt.xml</code> files.
@@ -69,12 +69,13 @@ public abstract class AbstractGwtModuleMojo
     @Parameter(property = "gwt.module")
     private String module;
 
+    @Override
     public List<String> getGwtModules()
     {
         String[] modules = getModules();
         return ArrayUtils.isEmpty( modules )? new ArrayList<String>(0) : Arrays.asList( modules );
     }
-    
+
     /**
      * Return the configured modules or scan the project source/resources folder to find them
      *
@@ -133,7 +134,7 @@ public abstract class AbstractGwtModuleMojo
             for ( String fileName : mods )
             {
                 String path =
-                    fileName.substring( 0, fileName.length() - DefaultGwtModuleReader.GWT_MODULE_EXTENSION.length() );
+                        fileName.substring( 0, fileName.length() - DefaultGwtModuleReader.GWT_MODULE_EXTENSION.length() );
                 modules[i++] = path.replace( File.separatorChar, '.' );
             }
             if ( modules.length > 0 )
@@ -145,8 +146,9 @@ public abstract class AbstractGwtModuleMojo
         return modules;
     }
 
+    @Override
     public GwtModule readModule( String name )
-        throws GwtModuleReaderException
+            throws GwtModuleReaderException
     {
         String modulePath = name.replace( '.', '/' ) + DefaultGwtModuleReader.GWT_MODULE_EXTENSION;
         Collection<String> sourceRoots = getProject().getCompileSourceRoots();
@@ -176,9 +178,9 @@ public abstract class AbstractGwtModuleMojo
         {
             Collection<File> classpath = getClasspath( Artifact.SCOPE_COMPILE );
             // also use Vaadin client package
-            File[] gwtUserJars = getGwtUserJar();
+            Collection<File> gwtUserJars = getGwtUserJar();
 
-            URL[] urls = new URL[classpath.size() + gwtUserJars.length];
+            URL[] urls = new URL[classpath.size() + gwtUserJars.size()];
             int i = 0;
             for ( File file : classpath )
             {
@@ -208,7 +210,7 @@ public abstract class AbstractGwtModuleMojo
     }
 
     private GwtModule readModule( String name, File file )
-        throws GwtModuleReaderException
+            throws GwtModuleReaderException
 
     {
         try
@@ -228,7 +230,7 @@ public abstract class AbstractGwtModuleMojo
      * @return
      */
     private GwtModule readModule( String name, InputStream xml )
-        throws GwtModuleReaderException
+            throws GwtModuleReaderException
     {
         try
         {

@@ -19,6 +19,13 @@ package org.codehaus.mojo.gwt.shell;
  * under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,23 +34,17 @@ import org.codehaus.mojo.gwt.AbstractGwtModuleMojo;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 /**
  * Support running GWT SDK Tools as forked JVM with classpath set according to project source/resource directories and
  * dependencies.
- * 
+ *
  * @author ccollins
  * @author cooper
  * @author willpugh
  * @version $Id$
  */
 public abstract class AbstractGwtShellMojo
-    extends AbstractGwtModuleMojo
+extends AbstractGwtModuleMojo
 {
     /**
      * Location on filesystem where GWT will write generated content for review (-gen option to GWT Compiler).
@@ -153,14 +154,15 @@ public abstract class AbstractGwtShellMojo
      *
      * @see org.apache.maven.plugin.Mojo#execute()
      */
+    @Override
     public final void execute()
-        throws MojoExecutionException, MojoFailureException
+            throws MojoExecutionException, MojoFailureException
     {
         doExecute();
     }
 
     public abstract void doExecute()
-        throws MojoExecutionException, MojoFailureException;
+            throws MojoExecutionException, MojoFailureException;
 
     protected String getExtraJvmArgs()
     {
@@ -169,12 +171,12 @@ public abstract class AbstractGwtShellMojo
 
     protected String getLogLevel()
     {
-        return this.logLevel;
+        return logLevel;
     }
 
     protected String getStyle()
     {
-        return this.style;
+        return style;
     }
 
 
@@ -231,18 +233,18 @@ public abstract class AbstractGwtShellMojo
 
     protected JavaCommand createJavaCommand() {
         return new JavaCommand()
-            .setLog( getLog() )
-            .setJvm( getJvm() )
-            .setJvmArgs( getJvmArgs() )
-            .setTimeOut( timeOut )
-            .addClassPathProcessors( new ClassPathProcessor()
+        .setLog( getLog() )
+        .setJvm( getJvm() )
+        .setJvmArgs( getJvmArgs() )
+        .setTimeOut( timeOut )
+        .addClassPathProcessors( new ClassPathProcessor()
+        {
+            @Override
+            public void postProcessClassPath( List<File> files )
             {
-                @Override
-                public void postProcessClassPath( List<File> files )
-                {
-                    AbstractGwtShellMojo.this.postProcessClassPath( files );
-                }
-            } );
+                AbstractGwtShellMojo.this.postProcessClassPath( files );
+            }
+        } );
     }
     /**
      * Add sources.jar artifacts for project dependencies listed as compileSourcesArtifacts. This is a GWT hack to avoid
@@ -286,9 +288,10 @@ public abstract class AbstractGwtShellMojo
                     break;
                 }
             }
-            if ( !found )
+            if ( !found ) {
                 getLog().warn(
                         "Declared compileSourcesArtifact was not found in project dependencies " + dependencyId );
+            }
         }
     }
 
@@ -301,13 +304,13 @@ public abstract class AbstractGwtShellMojo
 
     protected void addArgumentGen( JavaCommand cmd )
     {
-        if ( this.genParam )
+        if ( genParam )
         {
-            if ( !this.gen.exists() )
+            if ( !gen.exists() )
             {
-                this.gen.mkdirs();
+                gen.mkdirs();
             }
-            cmd.arg( "-gen", this.gen.getAbsolutePath() );
+            cmd.arg( "-gen", gen.getAbsolutePath() );
         }
     }
 
