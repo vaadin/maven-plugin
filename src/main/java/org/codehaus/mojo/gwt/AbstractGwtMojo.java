@@ -21,17 +21,18 @@ package org.codehaus.mojo.gwt;
 
 import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
 import static org.apache.maven.artifact.Artifact.SCOPE_RUNTIME;
-import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -48,10 +49,17 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.MavenMetadataSource;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Abstract Support class for all GWT-related operations.
@@ -62,122 +70,105 @@ import org.apache.maven.project.MavenProject;
  * @version $Id$
  */
 public abstract class AbstractGwtMojo
-    extends AbstractMojo
+extends AbstractMojo
 {
+    private static final String GWT_USER = "com.google.gwt:gwt-user";
+
+    private static final String GWT_DEV = "com.google.gwt:gwt-dev";
+
     /** GWT artifacts groupId */
     public static final String GWT_GROUP_ID = "com.google.gwt";
     public static final String VAADIN_GROUP_ID = "com.vaadin";
 
     // --- Some Maven tools ----------------------------------------------------
 
-    /**
-     * @parameter expression="${plugin.version}"
-     * @required
-     * @readonly
-     */
-    private String version;
+    @Parameter(defaultValue = "${plugin.artifactMap}", required = true, readonly = true)
+    private Map<String, Artifact> pluginArtifactMap;
 
-    /**
-     * @parameter expression="${plugin.artifacts}"
-     * @required
-     * @readonly
-     */
-    private Collection<Artifact> pluginArtifacts;
+    @Component
+    private MavenProjectBuilder projectBuilder;
 
-    /**
-     * @component
-     */
+    @Component
     protected ArtifactResolver resolver;
 
-    /**
-     * @component
-     */
+    @Component
     protected ArtifactFactory artifactFactory;
 
-
-    /**
-     * @required
-     * @readonly
-     * @component
-     */
+    @Component
     protected ClasspathBuilder classpathBuilder;
 
     // --- Some MavenSession related structures --------------------------------
 
-    /**
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
-     */
+    @Parameter(defaultValue = "${localRepository}", required = true, readonly = true)
     protected ArtifactRepository localRepository;
 
-    /**
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     * @required
-     * @readonly
-     */
+    @Parameter(defaultValue = "${project.pluginArtifactRepositories}", required = true, readonly = true)
     protected List<ArtifactRepository> remoteRepositories;
 
-    /**
-     * @component
-     */
+    @Component
     protected ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * The maven project descriptor
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${project}", required = true, readonly = true)
     private MavenProject project;
 
     // --- Plugin parameters ---------------------------------------------------
 
     /**
      * Folder where generated-source will be created (automatically added to compile classpath).
-     *
-     * @parameter default-value="${project.build.directory}/generated-sources/gwt"
-     * @required
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources/gwt", required = true)
     private File generateDirectory;
 
     /**
      * Location on filesystem where GWT will write output files (-out option to GWTCompiler).
-     *
-     * @parameter expression="${gwt.war}" default-value="${project.build.directory}/${project.build.finalName}"
-     * @alias outputDirectory
      */
+    @Parameter(property = "gwt.war", defaultValue="${project.build.directory}/${project.build.finalName}", alias = "outputDirectory")
     private File webappDirectory;
 
     /**
-     * Location of the web application static resources (same as maven-war-plugin parameter)
-     *
-     * @parameter default-value="${basedir}/src/main/webapp"
+     * Prefix to prepend to module names inside {@code webappDirectory} or in URLs in DevMode.
+     * <p>
+     * Could also be seen as a suffix to {@code webappDirectory}.
      */
+    @Parameter(property = "gwt.modulePathPrefix")
+    protected String modulePathPrefix;
+
+    /**
+     * Location of the web application static resources (same as maven-war-plugin parameter)
+     */
+    @Parameter(defaultValue="${basedir}/src/main/webapp")
     protected File warSourceDirectory;
 
     /**
      * Select the place where GWT application is built. In <code>inplace</code> mode, the warSourceDirectory is used to
      * match the same use case of the {@link war:inplace
      * http://maven.apache.org/plugins/maven-war-plugin/inplace-mojo.html} goal.
-     *
-     * @parameter default-value="false" expression="${gwt.inplace}"
      */
+    @Parameter(defaultValue = "false", property = "gwt.inplace")
     private boolean inplace;
 
     /**
      * The forked command line will use gwt sdk jars first in classpath.
      * see issue http://code.google.com/p/google-web-toolkit/issues/detail?id=5290
      *
-     * @parameter default-value="false" expression="${gwt.gwtSdkFirstInClasspath}"
      * @since 2.1.0-1
+     * @deprecated tweak your dependencies and/or split your project with a client-only module
      */
+    @Deprecated
+    @Parameter(defaultValue = "false", property = "gwt.gwtSdkFirstInClasspath")
     protected boolean gwtSdkFirstInClasspath;
 
     public File getOutputDirectory()
     {
-        return inplace ? warSourceDirectory : webappDirectory;
+        File out = inplace ? warSourceDirectory : webappDirectory;
+        if ( !StringUtils.isBlank( modulePathPrefix ) )
+        {
+            out = new File(out, modulePathPrefix);
+        }
+        return out;
     }
 
     /**
@@ -190,7 +181,7 @@ public abstract class AbstractGwtMojo
      * @throws MojoExecutionException some error occured
      */
     protected int addClasspathElements( Collection<?> elements, URL[] urls, int startPosition )
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         for ( Object object : elements )
         {
@@ -212,8 +203,8 @@ public abstract class AbstractGwtMojo
             catch ( MalformedURLException e )
             {
                 throw new MojoExecutionException(
-                                                  "Failed to convert original classpath element " + object + " to URL.",
-                                                  e );
+                        "Failed to convert original classpath element " + object + " to URL.",
+                        e );
             }
             startPosition++;
         }
@@ -229,11 +220,11 @@ public abstract class AbstractGwtMojo
      * @throws MojoExecutionException if classPath building failed
      */
     public Collection<File> getClasspath( String scope )
-        throws MojoExecutionException
-    {
+            throws MojoExecutionException
+            {
         try
         {
-            Collection<File> files = classpathBuilder.buildClasspathList( getProject(), scope, getProjectArtifacts() );
+            Collection<File> files = classpathBuilder.buildClasspathList( getProject(), scope, getProjectArtifacts(), isGenerator() );
 
             if ( getLog().isDebugEnabled() )
             {
@@ -249,52 +240,96 @@ public abstract class AbstractGwtMojo
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
+            }
+
+
+    /**
+     * Whether to use processed resources and compiled classes ({@code false}), or raw resources ({@code true }).
+     */
+    protected boolean isGenerator() {
+        return false;
     }
 
-
     // FIXME move to GwtDevHelper stuff to avoid duplicates
-    protected File[] getGwtDevJar()
-        throws MojoExecutionException
+    protected Collection<File> getGwtDevJar() throws MojoExecutionException
     {
         // TODO
         // checkGwtDevAsDependency();
         // checkGwtUserVersion();
         // return getArtifact( "com.google.gwt", "gwt-dev" ).getFile();
+
+        // TODO use getJarFiles() if possible
         return getJarAndDependencies("vaadin-client-compiler");
+        // return getJarFiles( GWT_DEV );
     }
 
-    protected Artifact getArtifact( String groupId, String artifactId )
+    protected Collection<File> getGwtUserJar() throws MojoExecutionException
     {
-        return getArtifact( groupId, artifactId, null );
-    }
-
-    protected File[] getGwtUserJar()
-            throws MojoExecutionException
-    {
+        // TODO use getJarFiles() if possible
         return getJarAndDependencies("vaadin-client");
+        // return getJarFiles( GWT_USER );
     }
 
-    protected File[] getJarAndDependencies(String artifactId)
+    private Collection<File> getJarFiles(String artifactId) throws MojoExecutionException
+    {
+        // disabled for Vaadin: checkGwtUserVersion();
+        Artifact rootArtifact = pluginArtifactMap.get( artifactId );
+        ArtifactResolutionResult result;
+        try
+        {
+            // Code shamelessly copied from exec-maven-plugin.
+            MavenProject rootProject =
+                    projectBuilder.buildFromRepository( rootArtifact, remoteRepositories,
+                            localRepository );
+            List<Dependency> dependencies = rootProject.getDependencies();
+            Set<Artifact> dependencyArtifacts =
+                    MavenMetadataSource.createArtifacts( artifactFactory, dependencies, null, null, null );
+            dependencyArtifacts.add( rootProject.getArtifact() );
+            result = resolver.resolveTransitively( dependencyArtifacts, rootArtifact,
+                    Collections.EMPTY_MAP, localRepository,
+                    remoteRepositories, artifactMetadataSource,
+                    null, Collections.EMPTY_LIST);
+        }
+        catch (Exception e)
+        {
+            throw new MojoExecutionException( "Failed to resolve artifact", e);
+        }
+        @SuppressWarnings("unchecked")
+        Collection<Artifact> resolved = result.getArtifacts();
+
+        Collection<File> files = new ArrayList<File>(resolved.size() + 1 );
+        files.add( rootArtifact.getFile() );
+        for ( Artifact artifact : resolved )
+        {
+            files.add( artifact.getFile() );
+        }
+
+        return files;
+    }
+
+    // TODO replace with getJarFiles() if possible
+    protected Collection<File> getJarAndDependencies(String artifactId)
             throws MojoExecutionException {
 
-        Artifact rootArtifact = getArtifact(VAADIN_GROUP_ID, artifactId);
+        Artifact rootArtifact = getArtifact(VAADIN_GROUP_ID, artifactId, null);
 
         ArtifactResolutionResult result = null;
 
         try {
-            Set<Artifact> artifacts = new HashSet<Artifact>();
+            Set<Artifact> dependencyArtifacts = new HashSet<Artifact>();
 
+            // TODO can these branches be unified/cleaned up?
             if (rootArtifact == null) {
                 getLog().warn( "Failed to retrieve " + VAADIN_GROUP_ID + ":" + artifactId + " based on project POM" );
 
                 // assume that artifact is not in project - try to resolve with
                 // version number from vaadin-shared
                 Artifact vaadinSharedArtifact = getArtifact(VAADIN_GROUP_ID,
-                        "vaadin-shared");
+                        "vaadin-shared", null);
                 if (vaadinSharedArtifact == null) {
                     // No vaadin-shared found, this is possibly when running clean and artifacts have not been resolved
                     // https://maven.apache.org/ref/3.2.3/apidocs/org/apache/maven/project/MavenProject.html#getArtifacts()
-                    return new File[]{};
+                    return Collections.emptyList();
                 }
 
                 rootArtifact = artifactFactory.createArtifact( VAADIN_GROUP_ID, artifactId, vaadinSharedArtifact.getBaseVersion(), "provided", "jar" );
@@ -305,28 +340,47 @@ public abstract class AbstractGwtMojo
 
                 // metadata (POM) for rootArtifact not in memory in this case => need this to resolve transitive dependencies!
                 ResolutionGroup resolutionGroup = artifactMetadataSource.retrieve(rootArtifact, localRepository, remoteRepositories);
-                artifacts.addAll(resolutionGroup.getArtifacts());
+                dependencyArtifacts.addAll(resolutionGroup.getArtifacts());
+            } else {
+                // Code shamelessly copied from exec-maven-plugin.
+                MavenProject rootProject = projectBuilder.buildFromRepository(
+                        rootArtifact, remoteRepositories, localRepository);
+                List<Dependency> dependencies = rootProject.getDependencies();
+                dependencyArtifacts = MavenMetadataSource
+                        .createArtifacts(artifactFactory, dependencies, null,
+                                null, null);
+                dependencyArtifacts.add(rootProject.getArtifact());
             }
 
-            result = resolver
-                    .resolveTransitively(artifacts, rootArtifact,
-                            remoteRepositories, localRepository,
-                            artifactMetadataSource);
+            result = resolver.resolveTransitively(dependencyArtifacts,
+                    rootArtifact, Collections.EMPTY_MAP, localRepository,
+                    remoteRepositories, artifactMetadataSource, null,
+                    Collections.EMPTY_LIST);
+
+            // result = resolver
+            // .resolveTransitively(dependencyArtifacts,
+            // rootArtifact,
+            // remoteRepositories, localRepository,
+            // artifactMetadataSource);
         } catch (ArtifactResolutionException e) {
             throw new MojoExecutionException("Failed to resolve artifact "+artifactId, e);
         } catch (ArtifactNotFoundException e) {
             throw new MojoExecutionException("Failed to resolve artifact "+artifactId, e);
         } catch (ArtifactMetadataRetrievalException e) {
             throw new MojoExecutionException("Failed to retrieve metadata for artifact "+artifactId, e);
+        } catch (ProjectBuildingException e) {
+            throw new MojoExecutionException("Failed to resolve artifact "
+                    + artifactId, e);
         }
 
         @SuppressWarnings("unchecked")
         Collection<Artifact> resolved = result.getArtifacts();
-        int i = 0;
-        File[] files = new File[resolved.size() + 1];
-        files[i++] = rootArtifact.getFile();
-        for (Artifact artifact : resolved) {
-            files[i++] = artifact.getFile();
+
+        Collection<File> files = new ArrayList<File>(resolved.size() + 1 );
+        files.add( rootArtifact.getFile() );
+        for ( Artifact artifact : resolved )
+        {
+            files.add( artifact.getFile() );
         }
 
         return files;
@@ -352,31 +406,12 @@ public abstract class AbstractGwtMojo
     }
 
     /**
-     * TODO remove !
-     * Check that gwt-dev is not define in dependencies : this can produce version conflicts with other dependencies, as
-     * gwt-dev is a "uber-jar" with some commons-* and jetty libs inside.
-     */
-    private void checkGwtDevAsDependency()
-    {
-        for ( Iterator iterator = getProject().getArtifacts().iterator(); iterator.hasNext(); )
-        {
-            Artifact artifact = (Artifact) iterator.next();
-            if ( GWT_GROUP_ID.equals( artifact.getGroupId() )
-                && "gwt-dev".equals( artifact.getArtifactId() )
-                && !SCOPE_TEST.equals(  artifact.getScope() ) )
-            {
-                getLog().warn( "Don't declare gwt-dev as a project dependency. This may introduce complex dependency conflicts" );
-            }
-        }
-    }
-
-    /**
      * Check gwt-user dependency matches plugin version
      */
     private void checkGwtUserVersion() throws MojoExecutionException
     {
         InputStream inputStream = Thread.currentThread().getContextClassLoader()
-            .getResourceAsStream( "org/codehaus/mojo/gwt/mojoGwtVersion.properties" );
+                .getResourceAsStream( "org/codehaus/mojo/gwt/mojoGwtVersion.properties" );
         Properties properties = new Properties();
         try
         {
@@ -391,28 +426,24 @@ public abstract class AbstractGwtMojo
         {
             IOUtils.closeQuietly( inputStream );
         }
-        for ( Iterator iterator = getProject().getCompileArtifacts().iterator(); iterator.hasNext(); )
+
+        Artifact gwtUser = project.getArtifactMap().get( GWT_USER );
+        if (gwtUser != null)
         {
-            Artifact artifact = (Artifact) iterator.next();
-            if ( GWT_GROUP_ID.equals( artifact.getGroupId() )
-                 && "gwt-user".equals( artifact.getArtifactId() ) )
+            String mojoGwtVersion = properties.getProperty( "gwt.version" );
+            //ComparableVersion with an up2date maven version
+            ArtifactVersion mojoGwtArtifactVersion = new DefaultArtifactVersion( mojoGwtVersion );
+            ArtifactVersion userGwtArtifactVersion = new DefaultArtifactVersion( gwtUser.getVersion() );
+            if ( userGwtArtifactVersion.compareTo( mojoGwtArtifactVersion ) < 0 )
             {
-                String mojoGwtVersion = properties.getProperty( "gwt.version" );
-                //ComparableVersion with an up2date maven version
-                ArtifactVersion mojoGwtArtifactVersion = new DefaultArtifactVersion( mojoGwtVersion );
-                ArtifactVersion userGwtArtifactVersion = new DefaultArtifactVersion( artifact.getVersion() );
-                if ( userGwtArtifactVersion.compareTo( mojoGwtArtifactVersion ) < 0 )
-                {
-                    getLog().warn( "You're project declares dependency on gwt-user " + artifact.getVersion()
-                                       + ". This plugin is designed for at least gwt version " + mojoGwtVersion );
-                }
-                break;
+                getLog().warn( "Your project declares dependency on gwt-user " + gwtUser.getVersion()
+                        + ". This plugin is designed for at least gwt version " + mojoGwtVersion );
             }
         }
     }
 
     protected Artifact resolve( String groupId, String artifactId, String version, String type, String classifier )
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         // return project.getArtifactMap().get( groupId + ":" + artifactId );
 
@@ -459,6 +490,17 @@ public abstract class AbstractGwtMojo
         return remoteRepositories;
     }
 
+    protected File setupGenerateDirectory() {
+        if ( !generateDirectory.exists() )
+        {
+            getLog().debug( "Creating target directory " + generateDirectory.getAbsolutePath() );
+            generateDirectory.mkdirs();
+        }
+        getLog().debug( "Add compile source root " + generateDirectory.getAbsolutePath() );
+        addCompileSourceRoot( generateDirectory );
+        return generateDirectory;
+    }
+
     public File getGenerateDirectory()
     {
         if ( !generateDirectory.exists() )
@@ -469,21 +511,19 @@ public abstract class AbstractGwtMojo
         return generateDirectory;
     }
 
-    @SuppressWarnings( "unchecked" )
     public Set<Artifact> getProjectArtifacts()
     {
         return project.getArtifacts();
     }
 
-    @SuppressWarnings( "unchecked" )
     public Set<Artifact> getProjectRuntimeArtifacts()
     {
         Set<Artifact> artifacts = new HashSet<Artifact>();
-        for (Artifact projectArtifact : (Collection<Artifact>) project.getArtifacts() )
+        for (Artifact projectArtifact : project.getArtifacts() )
         {
             String scope = projectArtifact.getScope();
             if ( SCOPE_RUNTIME.equals( scope )
-              || SCOPE_COMPILE.equals( scope ) )
+                    || SCOPE_COMPILE.equals( scope ) )
             {
                 artifacts.add( projectArtifact );
             }

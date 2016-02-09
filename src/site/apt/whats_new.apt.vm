@@ -5,7 +5,7 @@
  Olivier Lamy
  Thomas Broyer
  ------
- 2012-07-14 
+ 2014-11-14
  
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -29,22 +29,49 @@
 
 What's new in gwt-maven-plugin ${project.version}
 
- * Update to GWT 2.5.0-rc1
- 
- * More GWT compiler options: <<<-Dgwt.persistentunitcache>>> and <<<-Dgwt.persistentunitcachedir>>>, <<<-XenableClosureCompiler>>>,
-   <<<-XdisableAggressiveOptimization>>>, <<<-XcompilerMetrics>>>, <<<-XfragmentCount>>> (see the {{{./compile-mojo.html}Compile mojo}})  
- 
- * New <<<genParam>>> configuration parameter to toggle the <<<-gen>>> off and cut I/O needs down by an order of magnitude (speeding up compilation)
- 
- * New <<<quirksMode>>>, <<<userAgents>>> and <<<batch>>> parameters for the {{{./test-mojo.html}Test mojo}}
- 
- * Support for {{{./run-codeserver-mojo.html} Super Dev Mode}} 
- 
- * GWT's internal check for updates is disabled everywhere possible
+ * Updated to GWT ${gwtVersion}
 
- * {{{./css-mojo.html}Css mojo}} is now bound to the <<<generate-sources>>> phase by default
+   This includes adding new configuration properties, and removing <<<remoteweb>>>
+   from <<<gwt:test>>>, and the <<<gwt:browser>>> mojo
+
+ * Require Maven 3
+
+ * Updated and simplified archetype
+
+   This includes removing <<<gwt:i18n>>> (that shouldn't be used at build-time),
+   using the new <<<com.google.gwt:gwt>>> BOM and adding <<<gwt-dev>>> as a project
+   dependency.
+
+ * <<<gwt:test>>>'s <<<mode>>> now defaults to <<<htmlunit>>> rather than <<<manual>>>
+   (what a curious choie to begin with)
+
+ * Fix <<<sourceLevel>>> for <<<gwt:run>>>, add it for <<<gwt:run-codeserver>>>
+
+ * Add <<<launcherDir>>> to <<<gwt:run-codeserver>>>
+
+ * Correctly process <<<extraJvmArgs>>> containing quoted args, and similarly quote
+   each argument passed to GWT
+
+ * Run <<<gwt:i18n>>> on project configuration in Eclipse (with M2Eclipse)
+
+ * The <<<@RemoteServiceRelativePath>>> is now scanned from the service interfaces
+   rather than the implementations.
+
+ * Removed the warning about gwt-dev being a project dependency. A good Maven build
+   segregates client code into its own module, where the mentionned "conflicts"
+   shouldn't happen (or would happen anyway when running GWT tools like the compiler
+   or dev mode).
+
+ * Similarly, deprecate <<<gwtSdkFirstInClasspath>>>. In future versions, projects
+   wil be responsible for providing the compile-time GWT dependencies (including
+   <<<gwt-dev>>> and <<<gwt-codeserver>>> themselves)
+
+ * Make sure the <<<codeServerWorkDir>>> exists when launching <<<gwt:run-codeserver>>>
+
+ * Better workaround for IBM JDK and loal workers
+
+ * Remove long-deprecated <<<gwt:soyc>>>
 
  []
 
- Read the {{{http://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=11860&version=17850}full release notes}} for the list of fixed issues.
 

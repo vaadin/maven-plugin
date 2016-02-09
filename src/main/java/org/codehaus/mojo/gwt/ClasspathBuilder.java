@@ -36,6 +36,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 /**
@@ -43,8 +44,8 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
  * 
  * @author ccollins
  * @version $Id$
- * @plexus.component role="org.codehaus.mojo.gwt.ClasspathBuilder"
  */
+@Component(role = ClasspathBuilder.class)
 public class ClasspathBuilder
     extends AbstractLogEnabled
 {
@@ -59,12 +60,12 @@ public class ClasspathBuilder
      * @param project The maven project the Mojo is running for
      * @param artifacts the project artifacts (all scopes)
      * @param scope artifact scope to use
+     * @param isGenerator whether to use processed resources and compiled classes (false), or raw resources (true).
      * @return file collection for classpath
      * @throws MojoExecutionException 
      */
-    @SuppressWarnings( "unchecked" )
     public Collection<File> buildClasspathList( final MavenProject project, final String scope,
-                                                Set<Artifact> artifacts )
+                                                Set<Artifact> artifacts, boolean isGenerator )
         throws ClasspathBuilderException
     {
         getLogger().debug( "establishing classpath list (scope = " + scope + ")" );
@@ -77,10 +78,13 @@ public class ClasspathBuilder
         // addSourceWithActiveProject would make some java sources available to GWT compiler that should not be accessible in
         // a non-reactor build, making the build less deterministic and encouraging bad design.
 
-        items.add( new File( project.getBuild().getOutputDirectory() ) );
+        if ( !isGenerator ) {
+            items.add( new File( project.getBuild().getOutputDirectory() ) );
+        }
         addSources( items, project.getCompileSourceRoots() );
-        addResources( items, project.getResources() );
-
+        if ( isGenerator ) {
+        	addResources( items, project.getResources() );
+        }
         // Use our own ClasspathElements fitering, as for RUNTIME we need to include PROVIDED artifacts,
         // that is not the default Maven policy, as RUNTIME is used here to build the GWTShell execution classpath
 
@@ -148,8 +152,8 @@ public class ClasspathBuilder
         {
             String projectReferenceId =
                 getProjectReferenceId( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion() );
-            MavenProject refProject = (MavenProject) project.getProjectReferences().get( projectReferenceId );
-            if ( refProject != null )
+            MavenProject refProject = project.getProjectReferences().get( projectReferenceId );
+            if ( refProject != null && "sources".equals( artifact.getClassifier() ) )
             {
                 addSources( items, getSourceRoots( refProject, scope ) );
             }
@@ -189,7 +193,6 @@ public class ClasspathBuilder
      * @param scope
      * @return
      */
-    @SuppressWarnings( "unchecked" )
     private List<Artifact> getScopeArtifacts( final MavenProject project, final String scope )
     {
         if ( SCOPE_COMPILE.equals( scope ) )
@@ -217,7 +220,6 @@ public class ClasspathBuilder
      * @param scope
      * @return
      */
-    @SuppressWarnings( "unchecked" )
     private List<String> getSourceRoots( final MavenProject project, final String scope )
     {
         if ( SCOPE_COMPILE.equals( scope ) || SCOPE_RUNTIME.equals( scope ) )
@@ -244,7 +246,6 @@ public class ClasspathBuilder
      * @param scope
      * @return
      */
-    @SuppressWarnings( "unchecked" )
     private List<Resource> getResources( final MavenProject project, final String scope )
     {
         if ( SCOPE_COMPILE.equals( scope ) || SCOPE_RUNTIME.equals( scope ) )

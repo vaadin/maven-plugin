@@ -38,6 +38,11 @@
       <artifactId>gwt-user</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <scope>runtime</scope>
+    </dependency>
 
     <!-- this is the dependency to the "jar"-subproject -->
     <dependency>
@@ -62,7 +67,7 @@
           </execution>
         </executions>
         <configuration>
-          <runTarget>org.codehaus.mojo.gwt.test.Hello/Hello.html</runTarget>
+          <runTarget>hello/Hello.html</runTarget>
           <draftCompile>true</draftCompile>
           <optimizationLevel>1</optimizationLevel>          
         </configuration>

@@ -19,22 +19,30 @@ package org.codehaus.mojo.gwt;
  * under the License.
  */
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.DirectoryScanner;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.codehaus.plexus.util.Scanner;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.thoughtworks.qdox.JavaDocBuilder;
 import com.thoughtworks.qdox.model.Annotation;
@@ -44,14 +52,13 @@ import com.thoughtworks.qdox.model.JavaParameter;
 import com.thoughtworks.qdox.model.Type;
 
 /**
- * Goal which generate Asyn interface.
+ * Goal which generate Async interface.
  * 
- * @goal generateAsync
- * @phase generate-sources
- * @requiresDependencyResolution compile
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  * @version $Id$
  */
+@Mojo(name = "generateAsync", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE,
+      threadSafe = true)
 public class GenerateAsyncMojo
     extends AbstractGwtMojo
 {
@@ -72,60 +79,58 @@ public class GenerateAsyncMojo
 
     /**
      * Pattern for GWT service interface
-     * 
-     * @parameter default-value="**\/*Service.java"
      */
+    @Parameter(defaultValue = "**/*Service.java")
     private String servicePattern;
 
     /**
      * Return a com.google.gwt.http.client.Request on async interface to allow cancellation.
-     * 
-     * @parameter default-value="false"
      */
+    @Parameter(defaultValue = "false")
     private boolean returnRequest;
 
     /**
      * A (MessageFormat) Pattern to get the GWT-RPC servlet URL based on service interface name. For example to
      * "{0}.rpc" if you want to map GWT-RPC calls to "*.rpc" in web.xml, for example when using Spring dispatch servlet
      * to handle RPC requests.
-     * 
-     * @parameter default-value="{0}" expression="${gwt.rpcPattern}"
      */
+    @Parameter(defaultValue = "{0}", property = "gwt.rpcPattern")
     private String rpcPattern;
 
     /**
      * Stop the build on error
-     * 
-     * @parameter default-value="true" expression="${maven.gwt.failOnError}"
      */
+    @Parameter(defaultValue = "true", property = "maven.gwt.failOnError")
     private boolean failOnError;
 
     /**
      * Pattern for GWT service interface
-     * 
-     * @parameter default-value="false" expression="${generateAsync.force}"
      */
+    @Parameter(defaultValue = "false", property = "generateAsync.force")
     private boolean force;
 
-    /**
-     * @parameter expression="${project.build.sourceEncoding}"
-     */
+    @Parameter(property = "project.build.sourceEncoding")
     private String encoding;
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings( "unchecked" )
+    @Component
+    private BuildContext buildContext;
+
+    @Override
+    protected boolean isGenerator()
+    {
+        return true;
+    }
+
     public void execute()
         throws MojoExecutionException
     {
-        getLog().debug( "GenerateAsyncMojo#execute()" );
-
         if ( "pom".equals( getProject().getPackaging() ) )
         {
-    		getLog().info( "GWT generateAsync is skipped" );
-    		return;
-    	}
+            getLog().info( "GWT generateAsync is skipped" );
+            return;
+        }
+
+        setupGenerateDirectory();
 
         if ( encoding == null )
         {
@@ -136,12 +141,11 @@ public class GenerateAsyncMojo
         JavaDocBuilder builder = createJavaDocBuilder();
 
         List<String> sourceRoots = getProject().getCompileSourceRoots();
-        boolean generated = false;
         for ( String sourceRoot : sourceRoots )
         {
             try
             {
-                generated |= scanAndGenerateAsync( new File( sourceRoot ), builder );
+                scanAndGenerateAsync( new File( sourceRoot ), builder );
             }
             catch ( Throwable e )
             {
@@ -151,11 +155,6 @@ public class GenerateAsyncMojo
                     throw new MojoExecutionException( "Failed to generate Async interface", e );
                 }
             }
-        }
-        if ( generated )
-        {
-            getLog().debug( "add compile source root " + getGenerateDirectory() );
-            addCompileSourceRoot( getGenerateDirectory() );
         }
     }
 
@@ -167,8 +166,7 @@ public class GenerateAsyncMojo
     private boolean scanAndGenerateAsync( File sourceRoot, JavaDocBuilder builder )
         throws Exception
     {
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( sourceRoot );
+        Scanner scanner = buildContext.newScanner( sourceRoot );
         scanner.setIncludes( new String[] { servicePattern } );
         scanner.scan();
         String[] sources = scanner.getIncludedFiles();
@@ -181,7 +179,7 @@ public class GenerateAsyncMojo
         {
             File sourceFile = new File( sourceRoot, source );
             File targetFile = getTargetFile( source );
-            if ( isUpToDate( sourceFile, targetFile ) )
+            if ( !force && buildContext.isUptodate( targetFile, sourceFile ) )
             {
                 getLog().debug( targetFile.getAbsolutePath() + " is up to date. Generation skipped" );
                 // up to date, but still need to report generated-sources directory as sourceRoot
@@ -193,17 +191,13 @@ public class GenerateAsyncMojo
             JavaClass clazz = builder.getClassByName( className );
             if ( isEligibleForGeneration( clazz ) )
             {
+                getLog().debug( "Generating async interface for service " + className );
                 targetFile.getParentFile().mkdirs();
                 generateAsync( clazz, targetFile );
                 fileGenerated = true;
             }
         }
         return fileGenerated;
-    }
-
-    private boolean isUpToDate( File sourceFile, File targetFile )
-    {
-        return !force && targetFile.exists() && targetFile.lastModified() > sourceFile.lastModified();
     }
 
     private File getTargetFile( String source )
@@ -221,7 +215,10 @@ public class GenerateAsyncMojo
     private void generateAsync( JavaClass clazz, File targetFile )
         throws IOException
     {
-        PrintWriter writer = new PrintWriter( targetFile, encoding );
+        PrintWriter writer = new PrintWriter( new BufferedWriter(
+            new OutputStreamWriter( buildContext.newFileOutputStream( targetFile ), encoding ) ) );
+
+        boolean hasRemoteServiceRelativePath = hasRemoteServiceRelativePath(clazz);
 
         String className = clazz.getName();
         if ( clazz.getPackage() != null )
@@ -231,7 +228,11 @@ public class GenerateAsyncMojo
         }
         writer.println( "import com.google.gwt.core.client.GWT;" );
         writer.println( "import com.google.gwt.user.client.rpc.AsyncCallback;" );
-        writer.println( "import com.google.gwt.user.client.rpc.ServiceDefTarget;" );
+
+        if (!hasRemoteServiceRelativePath)
+        {
+            writer.println( "import com.google.gwt.user.client.rpc.ServiceDefTarget;" );
+        }
 
         writer.println();
         writer.println( "public interface " + className + "Async" );
@@ -240,11 +241,17 @@ public class GenerateAsyncMojo
         JavaMethod[] methods = clazz.getMethods( true );
         for ( JavaMethod method : methods )
         {
+            boolean deprecated = isDeprecated( method );
+
             writer.println( "" );
             writer.println( "    /**" );
             writer.println( "     * GWT-RPC service  asynchronous (client-side) interface" );
             writer.println( "     * @see " + clazz.getFullyQualifiedName() );
+            if ( deprecated )
+                writer.println( "     * @deprecated" );
             writer.println( "     */" );
+            if ( deprecated )
+                writer.println( "    @Deprecated" );
             if ( returnRequest )
             {
                 writer.print( "    com.google.gwt.http.client.Request " + method.getName() + "( " );
@@ -265,7 +272,7 @@ public class GenerateAsyncMojo
                 writer.print( method.getParameterTypes( true )[j].getGenericValue() );
                 if ( param.getType().getDimensions() != method.getParameterTypes( true )[j].getDimensions() )
                 {
-                    for ( int dimensions = 0 ; dimensions < param.getType().getDimensions(); dimensions++ )
+                    for ( int dimensions = 0; dimensions < param.getType().getDimensions(); dimensions++ )
                     {
                         writer.print( "[]" );
                     }
@@ -304,23 +311,6 @@ public class GenerateAsyncMojo
         }
 
         writer.println();
-
-        String uri = MessageFormat.format( rpcPattern, className );
-        if ( clazz.getAnnotations() != null )
-        {
-            for ( Annotation annotation : clazz.getAnnotations() )
-            {
-                getLog().debug( "annotation found on service interface " + annotation );
-                if ( annotation.getType().getValue().equals( "com.google.gwt.user.client.rpc.RemoteServiceRelativePath" ) )
-                {
-                    uri = annotation.getNamedParameter( "value" ).toString();
-                    // remove quotes
-                    uri = uri.substring( 1, uri.length() - 1 );
-                    getLog().debug( "@RemoteServiceRelativePath annotation found on service interface " + uri );
-                }
-            }
-        }
-
         writer.println( "    /**" );
         writer.println( "     * Utility class to get the RPC Async interface from client-side code" );
         writer.println( "     */" );
@@ -333,15 +323,19 @@ public class GenerateAsyncMojo
         writer.println( "            if ( instance == null )" );
         writer.println( "            {" );
         writer.println( "                instance = (" + className + "Async) GWT.create( " + className + ".class );" );
-        writer.println( "                ServiceDefTarget target = (ServiceDefTarget) instance;" );
-        writer.println( "                target.setServiceEntryPoint( GWT.getModuleBaseURL() + \"" + uri + "\" );" );
+        if ( !hasRemoteServiceRelativePath )
+        {
+            String uri = MessageFormat.format( rpcPattern, className );
+            writer.println( "                ServiceDefTarget target = (ServiceDefTarget) instance;" );
+            writer.println( "                target.setServiceEntryPoint( GWT.getModuleBaseURL() + \"" + uri + "\" );" );
+        }
         writer.println( "            }" );
         writer.println( "            return instance;" );
         writer.println( "        }" );
         writer.println( "" );
         writer.println( "        private Util()" );
         writer.println( "        {" );
-        writer.println( "            // Utility class should not be instanciated" );
+        writer.println( "            // Utility class should not be instantiated" );
         writer.println( "        }" );
         writer.println( "    }" );
 
@@ -354,29 +348,17 @@ public class GenerateAsyncMojo
         return javaClass.isInterface() && javaClass.isPublic() && javaClass.isA( REMOTE_SERVICE_INTERFACE );
     }
 
-    @SuppressWarnings("unchecked")
     private JavaDocBuilder createJavaDocBuilder()
         throws MojoExecutionException
     {
-        try
+        JavaDocBuilder builder = new JavaDocBuilder();
+        builder.setEncoding( encoding );
+        builder.getClassLibrary().addClassLoader( getProjectClassLoader() );
+        for ( String sourceRoot : getProject().getCompileSourceRoots() )
         {
-            JavaDocBuilder builder = new JavaDocBuilder();
-            builder.setEncoding( encoding );
-            builder.getClassLibrary().addClassLoader( getProjectClassLoader() );
-            for ( String sourceRoot : ( List < String > ) getProject().getCompileSourceRoots() )
-            {
-                builder.getClassLibrary().addSourceFolder( new File( sourceRoot ) );
-            }
-            return builder;
+            builder.getClassLibrary().addSourceFolder( new File( sourceRoot ) );
         }
-        catch ( MalformedURLException e )
-        {
-            throw new MojoExecutionException( "Failed to resolve project classpath", e );
-        }
-        catch ( DependencyResolutionRequiredException e )
-        {
-            throw new MojoExecutionException( "Failed to resolve project classpath", e );
-        }
+        return builder;
     }
 
     private String getTopLevelClassName( String sourceFile )
@@ -386,31 +368,61 @@ public class GenerateAsyncMojo
     }
 
     /**
-     * @return the project classloader
-     * @throws DependencyResolutionRequiredException failed to resolve project dependencies
-     * @throws MalformedURLException configuration issue ?
+     * Determine if a client service method is deprecated.
+     * 
+     * @see MGWT-352
      */
-    protected ClassLoader getProjectClassLoader()
-        throws DependencyResolutionRequiredException, MalformedURLException
+    private boolean isDeprecated( JavaMethod method )
     {
-        getLog().debug( "AbstractMojo#getProjectClassLoader()" );
+        if ( method == null )
+            return false;
 
-        List<?> compile = getProject().getCompileClasspathElements();
-        URL[] urls = new URL[compile.size()];
-        int i = 0;
-        for ( Object object : compile )
+        for ( Annotation annotation : method.getAnnotations() )
         {
-            if ( object instanceof Artifact )
+            if ( "java.lang.Deprecated".equals( annotation.getType().getFullyQualifiedName() ) )
             {
-                urls[i] = ( (Artifact) object ).getFile().toURI().toURL();
+                return true;
             }
-            else
+        }
+
+        return method.getTagByName( "deprecated" ) != null;
+    }
+
+    private boolean hasRemoteServiceRelativePath(final JavaClass clazz)
+    {
+        if ( clazz != null && clazz.getAnnotations() != null )
+        {
+            for ( Annotation annotation : clazz.getAnnotations() )
             {
-                urls[i] = new File( (String) object ).toURI().toURL();
+                getLog().debug( "annotation found on service interface " + annotation );
+                if ( annotation.getType().getValue().equals( "com.google.gwt.user.client.rpc.RemoteServiceRelativePath" ) )
+                {
+                    getLog().debug( "@RemoteServiceRelativePath annotation found on service interface" );
+                    return true;
+                }
             }
-            i++;
+        }
+
+        return false;
+    }
+
+    private ClassLoader getProjectClassLoader() throws MojoExecutionException
+    {
+        Collection<File> classpath = getClasspath( Artifact.SCOPE_COMPILE );
+        URL[] urls = new URL[classpath.size()];
+        try
+        {
+            int i = 0;
+            for ( File classpathFile : classpath )
+            {
+                urls[i] = classpathFile.toURI().toURL();
+                i++;
+            }
+        }
+        catch ( MalformedURLException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
         }
         return new URLClassLoader( urls, ClassLoader.getSystemClassLoader() );
     }
-
 }

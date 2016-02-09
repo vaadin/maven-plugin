@@ -19,51 +19,65 @@ package org.codehaus.mojo.gwt.shell;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.cli.StreamConsumer;
+import org.sonatype.plexus.build.incremental.BuildContext;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 
 /**
  * Creates CSS interfaces for css files.
  * Will use the utility tool provided in gwt sdk which create a corresponding Java interface for accessing 
  * the classnames used in the file.
- * @goal css
- * @phase generate-sources
+ *
  * @author Stale Undheim <undheim@corporater.com>
  * @author olamy
  * @since 2.1.0-1
  */
+@Mojo(name = "css", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class CSSMojo
     extends AbstractGwtShellMojo
 {
     /**
      * List of resourceBundles that should be used to generate CSS interfaces.
-     * 
-     * @parameter
      */
+    @Parameter
     private String[] cssFiles;
 
     /**
      * Shortcut for a single cssFile
-     * 
-     * @parameter
      */
+    @Parameter
     private String cssFile;
+
+    @Parameter(property = "project.build.sourceEncoding")
+    private String encoding;
+
+    @Component
+    private BuildContext buildContext;
+
+    @Override
+    protected boolean isGenerator() {
+        return true;
+    }
 
     public void doExecute()
         throws MojoExecutionException, MojoFailureException
     {
         setup();
-        boolean generated = false;
 
         // java -cp gwt-dev.jar:gwt-user.jar
         // com.google.gwt.resources.css.InterfaceGenerator -standalone -typeName some.package.MyCssResource -css
@@ -76,72 +90,83 @@ public class CSSMojo
                     substring( 0, file.lastIndexOf( '.' ) ).replace( File.separatorChar, '.' );
                 final File javaOutput =
                     new File( getGenerateDirectory(), typeName.replace( '.', File.separatorChar ) + ".java" );
-                final StringBuilder content = new StringBuilder();
-                out = new StreamConsumer()
-                {
-                    public void consumeLine( String line )
-                    {
-                        content.append( line ).append( SystemUtils.LINE_SEPARATOR );
-                    }
-                };
-                for ( Resource resource : (List<Resource>) getProject().getResources() )
+                for ( Resource resource : getProject().getResources() )
                 {
                     final File candidate = new File( resource.getDirectory(), file );
                     if ( candidate.exists() )
                     {
+                        if ( buildContext.isUptodate( javaOutput, candidate ) )
+                        {
+                            getLog().debug( javaOutput.getAbsolutePath() + " is up to date. Generation skipped" );
+                            break;
+                        }
+
                         getLog().info( "Generating " + javaOutput + " with typeName " + typeName );
                         ensureTargetPackageExists( getGenerateDirectory(), typeName );
 
                         
                         try
                         {
-                            new JavaCommand( "com.google.gwt.resources.css.InterfaceGenerator" )
-                            .withinScope( Artifact.SCOPE_COMPILE )
-                            .arg( "-standalone" )
-                            .arg( "-typeName" )
-                            .arg( typeName )
-                            .arg( "-css" )
-                            .arg( candidate.getAbsolutePath() )
-                            .withinClasspath( getGwtDevJar() )
-                            .withinClasspath( getGwtUserJar() )
-                            .execute();                            
-                            final FileWriter outputWriter = new FileWriter( javaOutput );
-                            outputWriter.write( content.toString() );
-                            outputWriter.close();
+                            final StringBuilder content = new StringBuilder();
+                            createJavaCommand()
+                                .setMainClass( "com.google.gwt.resources.css.InterfaceGenerator" )
+                                .addToClasspath( getClasspath( Artifact.SCOPE_COMPILE ) )
+                                .arg( "-standalone" )
+                                .arg( "-typeName" )
+                                .arg( typeName )
+                                .arg( "-css" )
+                                .arg( candidate.getAbsolutePath() )
+                                .addToClasspath( getGwtDevJar() )
+                                .addToClasspath( getGwtUserJar() )
+                                .setOut( new StreamConsumer()
+                                    {
+                                        public void consumeLine( String line )
+                                        {
+                                            content.append( line ).append( SystemUtils.LINE_SEPARATOR );
+                                        }
+                                    } )
+                                .execute();
+                            if ( content.length() == 0 )
+                            {
+                                throw new MojoExecutionException( "cannot generate java source from file " + file + "." );
+                            }
+                            final OutputStreamWriter outputWriter =
+                                new OutputStreamWriter( buildContext.newFileOutputStream( javaOutput ) , encoding );
+                            try {
+                                outputWriter.write( content.toString() );
+                            } finally {
+                                IOUtil.close( outputWriter );
+                            }
                         }
                         catch ( IOException e )
                         {
-                            throw new MojoExecutionException( "Failed to write to file: " + javaOutput );
+                            throw new MojoExecutionException( "Failed to write to file: " + javaOutput, e );
                         }
-                        generated = true;
+                        catch ( JavaCommandException e )
+                        {
+                            throw new MojoExecutionException( e.getMessage(), e );
+                        }
                         break;
                     }
                 }
-                
-                if ( content.length() == 0 )
-                {
-                    throw new MojoExecutionException( "cannot generate java source from file " + file + "." );
-                }
             }
         }
-
-        if ( generated )
-        {
-            getLog().debug( "add compile source root " + getGenerateDirectory() );
-            addCompileSourceRoot( getGenerateDirectory() );
-        }
-
     }
 
     private void setup()
-
-        throws MojoExecutionException
     {
+        setupGenerateDirectory();
+
+        if ( encoding == null )
+        {
+            getLog().warn( "Encoding is not set, your build will be platform dependent" );
+            encoding = Charset.defaultCharset().name();
+        }
+
         if ( cssFiles == null && cssFile != null )
         {
             cssFiles = new String[] { cssFile };
         }
-
     }
 
     private void ensureTargetPackageExists( File generateDirectory, String targetName )
