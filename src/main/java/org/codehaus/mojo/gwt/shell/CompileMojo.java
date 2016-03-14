@@ -200,7 +200,7 @@ public class CompileMojo
      *
      * @since 2.1.0-1
      */
-    @Parameter(alias = "strict", defaultValue = "false", property = "gwt.compiler.strict")
+    @Parameter(alias = "strict", defaultValue = "true", property = "gwt.compiler.strict")
     private boolean failOnError;
 
     /**

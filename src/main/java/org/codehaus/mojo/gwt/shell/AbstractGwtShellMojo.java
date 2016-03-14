@@ -134,7 +134,7 @@ extends AbstractGwtModuleMojo
      *
      * @since 2.5.0-rc1
      */
-    @Parameter(property = "gwt.persistentunitcache")
+    @Parameter(defaultValue="false", property = "gwt.persistentunitcache")
     private Boolean persistentunitcache;
 
     /**
