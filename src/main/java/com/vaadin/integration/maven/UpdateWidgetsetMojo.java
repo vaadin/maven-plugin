@@ -3,6 +3,7 @@ package com.vaadin.integration.maven;
 import java.io.File;
 import java.util.Collection;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -24,7 +25,7 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
     public static final String WIDGETSET_BUILDER_CLASS = "com.vaadin.server.widgetsetutils.WidgetSetBuilder";
 
     public static final String GWT_MODULE_EXTENSION = ".gwt.xml";
-
+    
     /**
      * {@inheritDoc}
      *
@@ -92,7 +93,8 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
             }
         }
 
-        // TODO is this needed? cmd.withinScope( Artifact.SCOPE_COMPILE );
+        cmd.addToClasspath(getClasspath( Artifact.SCOPE_COMPILE ));
+        
         cmd.addToClasspath(getGwtUserJar()).addToClasspath(getGwtDevJar());
 
         cmd.arg(module);
