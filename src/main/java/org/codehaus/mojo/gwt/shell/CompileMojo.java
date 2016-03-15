@@ -403,7 +403,7 @@ public class CompileMojo
     public void doExecute( )
         throws MojoExecutionException, MojoFailureException
     {
-        if ( skip || "pom".equals( getProject().getPackaging() ) )
+        if ( skip || "pom".equals( getProject().getPackaging() ) || "cdn".equals(cdnMode) )
         {
             getLog().info( "GWT compilation is skipped" );
             return;
@@ -414,7 +414,11 @@ public class CompileMojo
             getOutputDirectory().mkdirs();
         }
 
-        compile( getModules() );
+        if ("fetch".equals(cdnMode)) {
+            fetchWidgetset();
+        } else {
+            compile( getModules() );
+        }
     }
 
     @Override
@@ -673,4 +677,10 @@ public class CompileMojo
             throw new MojoExecutionException( e.getMessage(), e );
         }
     }
+
+    private void fetchWidgetset() {
+        getLog().error("Fetching widgetsets from CDN not yet supported");
+        // TODO synchronous download
+    }
+
 }

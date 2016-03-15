@@ -147,6 +147,16 @@ extends AbstractGwtModuleMojo
     @Parameter(property = "gwt.persistentunitcachedir")
     private File persistentunitcachedir;
 
+    /**
+     * The widgetset compilation mode (local / fetch from CDN / CDN only).
+     * The allowed values are "local", "fetch" and "cdn".
+     * <p>
+     * Can be set from command line using '-Dvaadin.cdn.mode=...'
+     */
+    @Parameter(defaultValue = "local", property = "vaadin.cdn.mode")
+    protected String cdnMode;
+
+
     // methods
 
     /**

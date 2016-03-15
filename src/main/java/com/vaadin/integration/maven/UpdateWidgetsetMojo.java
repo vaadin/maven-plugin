@@ -54,6 +54,18 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
             return;
         }
 
+        if ("cdn".equals(cdnMode)) {
+            serveFromCDN();
+        } else if ("fetch".equals(cdnMode)) {
+            fetchWidgetset();
+        } else {
+            updateLocalWidgetset();
+        }
+    }
+
+    private final void updateLocalWidgetset() throws MojoExecutionException,
+        MojoFailureException {
+
         File appwsFile = new File(generatedWidgetsetDirectory, APP_WIDGETSET_FILE);
 
         // compile one widgetset at a time
@@ -92,6 +104,16 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
 
         }
 
+    }
+
+    private void serveFromCDN() {
+        getLog().error("CDN not yet supported");
+        // TODO generate WebListener class
+    }
+
+    private void fetchWidgetset() {
+        getLog().error("Fetching widgetsets from CDN not yet supported");
+        // TODO generate WebListener class
     }
 
     private void updateWidgetset(String module, boolean generated) throws MojoExecutionException {
