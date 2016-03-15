@@ -76,10 +76,26 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
             return;
         }
 
-        if ("cdn".equals(cdnMode)) {
-            serveFromCDN();
-        } else if ("fetch".equals(cdnMode)) {
-            fetchWidgetset();
+        if ("cdn".equals(cdnMode) || "fetch".equals(cdnMode)) {
+            WidgetSetRequest wsReq = createWidgetsetRequest();
+
+            getProject().addCompileSourceRoot(WSCDN_GENERATED_SOURCES_DIRECTORY);
+
+            String packageName = WSCDN_PACKAGE;
+            String className = WSCDN_WIDGETSET_CLASS_NAME;
+
+            File outputDirectory = new File(getProject().getBasedir(), WSCDN_GENERATED_SOURCES_DIRECTORY);
+            File packageDirectory = new File(outputDirectory,
+                    packageName.replace(".", "/"));
+            packageDirectory.mkdirs();
+
+            File outputFile = new File(packageDirectory, className + ".java");
+
+            try {
+                triggerCdnBuild(wsReq, outputFile, "fetch".equals(cdnMode));
+            } catch (IOException e) {
+                throw new MojoExecutionException("Could not create widgetset @WebListener class", e);
+            }
         } else {
             updateLocalWidgetset();
         }
@@ -126,29 +142,6 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
 
         }
 
-    }
-
-    private void serveFromCDN() throws MojoExecutionException, MojoFailureException {
-        // generate WebListener class
-        WidgetSetRequest wsReq = createWidgetsetRequest();
-
-        getProject().addCompileSourceRoot(WSCDN_GENERATED_SOURCES_DIRECTORY);
-
-        String packageName = WSCDN_PACKAGE;
-        String className = WSCDN_WIDGETSET_CLASS_NAME;
-
-        File outputDirectory = new File(getProject().getBasedir(), WSCDN_GENERATED_SOURCES_DIRECTORY);
-        File packageDirectory = new File(outputDirectory,
-                packageName.replace(".", "/"));
-        packageDirectory.mkdirs();
-
-        File outputFile = new File(packageDirectory, className + ".java");
-
-        try {
-            serveFromCDN(wsReq, outputFile);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Could not create widgetset @WebListener class", e);
-        }
     }
 
     private WidgetSetRequest createWidgetsetRequest() throws MojoExecutionException, MojoFailureException {
@@ -212,7 +205,21 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
         return wsReq;
     }
 
-    protected void serveFromCDN(WidgetSetRequest wsReq, File outputFile) throws IOException, MojoExecutionException {
+    /**
+     * Create an appropriate WebListener class and start the build of the
+     * widgetset.
+     * 
+     * @param wsReq
+     *            widgetset compilation request
+     * @param outputFile
+     *            file in which to write the WebListener widgetset class
+     * @param fetch
+     *            true to only trigger widgetset compilation for a later fetch,
+     *            false to use the widgetset directly from the CDN
+     * @throws IOException
+     * @throws MojoExecutionException
+     */
+    protected void triggerCdnBuild(WidgetSetRequest wsReq, File outputFile, boolean fetch) throws IOException, MojoExecutionException {
         String wsName = null;
         String wsUrl = null;
 
@@ -223,14 +230,14 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
                 || wsRes.getStatus() == PublishState.COMPILING)) // Currently compiling the widgetset)
         {
             wsName = wsRes.getWidgetSetName();
-            wsUrl = wsRes.getWidgetSetUrl();
+            wsUrl = fetch ? "local" : wsRes.getWidgetSetUrl();
         } else {
             throw new MojoExecutionException(
                     "Remote widgetset compilation failed: " + (wsRes != null ? wsRes.
                             getStatus() : " (no response)"));
         }
 
-        PublishState status = wsRes.getStatus();
+        PublishState status = fetch ? PublishState.AVAILABLE : wsRes.getStatus();
 
         createWebListenerClass(wsReq, outputFile, wsName, wsUrl, status);
     }
@@ -275,11 +282,6 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
         }
     }
 
-
-    private void fetchWidgetset() {
-        getLog().error("Fetching widgetsets from CDN not yet supported");
-        // TODO generate WebListener class
-    }
 
     private void updateWidgetset(String module, boolean generated) throws MojoExecutionException {
         // class path order has "compile" sources first as it should
