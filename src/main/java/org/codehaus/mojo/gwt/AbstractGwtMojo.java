@@ -125,7 +125,7 @@ extends AbstractMojo
     /**
      * Location on filesystem where GWT will write output files (-out option to GWTCompiler).
      */
-    @Parameter(property = "gwt.war", defaultValue="${project.build.directory}/${project.build.finalName}", alias = "outputDirectory")
+    @Parameter(property = "gwt.war", defaultValue="${project.build.outputDirectory}/VAADIN/widgetsets", alias = "outputDirectory")
     private File webappDirectory;
 
     /**
