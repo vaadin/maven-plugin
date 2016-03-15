@@ -6,7 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -21,6 +23,12 @@ import org.codehaus.mojo.gwt.shell.JavaCommand;
 import org.codehaus.mojo.gwt.shell.JavaCommandException;
 import org.codehaus.plexus.util.IOUtil;
 
+import com.vaadin.wscdn.client.AddonInfo;
+import com.vaadin.wscdn.client.Connection;
+import com.vaadin.wscdn.client.PublishState;
+import com.vaadin.wscdn.client.WidgetSetRequest;
+import com.vaadin.wscdn.client.WidgetSetResponse;
+
 /**
  * Updates Vaadin widgetsets based on other widgetset packages on the classpath.
  * It is assumed that the project does not directly contain other GWT modules.
@@ -28,6 +36,11 @@ import org.codehaus.plexus.util.IOUtil;
  */
 @Mojo(name = "update-widgetset", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
+    private static final String WSCDN_WIDGETSET_CLASS_NAME = "WidgetSet";
+    private static final String WSCDN_PACKAGE = "com.vaadin.wscdn";
+
+    private static final String WSCDN_GENERATED_SOURCES_DIRECTORY = "target/generated-sources/wscdn";
+
     public static final String WIDGETSET_BUILDER_CLASS = "com.vaadin.server.widgetsetutils.WidgetSetBuilder";
 
     public static final String GWT_MODULE_EXTENSION = ".gwt.xml";
@@ -106,10 +119,106 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
 
     }
 
-    private void serveFromCDN() {
-        getLog().error("CDN not yet supported");
-        // TODO generate WebListener class
+    private void serveFromCDN() throws MojoExecutionException {
+        // TODO get the add-on list etc.
+
+        // generate WebListener class
+        String vaadinVersion = null;
+
+        Set<Artifact> artifacts = getProject().getArtifacts();
+        for (Artifact artifact : artifacts) {
+            // Store the vaadin version
+            if (artifact.getArtifactId().equals("vaadin-server")) {
+                vaadinVersion = artifact.getVersion();
+            }
+        }
+
+        WidgetSetRequest wsReq = new WidgetSetRequest();
+        wsReq.setCompileStyle(getStyle());
+        wsReq.setVaadinVersion(vaadinVersion);
+
+        getProject().addCompileSourceRoot(WSCDN_GENERATED_SOURCES_DIRECTORY);
+
+        String packageName = WSCDN_PACKAGE;
+        String className = WSCDN_WIDGETSET_CLASS_NAME;
+
+        File outputDirectory = new File(getProject().getBasedir(), WSCDN_GENERATED_SOURCES_DIRECTORY);
+        File packageDirectory = new File(outputDirectory,
+                packageName.replace(".", "/"));
+        packageDirectory.mkdirs();
+
+        File outputFile = new File(packageDirectory, className + ".java");
+
+        try {
+            serveFromCDN(wsReq, outputFile);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Could not create widgetset @WebListener class", e);
+        }
     }
+
+    protected void serveFromCDN(WidgetSetRequest wsReq, File outputFile) throws IOException, MojoExecutionException {
+        String wsName = null;
+        String wsUrl = null;
+
+        Connection conn = new Connection();
+        WidgetSetResponse wsRes = conn.queryRemoteWidgetSet(wsReq, true);
+        if (wsRes != null && (wsRes.getStatus() == PublishState.AVAILABLE // Compiled and published
+                || wsRes.getStatus() == PublishState.COMPILED // Compiled succesfully, but not yet available
+                || wsRes.getStatus() == PublishState.COMPILING)) // Currently compiling the widgetset)
+        {
+            wsName = wsRes.getWidgetSetName();
+            wsUrl = wsRes.getWidgetSetUrl();
+        } else {
+            throw new MojoExecutionException(
+                    "Remote widgetset compilation failed: " + (wsRes != null ? wsRes.
+                            getStatus() : " (no response)"));
+        }
+
+        PublishState status = wsRes.getStatus();
+
+        createWebListenerClass(wsReq, outputFile, wsName, wsUrl, status);
+    }
+
+    private void createWebListenerClass(WidgetSetRequest wsReq, File outputFile, String wsName, String wsUrl, PublishState status)
+	    throws IOException {
+	String listener = IOUtil.toString(getClass().getResourceAsStream(
+                "/weblistener.tmpl"));
+        listener = listener.replace("__wsUrl", wsUrl);
+        listener = listener.replace("__wsName", wsName);
+	listener = listener.replace("__wsReady",
+                status == PublishState.AVAILABLE ? "true" : "false");
+
+        StringBuilder sb = new StringBuilder();
+        if (wsReq.getAddons() != null) {
+            for (AddonInfo a : wsReq.getAddons()) {
+                String aid = a.getArtifactId();
+                String gid = a.getGroupId();
+                String v = a.getVersion();
+                sb.append(" * ");
+                sb.append(aid);
+                sb.append(":");
+                sb.append(gid);
+                sb.append(":");
+                sb.append(v);
+                sb.append("\n");
+            }
+        }
+        listener = listener.replace("__vaadin", " * " + wsReq.getVaadinVersion());
+        listener = listener.replace("__style", " * " + wsReq.getCompileStyle());
+        listener = listener.replace("__addons", sb.toString());
+
+        FileUtils.writeStringToFile(outputFile, listener);
+
+        // Print some info
+        if (wsName != null && wsUrl != null) {
+            getLog().info("Widgetset config created to " + outputFile.
+                    getAbsolutePath() + ". Public URL: " + wsUrl);
+        } else {
+            getLog().info("Widget set created to " + outputFile.
+                    getAbsolutePath() + ".");
+        }
+    }
+
 
     private void fetchWidgetset() {
         getLog().error("Fetching widgetsets from CDN not yet supported");
