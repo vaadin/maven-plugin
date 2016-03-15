@@ -24,6 +24,8 @@ package org.codehaus.mojo.gwt.shell;
  */
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -40,6 +42,9 @@ import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SingleTargetSourceMapping;
 import org.codehaus.plexus.util.StringUtils;
+
+import com.vaadin.wscdn.client.Connection;
+import com.vaadin.wscdn.client.WidgetSetRequest;
 
 /**
  * Invokes the GWT Compiler for the project source.
@@ -678,9 +683,17 @@ public class CompileMojo
         }
     }
 
-    private void fetchWidgetset() {
-        getLog().error("Fetching widgetsets from CDN not yet supported");
-        // TODO synchronous download
+    private void fetchWidgetset() throws MojoExecutionException, MojoFailureException {
+        getLog().info("Fetching widgetset from CDN");
+
+        WidgetSetRequest wsReq = createWidgetsetRequest();
+        Connection conn = new Connection();
+        try {
+            // TODO handle timeouts better
+            conn.downloadRemoteWidgetSet(wsReq, getOutputDirectory());
+        } catch (IOException e) {
+            throw new MojoFailureException("Failed to download widgetset from CDN", e);
+        }
     }
 
 }

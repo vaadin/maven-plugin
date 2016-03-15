@@ -5,18 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -30,8 +22,6 @@ import org.codehaus.mojo.gwt.shell.JavaCommand;
 import org.codehaus.mojo.gwt.shell.JavaCommandException;
 import org.codehaus.plexus.util.IOUtil;
 
-import com.vaadin.integration.maven.wscdn.ClassPathExplorer;
-import com.vaadin.integration.maven.wscdn.CvalChecker;
 import com.vaadin.wscdn.client.AddonInfo;
 import com.vaadin.wscdn.client.Connection;
 import com.vaadin.wscdn.client.PublishState;
@@ -142,67 +132,6 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
 
         }
 
-    }
-
-    private WidgetSetRequest createWidgetsetRequest() throws MojoExecutionException, MojoFailureException {
-        String vaadinVersion = null;
-
-        Set<Artifact> artifacts = getProject().getArtifacts();
-        for (Artifact artifact : artifacts) {
-            // Store the vaadin version
-            if (artifact.getArtifactId().equals("vaadin-server")) {
-                vaadinVersion = artifact.getVersion();
-            }
-        }
-
-        List cp;
-        try {
-            cp = getProject().getCompileClasspathElements();
-        } catch (DependencyResolutionRequiredException e) {
-            throw new MojoExecutionException("Failed to resolve compile classpath elements", e);
-        }
-
-        Map<String, URL> urls = new HashMap<String, URL>();
-        for (Object object : cp) {
-            String path = (String) object;
-            try {
-                urls.put(path, new File(path).toURI().toURL());
-            } catch (MalformedURLException e) {
-                throw new MojoExecutionException("Failed to parse URL of a classpath element", e);
-            }
-        }
-        Map<String, URL> availableWidgetSets;
-        try {
-            availableWidgetSets = ClassPathExplorer
-                    .getAvailableWidgetSets(urls);
-        } catch (CvalChecker.InvalidCvalException ex) {
-            throw new MojoExecutionException("Cval license check failed!", ex);
-        }
-        Set<Artifact> uniqueArtifacts = new HashSet<Artifact>();
-
-        for (String name : availableWidgetSets.keySet()) {
-            URL url = availableWidgetSets.get(name);
-            for (Artifact a : artifacts) {
-                String u = url.toExternalForm();
-                if (u.contains(a.getArtifactId())
-                        && u.contains(a.getBaseVersion()) && !u.contains(
-                                "vaadin-client")) {
-                    uniqueArtifacts.add(a);
-                }
-            }
-        }
-
-        WidgetSetRequest wsReq = new WidgetSetRequest();
-        for (Artifact a : uniqueArtifacts) {
-            wsReq.addon(a.getGroupId(), a.getArtifactId(), a.
-                    getBaseVersion());
-        }
-        getLog().info((wsReq.getAddons() != null ? wsReq.getAddons().
-                size() : 0) + " addons found.");
-
-        wsReq.setCompileStyle(getStyle());
-        wsReq.setVaadinVersion(vaadinVersion);
-        return wsReq;
     }
 
     /**
