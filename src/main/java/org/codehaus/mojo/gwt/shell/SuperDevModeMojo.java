@@ -85,7 +85,7 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo
      *
      * @since 2.6.0-rc1
      */
-    @Parameter(defaultValue = "auto", property = "maven.compiler.source")
+    @Parameter(defaultValue = "auto", property = "gwt.compiler.source")
     private String sourceLevel;
 
     /**
