@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -404,6 +405,13 @@ public class CompileMojo
     @Parameter(defaultValue = "NONE", property = "gwt.compiler.methodNameDisplayMode")
     private String methodNameDisplayMode;
 
+    /**
+     * Last used widgetset
+     */
+    @Parameter(defaultValue = "${project.build.directory}/wscdn-widgetset")
+    private File lastWidgetset;
+
+
     @Override
     public void doExecute( )
         throws MojoExecutionException, MojoFailureException
@@ -684,10 +692,30 @@ public class CompileMojo
     }
 
     private void fetchWidgetset() throws MojoExecutionException, MojoFailureException {
+        WidgetSetRequest wsReq = createWidgetsetRequest();
+
+        try {
+            if (lastWidgetset.exists()
+                    && FileUtils.readFileToString(lastWidgetset)
+                    .equals(wsReq.toWidgetsetString())) {
+                getLog().info("No changes in widgetset: "
+                        + wsReq.toWidgetsetString());
+                return;
+            }
+        } catch (IOException e) {
+            // just download if we are not sure if up to date
+        }
+
         getLog().info("Fetching widgetset from CDN");
 
-        WidgetSetRequest wsReq = createWidgetsetRequest();
         downloadWidgetset(wsReq, 3);
+
+        // cache information about last fetched widgetset
+        try {
+            FileUtils.writeStringToFile(lastWidgetset, wsReq.toWidgetsetString());
+        } catch (IOException e) {
+            // failed to cache last used widgetset, so will re-download next time
+        }
     }
 
     private void downloadWidgetset(WidgetSetRequest wsReq, int retryCount) throws MojoFailureException {
