@@ -687,12 +687,22 @@ public class CompileMojo
         getLog().info("Fetching widgetset from CDN");
 
         WidgetSetRequest wsReq = createWidgetsetRequest();
-        Connection conn = new Connection();
+        downloadWidgetset(wsReq, 3);
+    }
+
+    private void downloadWidgetset(WidgetSetRequest wsReq, int retryCount) throws MojoFailureException {
         try {
-            // TODO handle timeouts better
+            Connection conn = new Connection();
             conn.downloadRemoteWidgetSet(wsReq, getOutputDirectory());
-        } catch (IOException e) {
-            throw new MojoFailureException("Failed to download widgetset from CDN", e);
+
+            getLog().info("Widgetset successfully fetched from CDN");
+        } catch (Exception e) {
+            if (retryCount > 0) {
+                getLog().info("Retrying widgetset download - the server might be busy, please wait a moment");
+                downloadWidgetset(wsReq, retryCount-1);
+            } else {
+                throw new MojoFailureException("Failed to download widgetset from CDN", e);
+            }
         }
     }
 
