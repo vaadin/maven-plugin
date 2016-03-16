@@ -66,7 +66,7 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
             return;
         }
 
-        if ("cdn".equals(cdnMode) || "fetch".equals(cdnMode)) {
+        if ("cdn".equals(widgetsetMode) || "fetch".equals(widgetsetMode)) {
             WidgetSetRequest wsReq = createWidgetsetRequest();
 
             getProject().addCompileSourceRoot(WSCDN_GENERATED_SOURCES_DIRECTORY);
@@ -82,7 +82,7 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
             File outputFile = new File(packageDirectory, className + ".java");
 
             try {
-                triggerCdnBuild(wsReq, outputFile, "fetch".equals(cdnMode));
+                triggerCdnBuild(wsReq, outputFile, "fetch".equals(widgetsetMode));
             } catch (IOException e) {
                 throw new MojoExecutionException("Could not create widgetset @WebListener class", e);
             }

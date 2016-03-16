@@ -408,7 +408,7 @@ public class CompileMojo
     public void doExecute( )
         throws MojoExecutionException, MojoFailureException
     {
-        if ( skip || "pom".equals( getProject().getPackaging() ) || "cdn".equals(cdnMode) )
+        if ( skip || "pom".equals( getProject().getPackaging() ) || "cdn".equals(widgetsetMode) )
         {
             getLog().info( "GWT compilation is skipped" );
             return;
@@ -419,7 +419,7 @@ public class CompileMojo
             getOutputDirectory().mkdirs();
         }
 
-        if ("fetch".equals(cdnMode)) {
+        if ("fetch".equals(widgetsetMode)) {
             fetchWidgetset();
         } else {
             compile( getModules() );

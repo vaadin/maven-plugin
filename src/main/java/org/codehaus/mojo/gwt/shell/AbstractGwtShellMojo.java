@@ -162,10 +162,10 @@ extends AbstractGwtModuleMojo
      * The widgetset compilation mode (local / fetch from CDN / CDN only).
      * The allowed values are "local", "fetch" and "cdn".
      * <p>
-     * Can be set from command line using '-Dvaadin.cdn.mode=...'
+     * Can be set from command line using '-Dvaadin.widgetset.mode=...'
      */
-    @Parameter(defaultValue = "local", property = "vaadin.cdn.mode")
-    protected String cdnMode;
+    @Parameter(defaultValue = "local", property = "vaadin.widgetset.mode")
+    protected String widgetsetMode;
 
 
     // methods
