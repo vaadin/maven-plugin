@@ -7,6 +7,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.mojo.gwt.shell.JavaCommand;
 import org.codehaus.mojo.gwt.shell.JavaCommandException;
@@ -17,6 +18,18 @@ import org.codehaus.mojo.gwt.shell.JavaCommandException;
 @Mojo(name = "compile-theme", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class CompileThemeMojo extends AbstractThemeMojo {
     public static final String THEME_COMPILE_CLASS = "com.vaadin.sass.SassCompiler";
+
+    /**
+     * Create a compressed version of the theme alongside with the uncompressed one or not.
+     */
+    @Parameter(defaultValue = "false", property = "vaadin.theme.compress")
+    private boolean compressTheme;
+
+    /**
+     * Ignore theme compilation warnings or not.
+     */
+    @Parameter(defaultValue = "false", property = "vaadin.theme.ignore.warnings")
+    private boolean ignoreThemeWarnings;
 
     @Override
     protected void checkVaadinVersion() throws MojoExecutionException {
@@ -34,6 +47,14 @@ public class CompileThemeMojo extends AbstractThemeMojo {
         JavaCommand cmd = new JavaCommand();
         cmd.setMainClass(THEME_COMPILE_CLASS);
         cmd.setLog(getLog());
+
+        if (compressTheme) {
+            cmd.arg("-compress:true");
+        }
+
+        if (ignoreThemeWarnings) {
+            cmd.arg("-ignore-warnings:true");
+        }
 
         // src/main/webapp first on classpath
         cmd.addToClasspath(warSourceDirectory);
