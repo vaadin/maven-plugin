@@ -698,7 +698,8 @@
             <id>check-java-1.6-compat</id>
             <phase>process-classes</phase>
             <goals>
-              <goal>check</goal>
+                <!-- Disabled as WSCDN depends on some Java 8 classes -->
+<!--               <goal>check</goal> -->
             </goals>
           </execution>
         </executions>
