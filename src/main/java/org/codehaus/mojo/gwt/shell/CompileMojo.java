@@ -726,7 +726,7 @@ public class CompileMojo
             getLog().info("Widgetset successfully fetched from CDN");
         } catch (Exception e) {
             if (retryCount > 0) {
-                getLog().info("Retrying widgetset download - the server might be busy, please wait a moment");
+                getLog().warn("Retrying widgetset download - the server might be busy, please wait a moment");
                 downloadWidgetset(wsReq, retryCount-1);
             } else {
                 throw new MojoFailureException("Failed to download widgetset from CDN", e);
