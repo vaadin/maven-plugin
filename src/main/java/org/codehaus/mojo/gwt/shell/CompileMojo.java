@@ -52,14 +52,13 @@ import com.vaadin.wscdn.client.WidgetSetRequest;
  * See compiler options :
  * http://www.gwtproject.org/doc/latest/DevGuideCompilingAndDebugging.html#DevGuideCompilerOptions
  *
- * @execute phase=process-resources
  * @version $Id$
  * @author cooper
  * @author ccollins
  * @author <a href="mailto:nicolas@apache.org">Nicolas De loof</a>
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  */
-@Mojo(name = "compile", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+@Mojo(name = "compile", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class CompileMojo
     extends AbstractGwtShellMojo
 {
