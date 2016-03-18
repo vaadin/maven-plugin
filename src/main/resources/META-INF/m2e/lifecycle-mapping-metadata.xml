@@ -7,6 +7,8 @@
           <goal>update-theme</goal>
           <goal>update-widgetset</goal>
           <goal>resources</goal>
+          <goal>compile</goal>
+          <goal>compile-theme</goal>
         </goals>
       </pluginExecutionFilter>
       <action>
@@ -14,17 +16,6 @@
           <runOnIncremental>false</runOnIncremental>
           <runOnConfiguration>true</runOnConfiguration>
         </execute>
-      </action>
-    </pluginExecution>
-    <pluginExecution>
-      <pluginExecutionFilter>
-        <goals>
-          <goal>compile</goal>
-          <goal>compile-theme</goal>
-        </goals>
-      </pluginExecutionFilter>
-      <action>
-        <ignore></ignore>
       </action>
     </pluginExecution>
     <pluginExecution>
