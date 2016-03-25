@@ -38,8 +38,6 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
     private static final String WSCDN_WIDGETSET_CLASS_NAME = "WidgetSet";
     private static final String WSCDN_PACKAGE = "com.vaadin.wscdn";
 
-    private static final String WSCDN_GENERATED_SOURCES_DIRECTORY = "target/generated-sources/wscdn";
-
     public static final String WIDGETSET_BUILDER_CLASS = "com.vaadin.server.widgetsetutils.WidgetSetBuilder";
 
     public static final String GWT_MODULE_EXTENSION = ".gwt.xml";
@@ -52,6 +50,12 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}/generated-resources/gwt", required = true)
     private File generatedWidgetsetDirectory;
+
+    /**
+     * Folder where generated widgetset WebListener class will be created (automatically added to sources).
+     */
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources/wscdn", required = true)
+    private File generatedSourceDirectory;
 
     /**
      * {@inheritDoc}
@@ -69,12 +73,12 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
         if ("cdn".equals(widgetsetMode) || "fetch".equals(widgetsetMode)) {
             WidgetSetRequest wsReq = createWidgetsetRequest();
 
-            getProject().addCompileSourceRoot(WSCDN_GENERATED_SOURCES_DIRECTORY);
+            getProject().addCompileSourceRoot(generatedSourceDirectory.getAbsolutePath());
 
             String packageName = WSCDN_PACKAGE;
             String className = WSCDN_WIDGETSET_CLASS_NAME;
 
-            File outputDirectory = new File(getProject().getBasedir(), WSCDN_GENERATED_SOURCES_DIRECTORY);
+            File outputDirectory = generatedSourceDirectory;
             File packageDirectory = new File(outputDirectory,
                     packageName.replace(".", "/"));
             packageDirectory.mkdirs();
