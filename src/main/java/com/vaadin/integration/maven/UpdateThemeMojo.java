@@ -38,18 +38,9 @@ public class UpdateThemeMojo extends AbstractThemeMojo {
         cmd.setMainClass(THEME_UPDATE_CLASS);
         cmd.setLog(getLog());
 
-        // src/main/webapp first on classpath
-        cmd.addToClasspath(warSourceDirectory);
+        File themeDir = configureThemeClasspath(cmd, theme);
 
-        // rest of classpath (elements both from plugin and from project)
-        Collection<File> classpath = getClasspath(Artifact.SCOPE_COMPILE);
-        getLog().debug("Additional classpath elements for vaadin:update-theme:");
-        for (File artifact : classpath) {
-            getLog().debug("  " + artifact.getAbsolutePath());
-            cmd.addToClasspath(artifact);
-        }
-
-        cmd.arg(new File(warSourceDirectory.getAbsolutePath(), theme).getAbsolutePath());
+        cmd.arg(themeDir.getAbsolutePath());
 
         try {
             cmd.execute();

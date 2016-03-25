@@ -56,18 +56,8 @@ public class CompileThemeMojo extends AbstractThemeMojo {
             cmd.arg("-ignore-warnings:true");
         }
 
-        // src/main/webapp first on classpath
-        cmd.addToClasspath(warSourceDirectory);
+        File themeDir = configureThemeClasspath(cmd, theme);
 
-        // rest of classpath (elements both from plugin and from project)
-        Collection<File> classpath = getClasspath(Artifact.SCOPE_COMPILE);
-        getLog().debug("Additional classpath elements for vaadin:compile-theme:");
-        for (File artifact : classpath) {
-            getLog().debug("  " + artifact.getAbsolutePath());
-            cmd.addToClasspath(artifact);
-        }
-
-        File themeDir = new File(warSourceDirectory.getAbsolutePath(), theme);
         File scssFile = new File(themeDir, "styles.scss");
         File cssFile = new File(themeDir, "styles.css");
 
