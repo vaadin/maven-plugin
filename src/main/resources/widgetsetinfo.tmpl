@@ -1,0 +1,25 @@
+import com.vaadin.server.WidgetsetInfo;
+
+/* Addons in this ws:
+__vaadin
+__style
+__addons
+ */
+public class AppWidgetset implements WidgetsetInfo {
+
+    @Override
+    public String getWidgetsetName() {
+        return "__wsName";
+    }
+
+    @Override
+    public String getWidgetsetUrl() {
+        return "__wsUrl";
+    }
+
+    @Override
+    public boolean isCdn() {
+        return !__wsReady;
+    }
+
+}
