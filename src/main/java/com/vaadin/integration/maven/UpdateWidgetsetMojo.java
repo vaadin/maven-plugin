@@ -160,7 +160,7 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
                 || wsRes.getStatus() == PublishState.COMPILING)) // Currently compiling the widgetset)
         {
             wsName = wsRes.getWidgetSetName();
-            wsUrl = fetch ? "local" : wsRes.getWidgetSetUrl();
+            wsUrl = fetch ? "null" : "\"" + wsRes.getWidgetSetUrl() + "\"";
         } else {
             throw new MojoExecutionException(
                     "Remote widgetset compilation failed: " + (wsRes != null ? wsRes.
