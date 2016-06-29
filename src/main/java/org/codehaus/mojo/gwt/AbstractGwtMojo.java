@@ -102,7 +102,7 @@ extends AbstractMojo
     @Parameter(defaultValue = "${localRepository}", required = true, readonly = true)
     protected ArtifactRepository localRepository;
 
-    @Parameter(defaultValue = "${project.pluginArtifactRepositories}", required = true, readonly = true)
+    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", required = true, readonly = true)
     protected List<ArtifactRepository> remoteRepositories;
 
     @Component
