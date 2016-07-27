@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
@@ -62,6 +63,8 @@ import com.vaadin.wscdn.client.WidgetSetRequest;
 public class CompileMojo
     extends AbstractGwtShellMojo
 {
+
+    private static final String DEVELOPER_LICENSE_SUFFIX = ".developer.license";
 
     @Parameter(property = "gwt.compiler.skip", defaultValue = "false")
     private boolean skip;
@@ -463,6 +466,15 @@ public class CompileMojo
         {
             cmd.addToClasspath( getGwtUserJar() )
                .addToClasspath( getGwtDevJar() );
+        }
+
+        // add license args from Maven
+        Properties properties = System.getProperties();
+        for (Object keyObject : properties.keySet()) {
+            String key = String.valueOf(keyObject);
+            if (key.endsWith(DEVELOPER_LICENSE_SUFFIX)) {
+                cmd.systemProperty(key, properties.getProperty(key));
+            }
         }
 
         cmd.arg( "-logLevel", getLogLevel() )
