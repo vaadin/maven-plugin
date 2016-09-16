@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 /*
  * Class used for binding the JSON gotten from server.
  *
- * It is not in a separate f le, so as it is easier to copy into any product
+ * It is not in a separate file, so as it is easier to copy into any product
  * which does not depend on vaadin core.
  *
  * We are using elemental.json in order not to use additional dependency
@@ -37,7 +37,7 @@ public class CvalInfo {
 
     @Transient
     public Date getExpiredEpochDate() {
-        return new Date(getExpiredEpoch());
+        return getExpiredEpoch() != 0 ? new Date(getExpiredEpoch()) : null;
     }
 
     public long getExpiredEpoch() {
