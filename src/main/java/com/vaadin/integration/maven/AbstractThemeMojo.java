@@ -11,6 +11,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.mojo.gwt.AbstractGwtMojo;
 import org.codehaus.mojo.gwt.shell.JavaCommand;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -21,9 +22,8 @@ import org.codehaus.plexus.util.DirectoryScanner;
 public abstract class AbstractThemeMojo extends AbstractGwtMojo {
     /**
      * A single theme. Option to specify a single module from command line
-     *
-     * @parameter property="vaadin.theme"
      */
+    @Parameter(property = "vaadin.theme")
     private String theme;
 
     @Override
