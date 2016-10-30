@@ -12,14 +12,14 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.codehaus.mojo.gwt.AbstractGwtMojo;
+import org.codehaus.mojo.gwt.shell.AbstractGwtShellMojo;
 import org.codehaus.mojo.gwt.shell.JavaCommand;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
  * Abstract base class for theme compilation related Mojos.
  */
-public abstract class AbstractThemeMojo extends AbstractGwtMojo {
+public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
     /**
      * A single theme. Option to specify a single module from command line
      */
@@ -27,8 +27,8 @@ public abstract class AbstractThemeMojo extends AbstractGwtMojo {
     private String theme;
 
     @Override
-    public final void execute() throws MojoExecutionException,
-    MojoFailureException {
+    public final void doExecute()
+            throws MojoExecutionException, MojoFailureException {
         if ("pom".equals(getProject().getPackaging())) {
             getLog().info("Theme processing is skipped");
             return;
