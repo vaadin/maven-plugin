@@ -1,9 +1,7 @@
 package com.vaadin.integration.maven;
 
 import java.io.File;
-import java.util.Collection;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -44,9 +42,8 @@ public class CompileThemeMojo extends AbstractThemeMojo {
     protected void processTheme(String theme) throws MojoExecutionException {
         getLog().info("Updating theme " + theme);
 
-        JavaCommand cmd = new JavaCommand();
+        JavaCommand cmd = createJavaCommand();
         cmd.setMainClass(THEME_COMPILE_CLASS);
-        cmd.setLog(getLog());
 
         if (compressTheme) {
             cmd.arg("-compress:true");
