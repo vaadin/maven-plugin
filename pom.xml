@@ -139,16 +139,6 @@
   </distributionManagement>
   <repositories>
     <repository>
-      <id>vaadin-releases</id>
-      <url>http://oss.sonatype.org/content/repositories/vaadin-releases/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
       <id>vaadin-snapshots</id>
       <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
       <releases>
@@ -495,21 +485,6 @@
                 <goals>
                   <goal>enforce</goal>
                 </goals>
-                <configuration>
-                  <rules>
-                    <requirePluginVersions>
-                       <banSnapshots>false</banSnapshots>
-                       <!--
-                       oups documentation sucks !!
-                       http://maven.apache.org/enforcer/enforcer-rules/requirePluginVersions.html
-                       log says 
-                       Cause: Cannot find setter nor field in org.apache.maven.plugins.enforcer.RequirePluginVersions for 'unCheckedPluginsList'
-
-                       <unCheckedPluginsList>org.apache.maven.plugins:maven-invoker-plugin</unCheckedPluginsList>
-                        -->
-                    </requirePluginVersions>
-                  </rules>
-                </configuration>
               </execution>
             </executions>
           </plugin>          
