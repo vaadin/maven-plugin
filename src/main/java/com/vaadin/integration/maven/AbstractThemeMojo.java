@@ -148,7 +148,7 @@ public abstract class AbstractThemeMojo extends AbstractGwtMojo {
             String[] themes = theme.split(",");
             String[] themesPaths = new String[themes.length];
             for(int i = 0; i < themesPaths.length ; i++) {
-                themesPaths[i] = "VAADIN/themes/" + themes[i];
+                themesPaths[i] = "VAADIN/themes/" + themes[i].trim();
             }
             return themesPaths;
         }
