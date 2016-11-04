@@ -138,13 +138,19 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
     /**
      * Return the available themes in the project source/resources folder. If a
      * theme has been set by expression, only that theme is returned.
+     * It is possible to specify more themes, comma separated.
      *
      * @return the theme names
      */
     protected String[] getThemes() {
         // theme has higher priority if set by expression
         if (theme != null) {
-            return new String[] { "VAADIN/themes/" + theme };
+            String[] themes = theme.split(",");
+            String[] themesPaths = new String[themes.length];
+            for(int i = 0; i < themesPaths.length ; i++) {
+                themesPaths[i] = "VAADIN/themes/" + themes[i].trim();
+            }
+            return themesPaths;
         }
         List<String> themes = new ArrayList<String>();
 
