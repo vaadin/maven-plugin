@@ -131,7 +131,7 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
 
                 if (template.replaceAll("\\s", "").equals(generatedws.replaceAll("\\s", ""))) {
                     if (!appwsFile.delete()) {
-                        getLogger().severe("Unable to delete generated widget set file: "+appwsFile.getAbsolutePath())
+                        getLogger().severe("Unable to delete generated widget set file: "+appwsFile.getAbsolutePath());
                     }
                 }
             } catch (IOException e) {
