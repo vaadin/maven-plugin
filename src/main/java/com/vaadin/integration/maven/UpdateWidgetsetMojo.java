@@ -127,6 +127,7 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
                 // not have sufficient API to only generate the widgetset when it is needed
                 try (FileInputStream fis = new FileInputStream(appwsFile)) {
                     String generatedws = IOUtil.toString(fis);
+                    fis.close();
                     if (template.replaceAll("\\s", "").equals(generatedws.replaceAll("\\s", ""))) {
                         if (!appwsFile.delete()) {
                             getLogger().severe("Unable to delete generated widget set file: "+appwsFile.getAbsolutePath());
