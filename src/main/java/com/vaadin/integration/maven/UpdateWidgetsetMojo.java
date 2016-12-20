@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
@@ -115,17 +116,23 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
             try {
                 String template = IOUtil.toString(getClass().getResourceAsStream("/AppWidgetset.tmpl"));
                 if (!appwsFile.exists()) {
-                    OutputStream out = new FileOutputStream(appwsFile);
-                    IOUtil.copy(template, out);
+                    try (OutputStream out = new FileOutputStream(appwsFile)) {
+                        IOUtil.copy(template, out);
+                    }
                 }
                 updateWidgetset(APP_WIDGETSET_MODULE, true);
 
                 // if there was nothing relevant on the widgetset path, remove the generated widgetset
                 // TODO this is an ugly workaround as the corresponding class in Vaadin framework does
                 // not have sufficient API to only generate the widgetset when it is needed
-                String generatedws = IOUtil.toString(new FileInputStream(appwsFile));
-                if (template.replaceAll("\\s", "").equals(generatedws.replaceAll("\\s", ""))) {
-                    appwsFile.delete();
+                try (FileInputStream fis = new FileInputStream(appwsFile)) {
+                    String generatedws = IOUtil.toString(fis);
+                    fis.close();
+                    if (template.replaceAll("\\s", "").equals(generatedws.replaceAll("\\s", ""))) {
+                        if (!appwsFile.delete()) {
+                            getLogger().severe("Unable to delete generated widget set file: "+appwsFile.getAbsolutePath());
+                        }
+                    }
                 }
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to create AppWidgetset", e);
@@ -133,6 +140,10 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
 
         }
 
+    }
+
+    private static Logger getLogger() {
+        return Logger.getLogger(UpdateWidgetsetMojo.class.getName());
     }
 
     /**
