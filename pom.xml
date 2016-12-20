@@ -109,8 +109,10 @@
     <!-- TODO this would also be used in an archetype, currently broken -->
     <!-- This property is used in a filtered resources to check the version compatibility -->
     <vaadin.version>${project.version}</vaadin.version>
+    <gwt.version>2.8.0</gwt.version>
     <!--  apt filtering doesn't support dot -->
     <vaadinVersion>${vaadin.version}</vaadinVersion>
+    <gwtVersion>${gwt.version}</gwtVersion>
     <mavenVersion>3.0.5</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
     <mojo.java.target>1.8</mojo.java.target>
