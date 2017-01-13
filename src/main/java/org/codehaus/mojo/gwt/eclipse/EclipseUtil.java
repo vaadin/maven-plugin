@@ -33,25 +33,21 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
  * @version $Id$
  */
 @Component(role = EclipseUtil.class)
-public class EclipseUtil
-    extends AbstractLogEnabled
-{
+public class EclipseUtil extends AbstractLogEnabled {
     /**
-     * Read the Eclipse project name for .project file. Fall back to artifactId on error
+     * Read the Eclipse project name for .project file. Fall back to artifactId
+     * on error
      *
      * @return project name in eclipse workspace
      */
-    public String getProjectName( MavenProject project )
-    {
-        File dotProject = new File( project.getBasedir(), ".project" );
-        try
-        {
-            Xpp3Dom dom = Xpp3DomBuilder.build( ReaderFactory.newXmlReader( dotProject ) );
-            return dom.getChild( "name" ).getValue();
-        }
-        catch ( Exception e )
-        {
-            getLogger().warn( "Failed to read the .project file" );
+    public String getProjectName(MavenProject project) {
+        File dotProject = new File(project.getBasedir(), ".project");
+        try {
+            Xpp3Dom dom = Xpp3DomBuilder
+                    .build(ReaderFactory.newXmlReader(dotProject));
+            return dom.getChild("name").getValue();
+        } catch (Exception e) {
+            getLogger().warn("Failed to read the .project file");
             return project.getArtifactId();
         }
     }

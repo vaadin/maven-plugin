@@ -19,41 +19,35 @@ package org.codehaus.mojo.gwt.shell;
  * under the License.
  */
 
-
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * 
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  */
-public class ForkedProcessExecutionException
-    extends MojoExecutionException
-{
+public class ForkedProcessExecutionException extends MojoExecutionException {
 
     /**
      * @param message
      */
-    public ForkedProcessExecutionException( String message )
-    {
-        super( message );
+    public ForkedProcessExecutionException(String message) {
+        super(message);
     }
 
     /**
      * @param message
      * @param cause
      */
-    public ForkedProcessExecutionException( String message, Exception cause )
-    {
-        super( message, cause );
+    public ForkedProcessExecutionException(String message, Exception cause) {
+        super(message, cause);
     }
 
     /**
      * @param message
      * @param cause
      */
-    public ForkedProcessExecutionException( String message, Throwable cause )
-    {
-        super( message, cause );
+    public ForkedProcessExecutionException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
@@ -61,9 +55,9 @@ public class ForkedProcessExecutionException
      * @param shortMessage
      * @param longMessage
      */
-    public ForkedProcessExecutionException( Object source, String shortMessage, String longMessage )
-    {
-        super( source, shortMessage, longMessage );
+    public ForkedProcessExecutionException(Object source, String shortMessage,
+            String longMessage) {
+        super(source, shortMessage, longMessage);
     }
 
 }

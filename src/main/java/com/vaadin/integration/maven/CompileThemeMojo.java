@@ -18,7 +18,8 @@ public class CompileThemeMojo extends AbstractThemeMojo {
     public static final String THEME_COMPILE_CLASS = "com.vaadin.sass.SassCompiler";
 
     /**
-     * Create a compressed version of the theme alongside with the uncompressed one or not.
+     * Create a compressed version of the theme alongside with the uncompressed
+     * one or not.
      */
     @Parameter(defaultValue = "false", property = "vaadin.theme.compress")
     private boolean compressTheme;
@@ -33,8 +34,10 @@ public class CompileThemeMojo extends AbstractThemeMojo {
     protected void checkVaadinVersion() throws MojoExecutionException {
         // restrict to Vaadin 7.0 and later, otherwise skip and log
         if (!isVaadin7()) {
-            getLog().error("Theme compilation is only supported for Vaadin 7.0 and later.");
-            throw new MojoExecutionException("The goal compile-theme requires Vaadin 7.0 or later");
+            getLog().error(
+                    "Theme compilation is only supported for Vaadin 7.0 and later.");
+            throw new MojoExecutionException(
+                    "The goal compile-theme requires Vaadin 7.0 or later");
         }
     }
 
@@ -66,7 +69,8 @@ public class CompileThemeMojo extends AbstractThemeMojo {
             getLog().info("Theme \"" + theme + "\" compiled");
         } catch (JavaCommandException e) {
             getLog().error("Compiling theme \"" + theme + "\" failed", e);
-            throw new MojoExecutionException("Compiling theme \"" + theme + "\" failed", e);
+            throw new MojoExecutionException(
+                    "Compiling theme \"" + theme + "\" failed", e);
         }
     }
 

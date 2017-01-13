@@ -44,7 +44,8 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
             }
         } else {
             // ask the user to explicitly indicate the theme to update
-            getLog().info("No themes found. Use the parameter \"vaadin.theme\" to explicitly select a theme.");
+            getLog().info(
+                    "No themes found. Use the parameter \"vaadin.theme\" to explicitly select a theme.");
         }
     }
 
@@ -72,18 +73,22 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
                     try {
                         int majorVersion = Integer.parseInt(versionParts[0]);
                         int minorVersion = Integer.parseInt(versionParts[1]);
-                        if (majorVersion > major || (majorVersion == major && minorVersion >= minor)) {
+                        if (majorVersion > major || (majorVersion == major
+                                && minorVersion >= minor)) {
                             isNewer = true;
                         }
                     } catch (NumberFormatException e) {
-                        getLog().info("Failed to parse vaadin-shared version number "+artifactVersion);
+                        getLog().info(
+                                "Failed to parse vaadin-shared version number "
+                                        + artifactVersion);
                     }
                 }
                 if (!isNewer) {
                     getLog().warn(
                             "Your project declares dependency on vaadin-shared "
                                     + artifactVersion
-                                    + ". This goal requires at least Vaadin version "+major+"."+minor);
+                                    + ". This goal requires at least Vaadin version "
+                                    + major + "." + minor);
                 } else {
                     return true;
                 }
@@ -92,17 +97,22 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
         return false;
     }
 
-    protected abstract void processTheme(String theme) throws MojoExecutionException;
+    protected abstract void processTheme(String theme)
+            throws MojoExecutionException;
 
     /**
      * Configure the classpath for theme update/compilation.
      * 
-     * @param cmd command for which to configure the classpath
-     * @param theme theme path relative to a resource directory 
-     * @return the first suitable theme directory found (to be used as the output directory)
+     * @param cmd
+     *            command for which to configure the classpath
+     * @param theme
+     *            theme path relative to a resource directory
+     * @return the first suitable theme directory found (to be used as the
+     *         output directory)
      * @throws MojoExecutionException
      */
-    protected File configureThemeClasspath(JavaCommand cmd, String theme) throws MojoExecutionException {
+    protected File configureThemeClasspath(JavaCommand cmd, String theme)
+            throws MojoExecutionException {
         File themeDir = null;
         // resource directories with themes first on classpath
         for (Resource res : getProject().getResources()) {
@@ -126,7 +136,8 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
 
         // rest of classpath (elements both from plugin and from project)
         Collection<File> classpath = getClasspath(Artifact.SCOPE_COMPILE);
-        getLog().debug("Additional classpath elements for vaadin theme update/compile:");
+        getLog().debug(
+                "Additional classpath elements for vaadin theme update/compile:");
         for (File artifact : classpath) {
             getLog().debug("  " + artifact.getAbsolutePath());
             cmd.addToClasspath(artifact);
@@ -137,8 +148,8 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
 
     /**
      * Return the available themes in the project source/resources folder. If a
-     * theme has been set by expression, only that theme is returned.
-     * It is possible to specify more themes, comma separated.
+     * theme has been set by expression, only that theme is returned. It is
+     * possible to specify more themes, comma separated.
      *
      * @return the theme names
      */
@@ -147,7 +158,7 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
         if (theme != null) {
             String[] themes = theme.split(",");
             String[] themesPaths = new String[themes.length];
-            for(int i = 0; i < themesPaths.length ; i++) {
+            for (int i = 0; i < themesPaths.length; i++) {
                 themesPaths[i] = "VAADIN/themes/" + themes[i].trim();
             }
             return themesPaths;

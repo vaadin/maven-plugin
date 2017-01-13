@@ -39,8 +39,7 @@ import org.apache.maven.project.MavenProject;
  */
 @Mojo(name = "run-codeserver", requiresDirectInvocation = true, requiresDependencyResolution = ResolutionScope.COMPILE)
 @Execute(phase = LifecyclePhase.PROCESS_CLASSES)
-public class SuperDevModeMojo extends AbstractGwtShellMojo
-{
+public class SuperDevModeMojo extends AbstractGwtShellMojo {
 
     /**
      * Set SuperDevMode's bindAddress.
@@ -57,8 +56,8 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo
     private Integer codeServerPort;
 
     /**
-     * The root of the directory tree where the code server will write compiler output.
-     * If not supplied, a temporary directory will be used.
+     * The root of the directory tree where the code server will write compiler
+     * output. If not supplied, a temporary directory will be used.
      */
     @Parameter
     private File codeServerWorkDir;
@@ -89,7 +88,8 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo
     private String sourceLevel;
 
     /**
-     * Stop compiling if a module has a Java file with a compile error, even if unused.
+     * Stop compiling if a module has a Java file with a compile error, even if
+     * unused.
      * <p>
      * Can be set from command line using '-Dgwt.compiler.strict=true'.
      * 
@@ -115,7 +115,8 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo
     private String jsInteropMode;
 
     /**
-     * EXPERIMENTAL: Emit extra information allow chrome dev tools to display Java identifiers in many places instead of JavaScript functions.
+     * EXPERIMENTAL: Emit extra information allow chrome dev tools to display
+     * Java identifiers in many places instead of JavaScript functions.
      * <p>
      * Value can be one of NONE, ONLY_METHOD_NAME, ABBREVIATED or FULL.
      * 
@@ -125,7 +126,8 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo
     private String methodNameDisplayMode;
 
     /**
-     * An output directory where files for launching Super Dev Mode will be written. (Optional.)
+     * An output directory where files for launching Super Dev Mode will be
+     * written. (Optional.)
      * 
      * @since 2.7.0
      */
@@ -140,85 +142,69 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo
 
     @Override
     public void doExecute()
-        throws MojoExecutionException, MojoFailureException
-    {
+            throws MojoExecutionException, MojoFailureException {
         JavaCommand cmd = createJavaCommand()
-            .setMainClass( "com.google.gwt.dev.codeserver.CodeServer" );
+                .setMainClass("com.google.gwt.dev.codeserver.CodeServer");
 
-        if ( gwtSdkFirstInClasspath )
-        {
-            cmd.addToClasspath( getGwtUserJar() )
-                .addToClasspath( getGwtDevJar() );
+        if (gwtSdkFirstInClasspath) {
+            cmd.addToClasspath(getGwtUserJar()).addToClasspath(getGwtDevJar());
         }
 
-        cmd.addToClasspath( getClasspath( Artifact.SCOPE_COMPILE ) );
-        addCompileSourceArtifacts( cmd );
+        cmd.addToClasspath(getClasspath(Artifact.SCOPE_COMPILE));
+        addCompileSourceArtifacts(cmd);
         addPersistentUnitCache(cmd);
 
-        if ( !gwtSdkFirstInClasspath )
-        {
-            cmd.addToClasspath( getGwtUserJar() )
-                .addToClasspath( getGwtDevJar() );
+        if (!gwtSdkFirstInClasspath) {
+            cmd.addToClasspath(getGwtUserJar()).addToClasspath(getGwtDevJar());
         }
 
-        cmd.arg( "-logLevel", getLogLevel() );
-        cmd.arg( !precompile, "-noprecompile" );
-        cmd.arg( enforceStrictResources, "-XenforceStrictResources" );
-        cmd.arg( "-sourceLevel", sourceLevel );
-        cmd.arg( failOnError, "-failOnError" );
-        cmd.arg( !incremental, "-noincremental" );
+        cmd.arg("-logLevel", getLogLevel());
+        cmd.arg(!precompile, "-noprecompile");
+        cmd.arg(enforceStrictResources, "-XenforceStrictResources");
+        cmd.arg("-sourceLevel", sourceLevel);
+        cmd.arg(failOnError, "-failOnError");
+        cmd.arg(!incremental, "-noincremental");
 
-        if ( jsInteropMode != null && jsInteropMode.length() > 0 && !jsInteropMode.equals( "NONE" ) )
-        {
-            cmd.arg( "-XjsInteropMode", jsInteropMode );
+        if (jsInteropMode != null && jsInteropMode.length() > 0
+                && !jsInteropMode.equals("NONE")) {
+            cmd.arg("-XjsInteropMode", jsInteropMode);
         }
-        if ( methodNameDisplayMode != null && methodNameDisplayMode.length() > 0 && !methodNameDisplayMode.equals( "NONE" ))
-        {
-            cmd.arg( "-XmethodNameDisplayMode", methodNameDisplayMode );
+        if (methodNameDisplayMode != null && methodNameDisplayMode.length() > 0
+                && !methodNameDisplayMode.equals("NONE")) {
+            cmd.arg("-XmethodNameDisplayMode", methodNameDisplayMode);
         }
-        if ( bindAddress != null && bindAddress.length() > 0 )
-        {
-            cmd.arg( "-bindAddress", bindAddress );
+        if (bindAddress != null && bindAddress.length() > 0) {
+            cmd.arg("-bindAddress", bindAddress);
         }
-        if ( codeServerPort != null )
-        {
-            cmd.arg( "-port", String.valueOf( codeServerPort ) );
+        if (codeServerPort != null) {
+            cmd.arg("-port", String.valueOf(codeServerPort));
         }
-        if ( codeServerWorkDir != null )
-        {
+        if (codeServerWorkDir != null) {
             codeServerWorkDir.mkdirs();
-            cmd.arg( "-workDir", codeServerWorkDir.getAbsolutePath() );
+            cmd.arg("-workDir", codeServerWorkDir.getAbsolutePath());
         }
 
-        if ( launcherDir != null )
-        {
-            cmd.arg( "-launcherDir", launcherDir.getAbsolutePath() );
+        if (launcherDir != null) {
+            cmd.arg("-launcherDir", launcherDir.getAbsolutePath());
         }
 
-        for ( String module : getModules() )
-        {
-            cmd.arg( module );
+        for (String module : getModules()) {
+            cmd.arg(module);
         }
 
-        try
-        {
+        try {
             cmd.execute();
-        }
-        catch ( JavaCommandException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
+        } catch (JavaCommandException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         }
     }
 
-    public void setExecutedProject( MavenProject executedProject )
-    {
+    public void setExecutedProject(MavenProject executedProject) {
         this.executedProject = executedProject;
     }
 
     @Override
-    public MavenProject getProject()
-    {
+    public MavenProject getProject() {
         return executedProject;
     }
 }
-

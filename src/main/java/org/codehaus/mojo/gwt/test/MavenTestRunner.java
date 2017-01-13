@@ -45,9 +45,7 @@ import org.apache.maven.surefire.report.XMLReporter;
  * @author ndeloof
  * @version $Id$
  */
-public class MavenTestRunner
-    extends TestRunner
-{
+public class MavenTestRunner extends TestRunner {
     /** reporter to gather errors */
     private ReporterManager reportManager;
 
@@ -55,23 +53,18 @@ public class MavenTestRunner
     private boolean testHadFailed;
 
     /** entry point for runner in a dedicated JVM */
-    public static void main( String args[] )
-    {
-        try
-        {
+    public static void main(String args[]) {
+        try {
             MavenTestRunner runner = new MavenTestRunner();
-            TestResult r = runner.start( args );
-            if ( !r.wasSuccessful() )
-            {
-                System.exit( FAILURE_EXIT );
+            TestResult r = runner.start(args);
+            if (!r.wasSuccessful()) {
+                System.exit(FAILURE_EXIT);
             }
-            System.exit( SUCCESS_EXIT );
-        }
-        catch ( Throwable t )
-        {
+            System.exit(SUCCESS_EXIT);
+        } catch (Throwable t) {
             t.printStackTrace();
-            System.err.println( t.getMessage() );
-            System.exit( EXCEPTION_EXIT );
+            System.err.println(t.getMessage());
+            System.exit(EXCEPTION_EXIT);
         }
     }
 
@@ -81,10 +74,9 @@ public class MavenTestRunner
      * @see junit.textui.TestRunner#createTestResult()
      */
     @Override
-    protected TestResult createTestResult()
-    {
+    protected TestResult createTestResult() {
         TestResult result = super.createTestResult();
-        result.addListener( this );
+        result.addListener(this);
         return result;
     }
 
@@ -94,26 +86,22 @@ public class MavenTestRunner
      * @see junit.textui.TestRunner#doRun(junit.framework.Test, boolean)
      */
     @Override
-    public TestResult doRun( Test suite, boolean wait )
-    {
-        try
-        {
-            reportManager.runStarting( suite.countTestCases() );
-            ReportEntry report = new ReportEntry( this.getClass().getName(), suite.toString(), "starting" );
-            reportManager.testSetStarting( report );
+    public TestResult doRun(Test suite, boolean wait) {
+        try {
+            reportManager.runStarting(suite.countTestCases());
+            ReportEntry report = new ReportEntry(this.getClass().getName(),
+                    suite.toString(), "starting");
+            reportManager.testSetStarting(report);
             TestResult result = createTestResult();
-            suite.run( result );
+            suite.run(result);
             return result;
-        }
-        catch ( ReporterException e )
-        {
-            System.err.println( "Failed to log in test report " + e );
+        } catch (ReporterException e) {
+            System.err.println("Failed to log in test report " + e);
             return null;
-        }
-        finally
-        {
-            ReportEntry report = new ReportEntry( this.getClass().getName(), suite.toString(), "ended" );
-            reportManager.testSetCompleted( report );
+        } finally {
+            ReportEntry report = new ReportEntry(this.getClass().getName(),
+                    suite.toString(), "ended");
+            reportManager.testSetCompleted(report);
             reportManager.runCompleted();
         }
     }
@@ -121,84 +109,89 @@ public class MavenTestRunner
     /**
      *
      */
-    public MavenTestRunner()
-    {
-        String dir = System.getProperty( "surefire.reports" );
+    public MavenTestRunner() {
+        String dir = System.getProperty("surefire.reports");
         List<Reporter> reports = new ArrayList<Reporter>();
-        reports.add( new XMLReporter( new File( dir ), false ) );
-        reports.add( new FileReporter( new File( dir ), false ) );
-        reports.add( new BriefConsoleReporter( true ) );
-        reportManager = new ReporterManager( reports );
+        reports.add(new XMLReporter(new File(dir), false));
+        reports.add(new FileReporter(new File(dir), false));
+        reports.add(new BriefConsoleReporter(true));
+        reportManager = new ReporterManager(reports);
     }
 
     /**
      * A test started.
-     * @param test the test
+     * 
+     * @param test
+     *            the test
      */
-    public void startTest( Test test )
-    {
+    public void startTest(Test test) {
         testHadFailed = false;
-        ReportEntry report = new ReportEntry( test.getClass().getName(), test.toString(), test.getClass().getName() );
-        reportManager.testStarting( report );
+        ReportEntry report = new ReportEntry(test.getClass().getName(),
+                test.toString(), test.getClass().getName());
+        reportManager.testStarting(report);
     }
 
     /**
      * A test ended.
-     * @param test the test
+     * 
+     * @param test
+     *            the test
      */
-    public void endTest( Test test )
-    {
-        if ( !testHadFailed )
-        {
-            ReportEntry report =
-                new ReportEntry( test.getClass().getName(), test.toString(), test.getClass().getName() );
-            reportManager.testSucceeded( report );
+    public void endTest(Test test) {
+        if (!testHadFailed) {
+            ReportEntry report = new ReportEntry(test.getClass().getName(),
+                    test.toString(), test.getClass().getName());
+            reportManager.testSucceeded(report);
         }
     }
 
     /**
      * An error occurred.
-     * @param test the test
-     * @param t the error
+     * 
+     * @param test
+     *            the test
+     * @param t
+     *            the error
      */
-    public void addError( Test test, Throwable t )
-    {
+    public void addError(Test test, Throwable t) {
         String desc = test.toString();
-        ReportEntry report =
-            new ReportEntry( test.getClass().getName(), desc, desc, getStackTraceWriter( test, t ) );
+        ReportEntry report = new ReportEntry(test.getClass().getName(), desc,
+                desc, getStackTraceWriter(test, t));
 
-        reportManager.testError( report );
+        reportManager.testError(report);
         testHadFailed = true;
     }
 
     /**
      * A failure occurred.
-     * @param test the test
-     * @param t the failure
+     * 
+     * @param test
+     *            the test
+     * @param t
+     *            the failure
      */
-    public void addFailure( Test test, AssertionFailedError t )
-    {
+    public void addFailure(Test test, AssertionFailedError t) {
         String desc = test.toString();
-        ReportEntry report =
-            new ReportEntry( test.getClass().getName(), desc, desc, getStackTraceWriter( test, t ) );
+        ReportEntry report = new ReportEntry(test.getClass().getName(), desc,
+                desc, getStackTraceWriter(test, t));
 
-        reportManager.testFailed( report );
+        reportManager.testFailed(report);
         testHadFailed = true;
     }
 
     /**
-     * @param test the test
-     * @param t a throwable
+     * @param test
+     *            the test
+     * @param t
+     *            a throwable
      * @return a StackTraceWriter to trace the error
      */
-    private StackTraceWriter getStackTraceWriter( Test test, Throwable t )
-    {
+    private StackTraceWriter getStackTraceWriter(Test test, Throwable t) {
         String name = test.getClass().getName();
         String testName = "UNKNOWN";
-        if ( test instanceof TestSuite )
-        {
-            testName = ( (TestSuite) test ).getName();
+        if (test instanceof TestSuite) {
+            testName = ((TestSuite) test).getName();
         }
-        return new PojoStackTraceWriter( name, testName, t );
+        return new PojoStackTraceWriter(name, testName, t);
     }
 }

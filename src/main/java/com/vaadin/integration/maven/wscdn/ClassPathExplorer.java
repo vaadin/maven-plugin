@@ -70,7 +70,6 @@ public class ClassPathExplorer {
     public static final String VAADIN_ADDON_TITLE = "Implementation-Title";
     public static final String LINE = "----------------------------------------------------------------------------------------------------------------------";
 
-
     // License types
     public static final String VAADIN_AGPL = "agpl";
     public static final String VAADIN_CVAL = "cval";
@@ -102,7 +101,8 @@ public class ClassPathExplorer {
 
         private final Map<String, URL> addonStyles;
 
-        public LocationInfo(Map<String, URL> widgetsets, Map<String, URL> themes) {
+        public LocationInfo(Map<String, URL> widgetsets,
+                Map<String, URL> themes) {
             this.widgetsets = widgetsets;
             addonStyles = themes;
         }
@@ -132,9 +132,10 @@ public class ClassPathExplorer {
      * @return map from widgetset classname to widgetset location URL
      */
     public static Map<String, URL> getAvailableWidgetSets(
-            Map<String, URL> classpathLocations) throws CvalChecker.InvalidCvalException {
-        return getAvailableWidgetSetsAndStylesheets(classpathLocations).
-                getWidgetsets();
+            Map<String, URL> classpathLocations)
+            throws CvalChecker.InvalidCvalException {
+        return getAvailableWidgetSetsAndStylesheets(classpathLocations)
+                .getWidgetsets();
     }
 
     /**
@@ -145,7 +146,8 @@ public class ClassPathExplorer {
      * @return
      */
     public static LocationInfo getAvailableWidgetSetsAndStylesheets(
-            Map<String, URL> classpathLocations) throws CvalChecker.InvalidCvalException {
+            Map<String, URL> classpathLocations)
+            throws CvalChecker.InvalidCvalException {
         long start = System.currentTimeMillis();
         Map<String, URL> widgetsets = new HashMap<String, URL>();
         Map<String, URL> themes = new HashMap<String, URL>();
@@ -181,21 +183,23 @@ public class ClassPathExplorer {
      * If the location is a JAR file, the comma-separated values of the
      * "Vaadin-Widgetsets" attribute in its manifest are added to widgetsets.
      *
-     * @param locationString an entry in {@link #classpathLocations}
-     * @param widgetsets a map from widgetset name (including package, with dots
-     * as separators) to a URL (see {@link #classpathLocations}) - new entries
-     * are added to this map
+     * @param locationString
+     *            an entry in {@link #classpathLocations}
+     * @param widgetsets
+     *            a map from widgetset name (including package, with dots as
+     *            separators) to a URL (see {@link #classpathLocations}) - new
+     *            entries are added to this map
      */
-    private static void searchForWidgetSetsAndAddonStyles(
-            String locationString, Map<String, URL> inClasspathLocations,
-            Map<String, URL> widgetsets,
-            Map<String, URL> addonStyles) throws CvalChecker.InvalidCvalException {
+    private static void searchForWidgetSetsAndAddonStyles(String locationString,
+            Map<String, URL> inClasspathLocations, Map<String, URL> widgetsets,
+            Map<String, URL> addonStyles)
+            throws CvalChecker.InvalidCvalException {
 
         URL location = inClasspathLocations.get(locationString);
         File directory = new File(location.getFile());
 
-        if (directory.exists() && directory.isDirectory() && !directory.
-                isHidden()) {
+        if (directory.exists() && directory.isDirectory()
+                && !directory.isHidden()) {
             // Get the list of the files contained in the directory
             String[] files = directory.list();
             if (files != null) {
@@ -206,8 +210,8 @@ public class ClassPathExplorer {
                     }
                     // remove the .gwt.xml extension
                     String classname = file.substring(0, file.length() - 8);
-                    String packageName = locationString.substring(locationString
-                            .lastIndexOf("/") + 1);
+                    String packageName = locationString
+                            .substring(locationString.lastIndexOf("/") + 1);
                     classname = packageName + "." + classname;
                     if (!isWidgetset(classname)) {
                         // Only return widgetsets and not GWT modules to avoid
@@ -216,8 +220,8 @@ public class ClassPathExplorer {
                     }
                     if (!widgetsets.containsKey(classname)) {
                         String packagePath = packageName.replaceAll("\\.", "/");
-                        String basePath = location.getFile().replaceAll(
-                                "/" + packagePath + "$", "");
+                        String basePath = location.getFile()
+                                .replaceAll("/" + packagePath + "$", "");
                         try {
                             URL url = new URL(location.getProtocol(),
                                     location.getHost(), location.getPort(),
@@ -226,7 +230,8 @@ public class ClassPathExplorer {
                         } catch (MalformedURLException e) {
                             // should never happen as based on an existing URL,
                             // only changing end of file name/path part
-                            error("Error locating the widgetset " + classname, e);
+                            error("Error locating the widgetset " + classname,
+                                    e);
                         }
                     }
                 }
@@ -238,7 +243,8 @@ public class ClassPathExplorer {
                 // and files in jar
 
                 URLConnection openConnection = location.openConnection();
-                if (openConnection instanceof JarURLConnection || openConnection instanceof FileURLConnection) {
+                if (openConnection instanceof JarURLConnection
+                        || openConnection instanceof FileURLConnection) {
 
                     JarFile jarFile;
                     if (openConnection instanceof JarURLConnection) {
@@ -255,8 +261,8 @@ public class ClassPathExplorer {
                     }
 
                     // Check for widgetset attribute
-                    String value = manifest.getMainAttributes().getValue(
-                            "Vaadin-Widgetsets");
+                    String value = manifest.getMainAttributes()
+                            .getValue("Vaadin-Widgetsets");
                     if (value != null) {
                         String[] widgetsetNames = value.split(",");
                         for (int i = 0; i < widgetsetNames.length; i++) {
@@ -269,10 +275,13 @@ public class ClassPathExplorer {
                         Attributes attribs = manifest.getMainAttributes();
                         String license = attribs.getValue(VAADIN_ADDON_LICENSE);
                         String name = attribs.getValue(VAADIN_ADDON_NAME);
-                        String vers = attribs.getValue(VAADIN_ADDON_VERSION) == null ? ""
-                                : attribs.getValue(VAADIN_ADDON_VERSION);
-                        String title = attribs.getValue(VAADIN_ADDON_TITLE) == null ? name
-                                : attribs.getValue(VAADIN_ADDON_TITLE);
+                        String vers = attribs
+                                .getValue(VAADIN_ADDON_VERSION) == null ? ""
+                                        : attribs
+                                                .getValue(VAADIN_ADDON_VERSION);
+                        String title = attribs
+                                .getValue(VAADIN_ADDON_TITLE) == null ? name
+                                        : attribs.getValue(VAADIN_ADDON_TITLE);
 
                         String awidgetsets = attribs
                                 .getValue(VAADIN_ADDON_WIDGETSET) == null ? name
@@ -288,8 +297,7 @@ public class ClassPathExplorer {
 
                                 try {
                                     info = cvalChecker.validateProduct(name,
-                                            vers,
-                                            title);
+                                            vers, title);
                                     printValidLicense(info, title, vers);
                                 } catch (UnreachableCvalServerException e) {
                                     info = new CvalInfo();
@@ -298,19 +306,19 @@ public class ClassPathExplorer {
                                     info.setProduct(product);
                                     printServerUnreachable(title, vers);
                                 }
-//                                for (String w : awidgetsets.split("[, ]+")) {
-//                                    ret.add(new CValUiInfo(title, String
-//                                            .valueOf(computeMajorVersion(vers)),
-//                                            w,
-//                                            info.getType()));
-//                                }
+                                // for (String w : awidgetsets.split("[, ]+")) {
+                                // ret.add(new CValUiInfo(title, String
+                                // .valueOf(computeMajorVersion(vers)),
+                                // w,
+                                // info.getType()));
+                                // }
                             }
                         }
                     }
 
                     // Check for theme attribute
-                    value = manifest.getMainAttributes().getValue(
-                            "Vaadin-Stylesheets");
+                    value = manifest.getMainAttributes()
+                            .getValue("Vaadin-Stylesheets");
                     if (value != null) {
                         String[] stylesheets = value.split(",");
                         for (int i = 0; i < stylesheets.length; i++) {
@@ -368,8 +376,9 @@ public class ClassPathExplorer {
      *
      * See {@link #classpathLocations} for information on output format.
      *
-     * @param classpathEntries raw class path entries as split from the Java
-     * class path string
+     * @param classpathEntries
+     *            raw class path entries as split from the Java class path
+     *            string
      * @return map of classpath locations, see {@link #classpathLocations}
      */
     private static Map<String, URL> getClasspathLocations(
@@ -400,10 +409,10 @@ public class ClassPathExplorer {
      * Also other non-JAR entries may be accepted, the caller should be prepared
      * to handle them.
      *
-     * @param classpathEntry class path entry string as given in the Java class
-     * path
+     * @param classpathEntry
+     *            class path entry string as given in the Java class path
      * @return true if the entry should be considered when looking for widgets
-     * or widgetsets
+     *         or widgetsets
      */
     private static boolean acceptClassPathEntry(String classpathEntry) {
         if (!classpathEntry.endsWith(".jar")) {
@@ -430,10 +439,12 @@ public class ClassPathExplorer {
                     if (manifest != null) {
                         Attributes mainAttributes = manifest
                                 .getMainAttributes();
-                        if (mainAttributes.getValue("Vaadin-Widgetsets") != null) {
+                        if (mainAttributes
+                                .getValue("Vaadin-Widgetsets") != null) {
                             return true;
                         }
-                        if (mainAttributes.getValue("Vaadin-Stylesheets") != null) {
+                        if (mainAttributes
+                                .getValue("Vaadin-Stylesheets") != null) {
                             return true;
                         }
                     }
@@ -486,12 +497,12 @@ public class ClassPathExplorer {
         for (File dir : dirs) {
             try {
                 // add the present directory
-                if (!dir.isHidden() && !dir.getPath().contains(
-                        File.separator + ".")) {
-                    String key = dir.getCanonicalPath() + "/" + name + dir.
-                            getName();
-                    locations.put(key, new URL("file://" + dir.
-                            getCanonicalPath()));
+                if (!dir.isHidden()
+                        && !dir.getPath().contains(File.separator + ".")) {
+                    String key = dir.getCanonicalPath() + "/" + name
+                            + dir.getName();
+                    locations.put(key,
+                            new URL("file://" + dir.getCanonicalPath()));
                 }
             } catch (Exception ioe) {
                 return;
@@ -601,24 +612,22 @@ public class ClassPathExplorer {
     }
 
     static private void printServerUnreachable(String name, String version) {
-        System.out.println(LINE
-                + "\n"
-                + getErrorMessage("unreachable", name,
-                        computeMajorVersion(version)) + "\n" + LINE);
+        System.out.println(LINE + "\n" + getErrorMessage("unreachable", name,
+                computeMajorVersion(version)) + "\n" + LINE);
     }
 
     static final int computeMajorVersion(String productVersion) {
         return productVersion == null || productVersion.isEmpty() ? 0
-                : Integer.parseInt(productVersion.replaceFirst("[^\\d]+.*$", ""));
+                : Integer.parseInt(
+                        productVersion.replaceFirst("[^\\d]+.*$", ""));
     }
-    
-        static String getErrorMessage(String key, Object... pars) {
+
+    static String getErrorMessage(String key, Object... pars) {
         Locale loc = Locale.getDefault();
-        ResourceBundle res = ResourceBundle.getBundle(
-                CvalChecker.class.getName(), loc);
+        ResourceBundle res = ResourceBundle
+                .getBundle(CvalChecker.class.getName(), loc);
         String msg = res.getString(key);
         return new MessageFormat(msg, loc).format(pars);
     }
-
 
 }

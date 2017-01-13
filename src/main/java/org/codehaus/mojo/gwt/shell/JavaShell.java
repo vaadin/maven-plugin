@@ -19,7 +19,6 @@ package org.codehaus.mojo.gwt.shell;
  * under the License.
  */
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,29 +30,24 @@ import org.codehaus.plexus.util.cli.shell.Shell;
  *
  * @see PLXUTILS-107
  */
-public class JavaShell
-    extends Shell
-{
-    protected List<String> getRawCommandLine( String executable, String[] arguments )
-    {
+public class JavaShell extends Shell {
+    protected List<String> getRawCommandLine(String executable,
+            String[] arguments) {
         List<String> commandLine = new ArrayList<String>();
-        if ( executable != null )
-        {
-            commandLine.add( executable );
+        if (executable != null) {
+            commandLine.add(executable);
         }
-        for ( String arg : arguments )
-        {
-            if ( isQuotedArgumentsEnabled() )
-            {
-                char[] escapeChars = getEscapeChars( isSingleQuotedExecutableEscaped(),
-                                                     isDoubleQuotedExecutableEscaped() );
+        for (String arg : arguments) {
+            if (isQuotedArgumentsEnabled()) {
+                char[] escapeChars = getEscapeChars(
+                        isSingleQuotedExecutableEscaped(),
+                        isDoubleQuotedExecutableEscaped());
 
-                commandLine.add( StringUtils.quoteAndEscape( arg, getArgumentQuoteDelimiter(), escapeChars,
-                                                             getQuotingTriggerChars(), '\\', false ) );
-            }
-            else
-            {
-                commandLine.add( arg );
+                commandLine.add(StringUtils.quoteAndEscape(arg,
+                        getArgumentQuoteDelimiter(), escapeChars,
+                        getQuotingTriggerChars(), '\\', false));
+            } else {
+                commandLine.add(arg);
             }
         }
         return commandLine;
