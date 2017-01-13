@@ -24,7 +24,7 @@ package org.codehaus.mojo.gwt.shell;
  */
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -708,7 +708,8 @@ public class CompileMojo
         try {
             if (lastWidgetset.exists()
                     && FileUtils.readFileToString(lastWidgetset)
-                    .equals(wsReq.toWidgetsetString())) {
+                            .equals(wsReq.toWidgetsetString())
+                    && directoryContainsWidgetSet(getOutputDirectory())) {
                 getLog().info("No changes in widgetset: "
                         + wsReq.toWidgetsetString());
                 return;
@@ -727,6 +728,39 @@ public class CompileMojo
         } catch (IOException e) {
             // failed to cache last used widgetset, so will re-download next time
         }
+    }
+
+    /**
+     * Checks if the given directory contains a widget set.
+     * <p>
+     * Assumes a widget set is always named "xyz/xyz.nocache.js"
+     *
+     * @param directory
+     *            the directory to check
+     * @return <code>true</code> if the directory contains a widget set,
+     *         <code>false</code> otherwise
+     */
+    private boolean directoryContainsWidgetSet(File directory) {
+        if (!directory.exists() || !directory.isDirectory()) {
+            return false;
+        }
+
+        for (File contents : directory.listFiles()) {
+            if (contents.isDirectory()) {
+                String wsName = contents.getName() + ".nocache.js";
+                String[] wsFiles = contents.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.equals(wsName);
+                    }
+                });
+                if (wsFiles != null && wsFiles.length != 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void downloadWidgetset(WidgetSetRequest wsReq, int retryCount) throws MojoFailureException {
