@@ -23,17 +23,13 @@ package org.codehaus.mojo.gwt.shell;
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  * @since 2.1.0-1
  */
-public class JavaCommandException
-    extends Exception
-{
+public class JavaCommandException extends Exception {
 
-    public JavaCommandException( String message )
-    {
-        super( message );
+    public JavaCommandException(String message) {
+        super(message);
     }
 
-    public JavaCommandException( String message, Throwable t )
-    {
-        super( message, t );
+    public JavaCommandException(String message, Throwable t) {
+        super(message, t);
     }
 }

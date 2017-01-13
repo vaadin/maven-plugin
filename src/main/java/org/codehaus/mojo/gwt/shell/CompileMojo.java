@@ -49,8 +49,7 @@ import com.vaadin.wscdn.client.Connection;
 import com.vaadin.wscdn.client.WidgetSetRequest;
 
 /**
- * Invokes the GWT Compiler for the project source.
- * See compiler options :
+ * Invokes the GWT Compiler for the project source. See compiler options :
  * http://www.gwtproject.org/doc/latest/DevGuideCompilingAndDebugging.html#DevGuideCompilerOptions
  *
  * @version $Id$
@@ -60,9 +59,7 @@ import com.vaadin.wscdn.client.WidgetSetRequest;
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  */
 @Mojo(name = "compile", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
-public class CompileMojo
-    extends AbstractGwtShellMojo
-{
+public class CompileMojo extends AbstractGwtShellMojo {
 
     private static final String DEVELOPER_LICENSE_SUFFIX = ".developer.license";
 
@@ -78,8 +75,8 @@ public class CompileMojo
     private boolean force;
 
     /**
-     * On GWT 1.6+, number of parallel processes used to compile GWT premutations. Defaults to
-     * platform available processors number.
+     * On GWT 1.6+, number of parallel processes used to compile GWT
+     * premutations. Defaults to platform available processors number.
      * 
      * <p>
      * Can be unset from command line using '-Dgwt.compiler.localWorkers=n'.
@@ -89,7 +86,8 @@ public class CompileMojo
     private int localWorkers;
 
     /**
-     * Whether or not to enable assertions in generated scripts (-checkAssertions).
+     * Whether or not to enable assertions in generated scripts
+     * (-checkAssertions).
      */
     @Parameter(alias = "enableAssertions", defaultValue = "false")
     private boolean checkAssertions;
@@ -136,7 +134,8 @@ public class CompileMojo
      * Can be set from command line using '-Dgwt.draftCompile=true'.
      * </p>
      * <p>
-     * This is equivalent to '-Dgwt.compiler.optimizationLevel=0 -Dgwt.compiler.disableAggressiveOptimization=true'.
+     * This is equivalent to '-Dgwt.compiler.optimizationLevel=0
+     * -Dgwt.compiler.disableAggressiveOptimization=true'.
      * </p>
      */
     @Parameter(defaultValue = "false", property = "gwt.draftCompile")
@@ -149,7 +148,8 @@ public class CompileMojo
     private File extra;
 
     /**
-     * The compiler's working directory for internal use (must be writeable; defaults to a system temp dir)
+     * The compiler's working directory for internal use (must be writeable;
+     * defaults to a system temp dir)
      */
     @Parameter
     private File workDir;
@@ -176,20 +176,22 @@ public class CompileMojo
     private boolean compileReport;
 
     /**
-     * Sets the optimization level used by the compiler.  0=none 9=maximum.
+     * Sets the optimization level used by the compiler. 0=none 9=maximum.
      * <p>
      * -1 uses the default level of the compiler.
      * </p>
      * <p>
      * Can be set from command line using '-Dgwt.compiler.optimizationLevel=n'.
      * </p>
+     * 
      * @since 2.1.0-1
      */
     @Parameter(defaultValue = "-1", property = "gwt.compiler.optimizationLevel")
     private int optimizationLevel;
 
     /**
-     * EXPERIMENTAL: Emit extra, detailed compile-report information in the "Story Of Your Compile" at the expense of compile time.
+     * EXPERIMENTAL: Emit extra, detailed compile-report information in the
+     * "Story Of Your Compile" at the expense of compile time.
      * <p>
      * Can be set from command line using '-Dgwt.compiler.soycDetailed=true'.
      * </p>
@@ -212,9 +214,11 @@ public class CompileMojo
     private boolean failOnError;
 
     /**
-     * EXPERIMENTAL: Compile output Javascript with the Closure compiler for even further optimizations.
+     * EXPERIMENTAL: Compile output Javascript with the Closure compiler for
+     * even further optimizations.
      * <p>
-     * Can be set from the command line using '-Dgwt.compiler.enableClosureCompiler=true'
+     * Can be set from the command line using
+     * '-Dgwt.compiler.enableClosureCompiler=true'
      * </p>
      *
      * @since 2.5.0-rc1
@@ -223,9 +227,11 @@ public class CompileMojo
     private boolean closureCompiler;
 
     /**
-     * EXPERIMENTAL: add -XdisableAggressiveOptimization parameter to the compiler command line
+     * EXPERIMENTAL: add -XdisableAggressiveOptimization parameter to the
+     * compiler command line
      * <p>
-     * Can be set from the command line using '-Dgwt.compiler.disableAggressiveOptimization=true'
+     * Can be set from the command line using
+     * '-Dgwt.compiler.disableAggressiveOptimization=true'
      * </p>
      *
      * @since 2.5.0-rc1
@@ -238,7 +244,8 @@ public class CompileMojo
     /**
      * EXPERIMENTAL: Gather compiler metrics.
      * <p>
-     * Can be set from the command line using '-Dgwt.compiler.compilerMetrics=true'
+     * Can be set from the command line using
+     * '-Dgwt.compiler.compilerMetrics=true'
      * </p>
      *
      * @since 2.5.0-rc1
@@ -247,7 +254,8 @@ public class CompileMojo
     private boolean compilerMetrics;
 
     /**
-     * EXPERIMENTAL: Limits of number of fragments using a code splitter that merges split points.
+     * EXPERIMENTAL: Limits of number of fragments using a code splitter that
+     * merges split points.
      * <p>
      * Can be set from the command line using '-Dgwt.compiler.fragmentCount=n'
      * </p>
@@ -258,7 +266,8 @@ public class CompileMojo
     private int fragmentCount;
 
     /**
-     * EXPERIMENTAL: Cluster similar functions in the output to improve compression.
+     * EXPERIMENTAL: Cluster similar functions in the output to improve
+     * compression.
      *
      * @since 2.6.0-rc1
      */
@@ -266,8 +275,8 @@ public class CompileMojo
     private boolean clusterFunctions;
 
     /**
-     * EXPERIMENTAL: Avoid adding implicit dependencies on "client" and "public" for
-     * modules that don't define any dependencies.
+     * EXPERIMENTAL: Avoid adding implicit dependencies on "client" and "public"
+     * for modules that don't define any dependencies.
      *
      * @since 2.6.0-rc1
      */
@@ -275,8 +284,8 @@ public class CompileMojo
     private boolean enforceStrictResources;
 
     /**
-     * EXPERIMENTAL: Inline literal parameters to shrink function declarations and
-     * provide more deadcode elimination possibilities.
+     * EXPERIMENTAL: Inline literal parameters to shrink function declarations
+     * and provide more deadcode elimination possibilities.
      *
      * @since 2.6.0-rc1
      */
@@ -302,7 +311,8 @@ public class CompileMojo
     /**
      * EXPERIMENTAL: Removing duplicate functions.
      * <p>
-     * Will interfere with stacktrace deobfuscation and so is only honored when compiler.stackMode is set to strip.
+     * Will interfere with stacktrace deobfuscation and so is only honored when
+     * compiler.stackMode is set to strip.
      *
      * @since 2.6.0-rc1
      */
@@ -336,9 +346,9 @@ public class CompileMojo
     private String sourceLevel;
 
     /**
-     * Whether to show warnings during monolithic compiles for issues that will break
-     * in incremental compiles (strict compile errors, strict source directory inclusion,
-     * missing dependencies).
+     * Whether to show warnings during monolithic compiles for issues that will
+     * break in incremental compiles (strict compile errors, strict source
+     * directory inclusion, missing dependencies).
      * 
      * @since 2.7.0-rc1
      */
@@ -354,7 +364,8 @@ public class CompileMojo
     private String jsInteropMode;
 
     /**
-     * Specifies a file into which detailed missing dependency information will be written.
+     * Specifies a file into which detailed missing dependency information will
+     * be written.
      * 
      * @since 2.7.0-rc1
      */
@@ -374,7 +385,8 @@ public class CompileMojo
     private String namespace;
 
     /**
-     * Whether to show warnings during monolithic compiles for overlapping source inclusion.
+     * Whether to show warnings during monolithic compiles for overlapping
+     * source inclusion.
      * 
      * @since 2.7.0-rc1
      */
@@ -382,7 +394,8 @@ public class CompileMojo
     private boolean overlappingSourceWarnings;
 
     /**
-     * EXPERIMENTAL: Emit detailed compile-report information in the "Story Of Your Compile"  in the new json format.
+     * EXPERIMENTAL: Emit detailed compile-report information in the "Story Of
+     * Your Compile" in the new json format.
      * 
      * @since 2.7.0-rc1
      */
@@ -398,7 +411,8 @@ public class CompileMojo
     private boolean incremental;
 
     /**
-     * EXPERIMENTAL: Emit extra information allow chrome dev tools to display Java identifiers in many places instead of JavaScript functions.
+     * EXPERIMENTAL: Emit extra information allow chrome dev tools to display
+     * Java identifiers in many places instead of JavaScript functions.
      * <p>
      * Value can be one of NONE, ONLY_METHOD_NAME, ABBREVIATED or FULL.
      * 
@@ -413,59 +427,53 @@ public class CompileMojo
     @Parameter(defaultValue = "${project.build.directory}/wscdn-widgetset")
     private File lastWidgetset;
 
-
     @Override
-    public void doExecute( )
-        throws MojoExecutionException, MojoFailureException
-    {
-        if ( skip || "pom".equals( getProject().getPackaging() ) || "cdn".equals(widgetsetMode) )
-        {
-            getLog().info( "GWT compilation is skipped" );
+    public void doExecute()
+            throws MojoExecutionException, MojoFailureException {
+        if (skip || "pom".equals(getProject().getPackaging())
+                || "cdn".equals(widgetsetMode)) {
+            getLog().info("GWT compilation is skipped");
             return;
         }
 
-        if ( !getOutputDirectory().exists() )
-        {
+        if (!getOutputDirectory().exists()) {
             getOutputDirectory().mkdirs();
         }
 
         if ("fetch".equals(widgetsetMode)) {
             fetchWidgetset();
         } else {
-            compile( getModules() );
+            compile(getModules());
         }
     }
 
     @Override
-    protected String getExtraJvmArgs()
-    {
+    protected String getExtraJvmArgs() {
         String jvmArgs = super.getExtraJvmArgs();
         // workaround to GWT issue 4031 with IBM JDK
-        // @see https://code.google.com/p/google-web-toolkit/issues/detail?id=4031#c16
-        if ( System.getProperty( "java.vendor" ).startsWith( "IBM" ) && StringUtils.isEmpty(getJvm()) && !StringUtils.isEmpty( jvmArgs ))
-        {
-            return jvmArgs + " -Dgwt.jjs.javaArgs=" + StringUtils.quoteAndEscape( jvmArgs, '"', new char[] { '"', ' ', '\t', '\r', '\n' } );
+        // @see
+        // https://code.google.com/p/google-web-toolkit/issues/detail?id=4031#c16
+        if (System.getProperty("java.vendor").startsWith("IBM")
+                && StringUtils.isEmpty(getJvm())
+                && !StringUtils.isEmpty(jvmArgs)) {
+            return jvmArgs + " -Dgwt.jjs.javaArgs="
+                    + StringUtils.quoteAndEscape(jvmArgs, '"',
+                            new char[] { '"', ' ', '\t', '\r', '\n' });
         }
         return jvmArgs;
     }
 
-    private void compile( String[] modules )
-        throws MojoExecutionException
-    {
+    private void compile(String[] modules) throws MojoExecutionException {
         boolean upToDate = true;
 
         JavaCommand cmd = createJavaCommand()
-            .setMainClass( "com.google.gwt.dev.Compiler" );
-        if ( gwtSdkFirstInClasspath )
-        {
-            cmd.addToClasspath( getGwtUserJar() )
-               .addToClasspath( getGwtDevJar() );
+                .setMainClass("com.google.gwt.dev.Compiler");
+        if (gwtSdkFirstInClasspath) {
+            cmd.addToClasspath(getGwtUserJar()).addToClasspath(getGwtDevJar());
         }
-        cmd.addToClasspath( getClasspath( Artifact.SCOPE_COMPILE ) );
-        if ( !gwtSdkFirstInClasspath )
-        {
-            cmd.addToClasspath( getGwtUserJar() )
-               .addToClasspath( getGwtDevJar() );
+        cmd.addToClasspath(getClasspath(Artifact.SCOPE_COMPILE));
+        if (!gwtSdkFirstInClasspath) {
+            cmd.addToClasspath(getGwtUserJar()).addToClasspath(getGwtDevJar());
         }
 
         // add license args from Maven
@@ -477,238 +485,229 @@ public class CompileMojo
             }
         }
 
-        cmd.arg( "-logLevel", getLogLevel() )
-            .arg( "-style", getStyle() )
-            .arg( "-war", getOutputDirectory().getAbsolutePath() )
-            .arg( "-localWorkers", String.valueOf( getLocalWorkers() ) )
-            // optional advanced arguments
-            .arg( checkAssertions, "-checkAssertions" )
-            .arg( draftCompile, "-draftCompile" )
-            .arg( validateOnly, "-validateOnly" )
-            .arg( disableClassMetadata, "-XnoclassMetadata" )
-            .arg( disableCastChecking, "-XnocheckCasts" )
-            .arg( disableRunAsync, "-XnocodeSplitting" )
-            .arg( failOnError, "-failOnError" )
-            .arg( detailedSoyc, "-XdetailedSoyc" )
-            .arg( closureCompiler, "-XclosureCompiler" )
-            .arg( compileReport, "-compileReport" )
-            .arg( compilerMetrics, "-XcompilerMetrics" )
-            .arg( disableAggressiveOptimization, "-XnoaggressiveOptimizations" )
-            .arg( "-XfragmentCount", String.valueOf( fragmentCount ) )
-            .arg( !clusterFunctions, "-XnoclusterFunctions" )
-            .arg( enforceStrictResources, "-XenforceStrictResources" )
-            .arg( !inlineLiteralParameters, "-XnoinlineLiteralParameters" )
-            .arg( !optimizeDataflow, "-XnooptimizeDataflow" )
-            .arg( !ordinalizeEnums, "-XnoordinalizeEnums" )
-            .arg( !removeDuplicateFunctions, "-XnoremoveDuplicateFunctions" )
-            .arg( saveSource, "-saveSource" )
-            .arg( "-sourceLevel", sourceLevel )
-            .arg( incrementalCompileWarnings, "-incrementalCompileWarnings" )
-            .arg( overlappingSourceWarnings, "-overlappingSourceWarnings")
-            .arg( enableJsonSoyc, "-XenableJsonSoyc" )
-            .arg( incremental, "-incremental" )
-        ;
+        cmd.arg("-logLevel", getLogLevel()).arg("-style", getStyle())
+                .arg("-war", getOutputDirectory().getAbsolutePath())
+                .arg("-localWorkers", String.valueOf(getLocalWorkers()))
+                // optional advanced arguments
+                .arg(checkAssertions, "-checkAssertions")
+                .arg(draftCompile, "-draftCompile")
+                .arg(validateOnly, "-validateOnly")
+                .arg(disableClassMetadata, "-XnoclassMetadata")
+                .arg(disableCastChecking, "-XnocheckCasts")
+                .arg(disableRunAsync, "-XnocodeSplitting")
+                .arg(failOnError, "-failOnError")
+                .arg(detailedSoyc, "-XdetailedSoyc")
+                .arg(closureCompiler, "-XclosureCompiler")
+                .arg(compileReport, "-compileReport")
+                .arg(compilerMetrics, "-XcompilerMetrics")
+                .arg(disableAggressiveOptimization,
+                        "-XnoaggressiveOptimizations")
+                .arg("-XfragmentCount", String.valueOf(fragmentCount))
+                .arg(!clusterFunctions, "-XnoclusterFunctions")
+                .arg(enforceStrictResources, "-XenforceStrictResources")
+                .arg(!inlineLiteralParameters, "-XnoinlineLiteralParameters")
+                .arg(!optimizeDataflow, "-XnooptimizeDataflow")
+                .arg(!ordinalizeEnums, "-XnoordinalizeEnums")
+                .arg(!removeDuplicateFunctions, "-XnoremoveDuplicateFunctions")
+                .arg(saveSource, "-saveSource").arg("-sourceLevel", sourceLevel)
+                .arg(incrementalCompileWarnings, "-incrementalCompileWarnings")
+                .arg(overlappingSourceWarnings, "-overlappingSourceWarnings")
+                .arg(enableJsonSoyc, "-XenableJsonSoyc")
+                .arg(incremental, "-incremental");
 
-        if ( jsInteropMode != null && jsInteropMode.length() > 0 && !jsInteropMode.equals( "NONE" ) )
-        {
-            cmd.arg( "-XjsInteropMode", jsInteropMode );
+        if (jsInteropMode != null && jsInteropMode.length() > 0
+                && !jsInteropMode.equals("NONE")) {
+            cmd.arg("-XjsInteropMode", jsInteropMode);
         }
-        if ( methodNameDisplayMode != null && methodNameDisplayMode.length() > 0 && !methodNameDisplayMode.equals( "NONE" ))
-        {
-            cmd.arg( "-XmethodNameDisplayMode", methodNameDisplayMode );
+        if (methodNameDisplayMode != null && methodNameDisplayMode.length() > 0
+                && !methodNameDisplayMode.equals("NONE")) {
+            cmd.arg("-XmethodNameDisplayMode", methodNameDisplayMode);
         }
 
-        if ( missingDepsFile != null )
-        {
-            cmd.arg( "-missingDepsFile", missingDepsFile.getAbsolutePath() );
+        if (missingDepsFile != null) {
+            cmd.arg("-missingDepsFile", missingDepsFile.getAbsolutePath());
         }
 
-        if ( namespace != null && namespace.length() > 0 )
-        {
-            cmd.arg( "-Xnamespace", namespace );
+        if (namespace != null && namespace.length() > 0) {
+            cmd.arg("-Xnamespace", namespace);
         }
 
-        if ( saveSourceOutput != null )
-        {
-            cmd.arg( "-saveSourceOutput", saveSourceOutput.getAbsolutePath() );
+        if (saveSourceOutput != null) {
+            cmd.arg("-saveSourceOutput", saveSourceOutput.getAbsolutePath());
         }
 
-        if ( optimizationLevel >= 0 )
-        {
-            cmd.arg( "-optimize" ).arg( Integer.toString( optimizationLevel ) );
+        if (optimizationLevel >= 0) {
+            cmd.arg("-optimize").arg(Integer.toString(optimizationLevel));
         }
 
-        if ( extraParam || compileReport || ( saveSource && saveSourceOutput == null ) )
-        {
-            getLog().debug( "create extra directory " );
-            if ( !extra.exists() )
-            {
+        if (extraParam || compileReport
+                || (saveSource && saveSourceOutput == null)) {
+            getLog().debug("create extra directory ");
+            if (!extra.exists()) {
                 extra.mkdirs();
             }
-            cmd.arg( "-extra" ).arg( extra.getAbsolutePath() );
-        }
-        else
-        {
-            getLog().debug( "NOT create extra directory " );
+            cmd.arg("-extra").arg(extra.getAbsolutePath());
+        } else {
+            getLog().debug("NOT create extra directory ");
         }
 
-        addCompileSourceArtifacts( cmd );
+        addCompileSourceArtifacts(cmd);
         addArgumentDeploy(cmd);
-        addArgumentGen( cmd );
+        addArgumentGen(cmd);
         addPersistentUnitCache(cmd);
 
-        if ( workDir != null )
-        {
-            cmd.arg( "-workDir" ).arg( String.valueOf( workDir ) );
+        if (workDir != null) {
+            cmd.arg("-workDir").arg(String.valueOf(workDir));
         }
 
-        for ( String target : modules )
-        {
-            if ( !compilationRequired( target, getOutputDirectory() ) )
-            {
+        for (String target : modules) {
+            if (!compilationRequired(target, getOutputDirectory())) {
                 continue;
             }
-            cmd.arg( target );
+            cmd.arg(target);
             upToDate = false;
         }
-        if ( !upToDate )
-        {
-            try
-            {
+        if (!upToDate) {
+            try {
                 cmd.execute();
-            }
-            catch ( JavaCommandException e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
+            } catch (JavaCommandException e) {
+                throw new MojoExecutionException(e.getMessage(), e);
             }
         }
     }
 
-    private int getLocalWorkers()
-    {
-        if ( localWorkers > 0 )
-        {
+    private int getLocalWorkers() {
+        if (localWorkers > 0) {
             return localWorkers;
         }
         return Runtime.getRuntime().availableProcessors();
     }
 
     /**
-     * Try to find out, if there are stale sources. If aren't some, we don't have to compile... ...this heuristic
-     * doesn't take into account, that there could be updated dependencies. But for this case, as 'clean compile' could
-     * be executed which would force a compilation.
+     * Try to find out, if there are stale sources. If aren't some, we don't
+     * have to compile... ...this heuristic doesn't take into account, that
+     * there could be updated dependencies. But for this case, as 'clean
+     * compile' could be executed which would force a compilation.
      *
-     * @param module Name of the GWT module to compile
-     * @param output Output path
+     * @param module
+     *            Name of the GWT module to compile
+     * @param output
+     *            Output path
      * @return true if compilation is required (i.e. stale sources are found)
-     * @throws MojoExecutionException When sources scanning fails
+     * @throws MojoExecutionException
+     *             When sources scanning fails
      * @author Alexander Gordt
      */
-    private boolean compilationRequired( String module, File output )
-        throws MojoExecutionException
-    {
-        getLog().debug( "**Checking if compilation is required for " + module );
-        try
-        {
+    private boolean compilationRequired(String module, File output)
+            throws MojoExecutionException {
+        getLog().debug("**Checking if compilation is required for " + module);
+        try {
 
-                GwtModule gwtModule = readModule( module );
-            if ( gwtModule.getEntryPoints().size() == 0 )
-            {
-                getLog().info( gwtModule.getName() + " has no EntryPoint - compilation skipped" );
-                // No entry-point, this is an utility module : compiling this one will fail
+            GwtModule gwtModule = readModule(module);
+            if (gwtModule.getEntryPoints().size() == 0) {
+                getLog().info(gwtModule.getName()
+                        + " has no EntryPoint - compilation skipped");
+                // No entry-point, this is an utility module : compiling this
+                // one will fail
                 // with '[ERROR] Module has no entry points defined'
                 return false;
             }
-            getLog().debug( "Module has an entrypoint" );
+            getLog().debug("Module has an entrypoint");
 
-            if ( force )
-            {
+            if (force) {
                 return true;
             }
-            getLog().debug( "Compilation not forced");
-            
+            getLog().debug("Compilation not forced");
+
             String modulePath = gwtModule.getPath();
 
             String outputTarget = modulePath + "/" + modulePath + ".nocache.js";
-            File outputTargetFile = new File( output, outputTarget );
+            File outputTargetFile = new File(output, outputTarget);
             // Require compilation if no js file present in target.
-            if ( !outputTargetFile.exists() )
-            {
+            if (!outputTargetFile.exists()) {
                 return true;
             }
-            getLog().debug( "Output file exists");
-            
+            getLog().debug("Output file exists");
+
             File moduleFile = gwtModule.getSourceFile();
-            if(moduleFile == null) {
-                return true; //the module was read from something like an InputStream; always recompile this because we can't make any other choice
+            if (moduleFile == null) {
+                return true; // the module was read from something like an
+                             // InputStream; always recompile this because we
+                             // can't make any other choice
             }
-            getLog().debug( "There is a module source file (not an input stream");
-            
-            //If input is newer than target, recompile
-            if(moduleFile.lastModified() > outputTargetFile.lastModified()) 
-            {
-                getLog().debug( "Module file has been modified since the output file was created; recompiling" );
+            getLog().debug(
+                    "There is a module source file (not an input stream");
+
+            // If input is newer than target, recompile
+            if (moduleFile.lastModified() > outputTargetFile.lastModified()) {
+                getLog().debug(
+                        "Module file has been modified since the output file was created; recompiling");
                 return true;
             }
-            getLog().debug( "The module XML hasn't been updated");
+            getLog().debug("The module XML hasn't been updated");
 
-            // js file already exists, but may not be up-to-date with project source files
-            SingleTargetSourceMapping singleTargetMapping = new SingleTargetSourceMapping( ".java", outputTarget );
+            // js file already exists, but may not be up-to-date with project
+            // source files
+            SingleTargetSourceMapping singleTargetMapping = new SingleTargetSourceMapping(
+                    ".java", outputTarget);
             StaleSourceScanner scanner = new StaleSourceScanner();
-            scanner.addSourceMapping( singleTargetMapping );
+            scanner.addSourceMapping(singleTargetMapping);
 
-            SingleTargetSourceMapping uiBinderMapping = new SingleTargetSourceMapping( ".ui.xml", outputTarget );
-            scanner.addSourceMapping( uiBinderMapping );
+            SingleTargetSourceMapping uiBinderMapping = new SingleTargetSourceMapping(
+                    ".ui.xml", outputTarget);
+            scanner.addSourceMapping(uiBinderMapping);
 
             Collection<File> compileSourceRoots = new HashSet<File>();
             for (String sourceRoot : getProject().getCompileSourceRoots()) {
                 for (String sourcePackage : gwtModule.getSources()) {
-                    String packagePath = gwtModule.getPackage().replace( '.', File.separatorChar );
-                    File sourceDirectory = new File (sourceRoot + File.separatorChar + packagePath + File.separator + sourcePackage);
-                    if(sourceDirectory.exists()) {
-                        getLog().debug(" Looking in a source directory "+sourceDirectory.getAbsolutePath() + " for possible changes");
-                        compileSourceRoots.add(sourceDirectory);                                        
+                    String packagePath = gwtModule.getPackage().replace('.',
+                            File.separatorChar);
+                    File sourceDirectory = new File(
+                            sourceRoot + File.separatorChar + packagePath
+                                    + File.separator + sourcePackage);
+                    if (sourceDirectory.exists()) {
+                        getLog().debug(" Looking in a source directory "
+                                + sourceDirectory.getAbsolutePath()
+                                + " for possible changes");
+                        compileSourceRoots.add(sourceDirectory);
                     }
                 }
             }
 
-            for ( File sourceRoot : compileSourceRoots )
-            {
-                if ( !sourceRoot.isDirectory() )
-                {
+            for (File sourceRoot : compileSourceRoots) {
+                if (!sourceRoot.isDirectory()) {
                     continue;
                 }
-                try
-                {
+                try {
                     // TODO only look into client side code!
-                    if ( !scanner.getIncludedSources( sourceRoot, output ).isEmpty() )
-                    {
-                        getLog().debug( "found stale source in " + sourceRoot + " compared with " + output );
+                    if (!scanner.getIncludedSources(sourceRoot, output)
+                            .isEmpty()) {
+                        getLog().debug("found stale source in " + sourceRoot
+                                + " compared with " + output);
                         return true;
                     }
-                }
-                catch ( InclusionScanException e )
-                {
-                    throw new MojoExecutionException( "Error scanning source root: \'" + sourceRoot + "\' "
-                        + "for stale files to recompile.", e );
+                } catch (InclusionScanException e) {
+                    throw new MojoExecutionException(
+                            "Error scanning source root: \'" + sourceRoot
+                                    + "\' " + "for stale files to recompile.",
+                            e);
                 }
             }
-            getLog().info( module + " is up to date. GWT compilation skipped" );
+            getLog().info(module + " is up to date. GWT compilation skipped");
             return false;
-        }
-        catch ( GwtModuleReaderException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
+        } catch (GwtModuleReaderException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         }
     }
 
-    private void fetchWidgetset() throws MojoExecutionException, MojoFailureException {
+    private void fetchWidgetset()
+            throws MojoExecutionException, MojoFailureException {
         WidgetSetRequest wsReq = createWidgetsetRequest();
 
         try {
             if (lastWidgetset.exists()
                     && FileUtils.readFileToString(lastWidgetset)
-                    .equals(wsReq.toWidgetsetString())) {
+                            .equals(wsReq.toWidgetsetString())) {
                 getLog().info("No changes in widgetset: "
                         + wsReq.toWidgetsetString());
                 return;
@@ -723,13 +722,16 @@ public class CompileMojo
 
         // cache information about last fetched widgetset
         try {
-            FileUtils.writeStringToFile(lastWidgetset, wsReq.toWidgetsetString());
+            FileUtils.writeStringToFile(lastWidgetset,
+                    wsReq.toWidgetsetString());
         } catch (IOException e) {
-            // failed to cache last used widgetset, so will re-download next time
+            // failed to cache last used widgetset, so will re-download next
+            // time
         }
     }
 
-    private void downloadWidgetset(WidgetSetRequest wsReq, int retryCount) throws MojoFailureException {
+    private void downloadWidgetset(WidgetSetRequest wsReq, int retryCount)
+            throws MojoFailureException {
         try {
             Connection conn = new Connection();
             conn.downloadRemoteWidgetSet(wsReq, getOutputDirectory());
@@ -737,10 +739,12 @@ public class CompileMojo
             getLog().info("Widgetset successfully fetched from CDN");
         } catch (Exception e) {
             if (retryCount > 0) {
-                getLog().warn("Retrying widgetset download - the server might be busy, please wait a moment");
-                downloadWidgetset(wsReq, retryCount-1);
+                getLog().warn(
+                        "Retrying widgetset download - the server might be busy, please wait a moment");
+                downloadWidgetset(wsReq, retryCount - 1);
             } else {
-                throw new MojoFailureException("Failed to download widgetset from CDN", e);
+                throw new MojoFailureException(
+                        "Failed to download widgetset from CDN", e);
             }
         }
     }

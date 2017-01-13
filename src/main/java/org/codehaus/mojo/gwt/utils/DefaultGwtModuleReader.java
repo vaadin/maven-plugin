@@ -47,9 +47,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  * @since 2.1.0-1
  */
-public class DefaultGwtModuleReader
-    implements GwtModuleReader
-{
+public class DefaultGwtModuleReader implements GwtModuleReader {
     public static final String GWT_MODULE_EXTENSION = ".gwt.xml";
 
     private MavenProject mavenProject;
@@ -58,162 +56,142 @@ public class DefaultGwtModuleReader
 
     private Log log;
 
-    public DefaultGwtModuleReader( MavenProject mavenProject, Log log, ClasspathBuilder classpathBuilder )
-    {
+    public DefaultGwtModuleReader(MavenProject mavenProject, Log log,
+            ClasspathBuilder classpathBuilder) {
         this.mavenProject = mavenProject;
         this.log = log;
         this.classpathBuilder = classpathBuilder;
     }
 
     @SuppressWarnings("unchecked")
-    public List<String> getGwtModules()
-    {
-        //Use a Set to avoid duplicate when user set src/main/java as <resource>
+    public List<String> getGwtModules() {
+        // Use a Set to avoid duplicate when user set src/main/java as
+        // <resource>
         Set<String> mods = new HashSet<String>();
 
-        Collection<String> sourcePaths = (Collection<String>) mavenProject.getCompileSourceRoots();
-        for ( String sourcePath : sourcePaths )
-        {
-            File sourceDirectory = new File( sourcePath );
-            if ( sourceDirectory.exists() )
-            {
+        Collection<String> sourcePaths = (Collection<String>) mavenProject
+                .getCompileSourceRoots();
+        for (String sourcePath : sourcePaths) {
+            File sourceDirectory = new File(sourcePath);
+            if (sourceDirectory.exists()) {
                 DirectoryScanner scanner = new DirectoryScanner();
-                scanner.setBasedir( sourceDirectory.getAbsolutePath() );
-                scanner.setIncludes( new String[] { "**/*" + GWT_MODULE_EXTENSION } );
+                scanner.setBasedir(sourceDirectory.getAbsolutePath());
+                scanner.setIncludes(
+                        new String[] { "**/*" + GWT_MODULE_EXTENSION });
                 scanner.scan();
 
-                mods.addAll( Arrays.asList( scanner.getIncludedFiles() ) );
+                mods.addAll(Arrays.asList(scanner.getIncludedFiles()));
             }
         }
 
-        Collection<Resource> resources = (Collection<Resource>) mavenProject.getResources();
-        for ( Resource resource : resources )
-        {
-            File resourceDirectoryFile = new File( resource.getDirectory() );
-            if ( !resourceDirectoryFile.exists() )
-            {
+        Collection<Resource> resources = (Collection<Resource>) mavenProject
+                .getResources();
+        for (Resource resource : resources) {
+            File resourceDirectoryFile = new File(resource.getDirectory());
+            if (!resourceDirectoryFile.exists()) {
                 continue;
             }
             DirectoryScanner scanner = new DirectoryScanner();
-            scanner.setBasedir( resource.getDirectory() );
-            scanner.setIncludes( new String[] { "**/*" + GWT_MODULE_EXTENSION } );
+            scanner.setBasedir(resource.getDirectory());
+            scanner.setIncludes(new String[] { "**/*" + GWT_MODULE_EXTENSION });
             scanner.scan();
-            mods.addAll( Arrays.asList( scanner.getIncludedFiles() ) );
+            mods.addAll(Arrays.asList(scanner.getIncludedFiles()));
         }
 
-        if ( mods.isEmpty() )
-        {
-            log.warn( "GWT plugin is configured to detect modules, but none were found." );
+        if (mods.isEmpty()) {
+            log.warn(
+                    "GWT plugin is configured to detect modules, but none were found.");
         }
 
-        List<String> modules = new ArrayList<String>( mods.size() );
-        for ( String fileName : mods )
-        {
-            String path = fileName.substring( 0, fileName.length() - GWT_MODULE_EXTENSION.length() );
-            modules.add( path.replace( File.separatorChar, '.' ) );
+        List<String> modules = new ArrayList<String>(mods.size());
+        for (String fileName : mods) {
+            String path = fileName.substring(0,
+                    fileName.length() - GWT_MODULE_EXTENSION.length());
+            modules.add(path.replace(File.separatorChar, '.'));
         }
-        if ( modules.size() > 0 )
-        {
-            log.info( "auto discovered modules " + modules );
+        if (modules.size() > 0) {
+            log.info("auto discovered modules " + modules);
         }
         return modules;
     }
 
-    public GwtModule readModule( String name )
-        throws GwtModuleReaderException
-    {
-        String modulePath = name.replace( '.', '/' ) + GWT_MODULE_EXTENSION;
+    public GwtModule readModule(String name) throws GwtModuleReaderException {
+        String modulePath = name.replace('.', '/') + GWT_MODULE_EXTENSION;
         Collection<String> sourceRoots = mavenProject.getCompileSourceRoots();
-        for ( String sourceRoot : sourceRoots )
-        {
-            File root = new File( sourceRoot );
-            File xml = new File( root, modulePath );
-            if ( xml.exists() )
-            {
-                log.debug( "GWT module " + name + " found in " + root );
-                return readModule( name, xml );
+        for (String sourceRoot : sourceRoots) {
+            File root = new File(sourceRoot);
+            File xml = new File(root, modulePath);
+            if (xml.exists()) {
+                log.debug("GWT module " + name + " found in " + root);
+                return readModule(name, xml);
             }
         }
-        Collection<Resource> resources = (Collection<Resource>) mavenProject.getResources();
-        for ( Resource resource : resources )
-        {
-            File root = new File( resource.getDirectory() );
-            File xml = new File( root, modulePath );
-            if ( xml.exists() )
-            {
-                log.debug( "GWT module " + name + " found in " + root );
-                return readModule( name, xml );
+        Collection<Resource> resources = (Collection<Resource>) mavenProject
+                .getResources();
+        for (Resource resource : resources) {
+            File root = new File(resource.getDirectory());
+            File xml = new File(root, modulePath);
+            if (xml.exists()) {
+                log.debug("GWT module " + name + " found in " + root);
+                return readModule(name, xml);
             }
         }
 
-        try
-        {
-            Collection<File> classpath = getClasspath( Artifact.SCOPE_COMPILE );
+        try {
+            Collection<File> classpath = getClasspath(Artifact.SCOPE_COMPILE);
             URL[] urls = new URL[classpath.size()];
             int i = 0;
-            for ( File file : classpath )
-            {
+            for (File file : classpath) {
                 urls[i++] = file.toURI().toURL();
             }
-            InputStream stream = new URLClassLoader( urls ).getResourceAsStream( modulePath );
-            if ( stream != null )
-            {
-                return readModule( name, stream );
+            InputStream stream = new URLClassLoader(urls)
+                    .getResourceAsStream(modulePath);
+            if (stream != null) {
+                return readModule(name, stream);
             }
-        }
-        catch ( MalformedURLException e )
-        {
+        } catch (MalformedURLException e) {
             // ignored;
-        }
-        catch ( ClasspathBuilderException e )
-        {
-            throw new GwtModuleReaderException( e.getMessage(), e );
+        } catch (ClasspathBuilderException e) {
+            throw new GwtModuleReaderException(e.getMessage(), e);
         }
 
-        throw new GwtModuleReaderException( "GWT Module " + name + " not found in project sources or resources." );
+        throw new GwtModuleReaderException("GWT Module " + name
+                + " not found in project sources or resources.");
     }
 
-    private GwtModule readModule( String name, File file )
-        throws GwtModuleReaderException
+    private GwtModule readModule(String name, File file)
+            throws GwtModuleReaderException
 
     {
-        try
-        {
-            return readModule( name, new FileInputStream( file ) );
-        }
-        catch ( FileNotFoundException e )
-        {
-            throw new GwtModuleReaderException( "Failed to read module file " + file );
+        try {
+            return readModule(name, new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            throw new GwtModuleReaderException(
+                    "Failed to read module file " + file);
         }
     }
 
-    private GwtModule readModule( String name, InputStream xml )
-        throws GwtModuleReaderException
-    {
-        try
-        {
-            Xpp3Dom dom = Xpp3DomBuilder.build( ReaderFactory.newXmlReader( xml ) );
-            return new GwtModule( name, dom, this );
-        }
-        catch ( Exception e )
-        {
+    private GwtModule readModule(String name, InputStream xml)
+            throws GwtModuleReaderException {
+        try {
+            Xpp3Dom dom = Xpp3DomBuilder.build(ReaderFactory.newXmlReader(xml));
+            return new GwtModule(name, dom, this);
+        } catch (Exception e) {
             String error = "Failed to read module XML file " + xml;
-            log.error( error );
-            throw new GwtModuleReaderException( error, e );
+            log.error(error);
+            throw new GwtModuleReaderException(error, e);
         }
     }
 
-    public Collection<File> getClasspath( String scope )
-        throws ClasspathBuilderException
-    {
-        Collection<File> files = classpathBuilder.buildClasspathList( mavenProject, scope, mavenProject.getArtifacts(), false );
+    public Collection<File> getClasspath(String scope)
+            throws ClasspathBuilderException {
+        Collection<File> files = classpathBuilder.buildClasspathList(
+                mavenProject, scope, mavenProject.getArtifacts(), false);
 
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "GWT SDK execution classpath :" );
-            for ( File f : files )
-            {
-                log.debug( "   " + f.getAbsolutePath() );
+        if (log.isDebugEnabled()) {
+            log.debug("GWT SDK execution classpath :");
+            for (File f : files) {
+                log.debug("   " + f.getAbsolutePath());
             }
         }
         return files;

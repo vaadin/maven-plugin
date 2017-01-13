@@ -145,17 +145,21 @@ public class CvalInfo {
     }
 
     public boolean isLicenseExpired() {
-        return (getExpired() != null && getExpired()) || (getExpiredEpochDate() != null && getExpiredEpochDate().
-                before(new Date()));
+        return (getExpired() != null && getExpired())
+                || (getExpiredEpochDate() != null
+                        && getExpiredEpochDate().before(new Date()));
     }
 
     public boolean isValidVersion(int majorVersion) {
-        return getProduct().getVersion() == null || getProduct().getVersion() >= majorVersion;
+        return getProduct().getVersion() == null
+                || getProduct().getVersion() >= majorVersion;
     }
 
     boolean isValidInfo(String name, String key) {
-        return getProduct() != null && getProduct().getName() != null && getLicenseKey() != null && getProduct().
-                getName().equals(name) && getLicenseKey().equals(key);
+        return getProduct() != null && getProduct().getName() != null
+                && getLicenseKey() != null
+                && getProduct().getName().equals(name)
+                && getLicenseKey().equals(key);
     }
 
     @Override

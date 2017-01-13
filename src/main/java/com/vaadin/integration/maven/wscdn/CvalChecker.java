@@ -52,7 +52,6 @@ import org.apache.commons.io.IOUtils;
  */
 public final class CvalChecker {
 
-
     /*
      * The class with the method for getting json from server side. It is here
      * and protected just for replacing it in tests.
@@ -132,8 +131,8 @@ public final class CvalChecker {
             } else if (info != null && info.getMessage() != null) {
                 msg = info.getMessage().replace("\\n", "\n");
             } else if (info != null && info.isLicenseExpired()) {
-                String type = "evaluation".equals(info.getType()) ? "Evaluation license"
-                        : "License";
+                String type = "evaluation".equals(info.getType())
+                        ? "Evaluation license" : "License";
                 msg = getErrorMessage("expired", title, majorVers, type);
             } else if (key == null) {
                 msg = getErrorMessage("none", title, majorVers);
@@ -237,18 +236,21 @@ public final class CvalChecker {
     /**
      * Validate whether there is a valid license key for a product.
      *
-     * @param productName for example vaadin-touchkit
-     * @param productVersion for instance 4.0.1
-     * @param productTitle yes, there is no documentation for this.
+     * @param productName
+     *            for example vaadin-touchkit
+     * @param productVersion
+     *            for instance 4.0.1
+     * @param productTitle
+     *            yes, there is no documentation for this.
      * @return CvalInfo Server response or cache response if server is offline
-     * @throws InvalidCvalException when there is no a valid license for the
-     * product
-     * @throws UnreachableCvalServerException when we have license key but
-     * server is unreachable
+     * @throws InvalidCvalException
+     *             when there is no a valid license for the product
+     * @throws UnreachableCvalServerException
+     *             when we have license key but server is unreachable
      */
     public CvalInfo validateProduct(String productName, String productVersion,
-            String productTitle) throws InvalidCvalException,
-            UnreachableCvalServerException {
+            String productTitle)
+            throws InvalidCvalException, UnreachableCvalServerException {
         String key = getDeveloperLicenseKey(productName, productVersion,
                 productTitle);
 
@@ -304,8 +306,8 @@ public final class CvalChecker {
         int timeout = validCache ? 2000 : 10000;
 
         try {
-            final String answer = provider.askServer(productName + "-"
-                    + productVersion, productKey, timeout);
+            final String answer = provider.askServer(
+                    productName + "-" + productVersion, productKey, timeout);
             CvalInfo srvinfo = parseJson(answer);
             if (srvinfo != null && srvinfo.isValidInfo(productName, productKey)
                     && srvinfo.isValidVersion(majorVersion)) {
@@ -338,8 +340,8 @@ public final class CvalChecker {
                 try {
                     p.clear();
                 } catch (BackingStoreException ex) {
-                    Logger.getLogger(CvalChecker.class.getName()).
-                            log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CvalChecker.class.getName())
+                            .log(Level.SEVERE, null, ex);
                 }
                 throw e;
             }
@@ -360,11 +362,11 @@ public final class CvalChecker {
         try {
             String dotLicenseName = "." + licenseName;
             String userHome = System.getProperty("user.home");
-            for (URL url : new URL[]{
-                new File(userHome, dotLicenseName).toURI().toURL(),
-                new File(userHome, licenseName).toURI().toURL(),
-                URL.class.getResource("/" + dotLicenseName),
-                URL.class.getResource("/" + licenseName)}) {
+            for (URL url : new URL[] {
+                    new File(userHome, dotLicenseName).toURI().toURL(),
+                    new File(userHome, licenseName).toURI().toURL(),
+                    URL.class.getResource("/" + dotLicenseName),
+                    URL.class.getResource("/" + licenseName) }) {
                 if (url != null) {
                     try {
                         key = readKeyFromFile(url,
@@ -401,8 +403,8 @@ public final class CvalChecker {
 
     static String getErrorMessage(String key, Object... pars) {
         Locale loc = Locale.getDefault();
-        ResourceBundle res = ResourceBundle.getBundle(
-                CvalChecker.class.getName(), loc);
+        ResourceBundle res = ResourceBundle
+                .getBundle(CvalChecker.class.getName(), loc);
         String msg = res.getString(key);
         return new MessageFormat(msg, loc).format(pars);
     }

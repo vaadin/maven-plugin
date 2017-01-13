@@ -32,9 +32,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * @version $Id$
  */
 @Mojo(name = "debug", requiresDirectInvocation = true, requiresDependencyResolution = ResolutionScope.TEST)
-public class DebugMojo
-    extends RunMojo
-{
+public class DebugMojo extends RunMojo {
 
     /**
      * Port to listen for debugger connection on.
@@ -62,30 +60,25 @@ public class DebugMojo
      * @see org.codehaus.mojo.gwt.shell.AbstractGwtShellMojo#getExtraJvmArgs()
      */
     @Override
-    public String getExtraJvmArgs()
-    {
+    public String getExtraJvmArgs() {
         String extras = super.getExtraJvmArgs();
         extras += " -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket";
-        extras += ",server=" + ( attachDebugger ? "n" : "y" );
+        extras += ",server=" + (attachDebugger ? "n" : "y");
         extras += ",address=" + debugPort;
-        extras += ",suspend=" + ( debugSuspend ? "y" : "n" );
+        extras += ",suspend=" + (debugSuspend ? "y" : "n");
         return extras;
     }
 
-
     @Override
     public void doExecute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        if ( debugSuspend )
-        {
-            getLog().info( "starting debugger on port " + debugPort + " in suspend mode" );
-        }
-        else
-        {
-            getLog().info( "starting debugger on port " + debugPort );
+            throws MojoExecutionException, MojoFailureException {
+        if (debugSuspend) {
+            getLog().info("starting debugger on port " + debugPort
+                    + " in suspend mode");
+        } else {
+            getLog().info("starting debugger on port " + debugPort);
         }
 
-        super.doExecute( );
+        super.doExecute();
     }
 }
