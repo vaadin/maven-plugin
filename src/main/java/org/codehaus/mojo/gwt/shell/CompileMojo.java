@@ -579,7 +579,7 @@ public class CompileMojo
             }
             catch ( JavaCommandException e )
             {
-                throw new MojoExecutionException( e.getMessage(), e );
+                throw new MojoExecutionException( "Widget set compliation failed", e );
             }
         }
     }
