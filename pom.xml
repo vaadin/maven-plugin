@@ -150,6 +150,7 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    <!-- Codehaus closed its services in 2015 -->
     <!--
     <repository>
       <id>codehaus-snapshots</id>
