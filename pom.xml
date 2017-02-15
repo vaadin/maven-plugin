@@ -34,9 +34,9 @@
   <description>
     Maven plugin for Vaadin.
   </description>
-  <url>http://vaadin.com</url>
+  <url>https://vaadin.com</url>
   <organization>
-  	<url>http://vaadin.com</url>
+  	<url>https://vaadin.com</url>
   	<name>Vaadin Ltd</name>
   </organization>
   <inceptionYear>2012</inceptionYear>
@@ -90,13 +90,13 @@
     </contributor>
   </contributors>
   <scm>
-    <connection>scm:http:http://dev.vaadin.com/git/integration/maven/vaadin-maven-plugin.git</connection>
-    <developerConnection>scm:ssh:git@dev.vaadin.com/integration/maven/vaadin-maven-plugin</developerConnection>
-    <url>http://dev.vaadin.com/git/?p=integration/maven/vaadin-maven-plugin.git</url>
+    <connection>scm:git:git://github.com/vaadin/maven-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:vaadin/maven-plugin.git</developerConnection>
+    <url>https://github.com/vaadin/maven-plugin</url>
   </scm>
   <issueManagement>
-    <system>trac</system>
-    <url>http://dev.vaadin.com</url>
+    <system>GitHub Issues</system>
+    <url>https://github.com/vaadin/maven-plugin/issues</url>
   </issueManagement>
 <!--  <ciManagement>
     <system>buildhive</system>
@@ -131,18 +131,18 @@
     <repository>
       <id>vaadin-staging</id>
       <name>Vaadin release staging repository</name>
-      <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
     <snapshotRepository>
       <id>vaadin-snapshots</id>
       <name>Vaadin snapshot repository</name>
-      <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+      <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
   <repositories>
     <repository>
       <id>vaadin-snapshots</id>
-      <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+      <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
       <releases>
         <enabled>false</enabled>
       </releases>
@@ -150,6 +150,8 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    <!-- Codehaus closed its services in 2015 -->
+    <!--
     <repository>
       <id>codehaus-snapshots</id>
       <url>http://nexus.codehaus.org/snapshots</url>
@@ -160,6 +162,7 @@
         <enabled>false</enabled>
       </releases>
     </repository>
+    -->
     <repository>
       <id>google-snapshots</id>
       <url>https://oss.sonatype.org/content/repositories/google-snapshots/</url>
