@@ -11,7 +11,9 @@ import org.codehaus.mojo.gwt.AbstractGwtMojo;
 import com.vaadin.framework8.migrate.Migrate;
 
 /**
- * Updates Vaadin themes based on addons containing themes on the classpath.
+ * Updates Vaadin 7 class imports to their corresponding compatibility imports
+ * in a Vaadin 8 project. Additionally updates declarative files to use the correct
+ * versions of components.
  */
 @Mojo(name = "upgrade8", requiresDependencyResolution = ResolutionScope.COMPILE)
 public class Vaadin8UpgradeMojo extends AbstractGwtMojo {
