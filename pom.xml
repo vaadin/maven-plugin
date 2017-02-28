@@ -573,30 +573,6 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <version>1.0</version>
-          <executions>
-            <execution>
-              <id>enforce-maven</id>
-              <goals>
-                <goal>enforce</goal>
-              </goals>
-              <configuration>
-                <rules>
-                  <requireMavenVersion>
-                    <version>(,2.1.0),(2.1.0,2.2.0),(2.2.0,)</version>
-                    <message>
-                      Maven 2.1.0 and 2.2.0 produce incorrect GPG signatures and checksums
-                      respectively.
-                    </message>
-                  </requireMavenVersion>
-                </rules>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
           <executions>
             <execution>
@@ -647,30 +623,6 @@
                 <files>
                   <file>${gpg.passphrase.file}</file>
                 </files>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <version>1.0</version>
-          <executions>
-            <execution>
-              <id>enforce-maven</id>
-              <goals>
-                <goal>enforce</goal>
-              </goals>
-              <configuration>
-                <rules>
-                  <requireMavenVersion>
-                    <version>(,2.1.0),(2.1.0,2.2.0),(2.2.0,)</version>
-                    <message>
-                      Maven 2.1.0 and 2.2.0 produce incorrect GPG signatures and checksums
-                      respectively.
-                    </message>
-                  </requireMavenVersion>
-                </rules>
               </configuration>
             </execution>
           </executions>
