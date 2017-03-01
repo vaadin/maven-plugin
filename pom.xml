@@ -397,6 +397,12 @@
       <artifactId>plexus-compiler-javac</artifactId>
       <version>2.3</version>
     </dependency>
+    <dependency>
+      <!-- needed by license checker -->
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+      <version>1.4.01</version>
+    </dependency>
   </dependencies>
   <profiles>
 
