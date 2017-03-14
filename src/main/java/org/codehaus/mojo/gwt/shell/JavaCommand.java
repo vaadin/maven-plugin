@@ -274,13 +274,15 @@ public class JavaCommand
         {
             command.addAll( this.jvmArgs );
         }
-        command.add( "-classpath" );
+
         List<String> path = new ArrayList<String>( classpath.size() );
         for ( File file : classpath )
         {
             path.add( file.getAbsolutePath() );
         }
-        command.add( StringUtils.join( path.iterator(), File.pathSeparator ) );
+        environment("CLASSPATH", StringUtils.join( path.iterator(), File.pathSeparator ));
+
+
         if ( systemProperties != null )
         {
             for ( Map.Entry<?, ?> entry : systemProperties.entrySet() )
@@ -311,6 +313,7 @@ public class JavaCommand
                     cmd.addEnvironment( (String) entry.getKey(), (String) entry.getValue() );
                 }
             }
+
             log.debug( "Execute command :\n" + cmd.toString() );
             int status;
             if ( timeOut > 0 )
