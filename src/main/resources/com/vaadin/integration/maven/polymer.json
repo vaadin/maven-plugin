@@ -1,0 +1,38 @@
+{
+  "entrypoint": "bower_components/bundle.html",
+  "sources": [
+    "bower_components/**/*.svg",
+    "bower_components/**/*.gif",
+    "bower_components/**/*.png",
+    "bower_components/**/*.map"
+  ],
+  "builds": [
+    {
+      "name": "es5",
+      "bundle": #frontend-bundle#,
+      "js": {
+        "minify": #frontend-minify#,
+        "compile": true
+      },
+      "css": {
+        "minify": #frontend-minify#
+      },
+      "html": {
+        "minify": #frontend-minify#
+      }
+    },
+    {
+      "name": "es6",
+      "bundle": #frontend-bundle#,
+      "js": {
+        "minify": #frontend-minify#
+      },
+      "css": {
+        "minify": #frontend-minify#
+      },
+      "html": {
+        "minify": #frontend-minify#
+      }
+    }
+  ]
+}
