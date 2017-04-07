@@ -1,0 +1,17 @@
+// Move files from the "build" directory to the ../webapp/VAADIN/frontend/ dir 
+// without the "bower_components" directory so that the server can serve the files
+
+const rimraf = require('rimraf');
+const mkdirp = require('mkdirp');
+const fs = require('fs');
+
+const frontendVaadin = "../webapp/VAADIN/frontend";
+
+if (!fs.existsSync(frontendVaadin)) {
+	mkdirp.sync(frontendVaadin);
+}
+
+for (es of ["es5","es6"]) {
+    rimraf.sync(frontendVaadin + "/" + es);
+    fs.renameSync("build/" + es + "/bower_components", "../webapp/VAADIN/frontend/" + es);
+}
