@@ -1,0 +1,17 @@
+{
+  "name": "#artifactId#",
+  "version": "1.0.0",
+  "main": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "gulp": "^3.9.1",
+    "polymer-build": "next"
+  },
+  "scripts": {
+    "install": "bower install && node update-addons-html.js && polymer build"
+  },
+  "dependencies": {
+    "polymer-cli": "next"
+  }
+}
