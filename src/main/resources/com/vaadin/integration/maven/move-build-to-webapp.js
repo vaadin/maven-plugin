@@ -12,6 +12,10 @@ if (!fs.existsSync(frontendVaadin)) {
 }
 
 for (es of ["es5","es6"]) {
-    rimraf.sync(frontendVaadin + "/" + es);
-    fs.renameSync("build/" + es + "/bower_components", "../webapp/VAADIN/frontend/" + es);
+	const sourceDir = "build/" + es;
+	const targetDir = frontendVaadin + "/" + es;
+
+	rimraf.sync(targetDir);
+    fs.renameSync(sourceDir + "/bower_components", targetDir);
+    fs.renameSync(sourceDir + "/bundle.html", targetDir + "/bundle.html");
 }
