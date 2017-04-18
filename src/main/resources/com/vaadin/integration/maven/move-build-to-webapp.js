@@ -5,7 +5,7 @@ const rimraf = require('rimraf');
 const mkdirp = require('mkdirp');
 const fs = require('fs');
 
-const frontendVaadin = "../webapp/VAADIN/frontend";
+const frontendVaadin = "../../../#frontend-target-folder#";
 
 if (!fs.existsSync(frontendVaadin)) {
 	mkdirp.sync(frontendVaadin);

@@ -32,8 +32,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * from there.
  * <p>
  * Running this target creates a
- * {@literal src/main/frontend/vaadin-addons/bower.json}, containing the found
- * dependencies. An existing file will be overwritten.
+ * {@literal src/main/frontend/vaadin-addons/bower.json} (folder configurable),
+ * containing the found dependencies. An existing file will be overwritten.
  * <p>
  * When dependencies are found, this goal will also create a project
  * {@literal bower.json} and related files in {@literal src/main/frontend}
@@ -51,18 +51,33 @@ public class UpdateFrontendMojo extends AbstractMojo {
 
     private static final String VAADIN_BOWER_OK_PROPERTY = "vaadin.bower.ok";
 
-    private static final String FRONTEND_DIR = "src/main/frontend/";
+    private static final String APPLICATION_BOWER_COMPONENTS_ADDON_CACHE = "bower_components/vaadin-addons";
 
-    private static final String APPLICATION_BOWER_COMPONENTS_ADDON_CACHE = FRONTEND_DIR
-            + "bower_components/vaadin-addons";
-
-    private static final String FRONTEND_BOWER_JSON = FRONTEND_DIR
-            + "/bower.json";
-    private static final String FRONTEND_VAADIN_ADDONS_BOWER_JSON = FRONTEND_DIR
-            + "/vaadin-addons/bower.json";
+    private static final String BOWER_JSON = "bower.json";
+    private static final String FRONTEND_VAADIN_ADDONS_BOWER_JSON = "vaadin-addons/bower.json";
 
     @Parameter(property = "project", defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject mavenProject;
+
+    /**
+     * The frontend folder for the project. This is where all meta data files
+     * like bower.json will be created and there the files will be processed and
+     * possibly bundled.
+     * <p>
+     * Default is `src/main/frontend`
+     */
+    @Parameter(property = "vaadin.frontend.dir", defaultValue = "src/main/frontend")
+    protected String frontendFolder;
+
+    /**
+     * The frontend target folder for the project. This is where all static
+     * files will end up after processing and possibly bundling.
+     * <p>
+     * Default is `src/main/webapp/VAADIN/frontend`, where the
+     * {@code frontend://} protocol will look for them
+     */
+    @Parameter(property = "vaadin.frontend.targetdir", defaultValue = "src/main/webapp/VAADIN/frontend")
+    protected String frontendTargetFolder;
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -116,9 +131,9 @@ public class UpdateFrontendMojo extends AbstractMojo {
         mavenProject.getProperties().setProperty(VAADIN_BOWER_OK_PROPERTY,
                 String.valueOf(bowerUpToDate));
         if (!bowerUpToDate) {
-            getLog().info("Dependencies have been updated");
             generateAddonBowerJson(found);
             removeCachedAddonBowerFolder();
+            getLog().info("Dependencies have been updated");
         }
 
         if (!found.isEmpty() && !applicationBowerJsonExists()) {
@@ -135,7 +150,7 @@ public class UpdateFrontendMojo extends AbstractMojo {
     }
 
     private void writeFrontendTemplate(String templateName) {
-        String targetFile = FRONTEND_DIR + templateName;
+        String targetFile = getFrontendFile(templateName);
         try {
             String contents = getTemplate(templateName);
             try (FileOutputStream out = new FileOutputStream(targetFile)) {
@@ -148,16 +163,30 @@ public class UpdateFrontendMojo extends AbstractMojo {
     }
 
     private String getTemplate(String name) throws IOException {
-        return IOUtils.toString(getClass().getResourceAsStream(name), "UTF-8")
-                .replaceAll("#artifactId#", mavenProject.getArtifactId());
+        String data = IOUtils.toString(getClass().getResourceAsStream(name),
+                "UTF-8");
+        data = data.replaceAll("#artifactId#", mavenProject.getArtifactId());
+        data = data.replaceAll("#frontend-target-folder#",
+                frontendTargetFolder);
+
+        return data;
     }
 
     private boolean applicationBowerJsonExists() {
-        return new File(FRONTEND_BOWER_JSON).exists();
+        return new File(getFrontendFile(BOWER_JSON)).exists();
+    }
+
+    private String getFrontendFile(String relativeFile) {
+        if (frontendFolder.endsWith("/")) {
+            return frontendFolder + relativeFile;
+        } else {
+            return frontendFolder + "/" + relativeFile;
+        }
     }
 
     private void removeCachedAddonBowerFolder() {
-        File cacheDir = new File(APPLICATION_BOWER_COMPONENTS_ADDON_CACHE);
+        File cacheDir = new File(
+                getFrontendFile(APPLICATION_BOWER_COMPONENTS_ADDON_CACHE));
         if (cacheDir.exists()) {
             try {
                 FileUtils.deleteDirectory(cacheDir);
@@ -172,7 +201,8 @@ public class UpdateFrontendMojo extends AbstractMojo {
 
     private void generateAddonBowerJson(LinkedHashMap<String, String> found)
             throws MojoExecutionException {
-        File addonsBowerJson = new File(FRONTEND_VAADIN_ADDONS_BOWER_JSON);
+        File addonsBowerJson = new File(
+                getFrontendFile(FRONTEND_VAADIN_ADDONS_BOWER_JSON));
         getLog().info("Updating " + addonsBowerJson.getAbsolutePath()
                 + " with the new dependencies");
 
@@ -243,7 +273,8 @@ public class UpdateFrontendMojo extends AbstractMojo {
     private LinkedHashMap<String, String> getCurrentBowerJsonDeps()
             throws MojoExecutionException {
         LinkedHashMap<String, String> dependencies = new LinkedHashMap<>();
-        File addonsBowerJson = new File(FRONTEND_VAADIN_ADDONS_BOWER_JSON);
+        File addonsBowerJson = new File(
+                getFrontendFile(FRONTEND_VAADIN_ADDONS_BOWER_JSON));
         if (!addonsBowerJson.exists()) {
             return dependencies;
         }
