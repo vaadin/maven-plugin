@@ -39,6 +39,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * {@literal bower.json} and related files in {@literal src/main/frontend}
  * unless the folder already contains a {@literal bower.json}. These files will
  * only be generated once and never overwritten.
+ * <p>
+ * This target sets the {@code vaadin.bower.ok} property to either
+ * <code>false</code> or <code>true</code> depending on whether the bower.json
+ * was updated or not. This property can be used together with e.g. a
+ * {@code skip} configuration of other plugins.
  *
  */
 @Mojo(name = "update-frontend", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
@@ -103,9 +108,12 @@ public class UpdateFrontendMojo extends AbstractMojo {
                             + artifactFile.getAbsolutePath());
                 }
             }
-
         }
-        if (!currentBowerJsonDeps.equals(found)) {
+
+        boolean bowerUpToDate = currentBowerJsonDeps.equals(found);
+        mavenProject.getProperties().setProperty("vaadin.bower.ok",
+                String.valueOf(bowerUpToDate));
+        if (!bowerUpToDate) {
             getLog().info("Dependencies have been updated");
             generateAddonBowerJson(found);
             removeCachedAddonBowerFolder();
