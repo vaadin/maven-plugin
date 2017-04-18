@@ -79,6 +79,34 @@ public class UpdateFrontendMojo extends AbstractMojo {
     @Parameter(property = "vaadin.frontend.targetdir", defaultValue = "src/main/webapp/VAADIN/frontend")
     protected String frontendTargetFolder;
 
+    /**
+     * Decides whether the automatically created polymer.json should create a
+     * bundle of all HTML imports or not.
+     * <p>
+     * Default is <code>true</code>, which will automatically create a
+     * {@code bundle.html} which is loaded instead of all separate HTML imports.
+     * This improves loading times for applications using HTTP/1 but is not
+     * needed for applications using HTTP/2.
+     * <p>
+     * Note that this only affects the generated polymer.json and changing this
+     * property later has no effect.
+     */
+    @Parameter(property = "vaadin.frontend.bundle", defaultValue = "true")
+    protected boolean frontendBundle;
+
+    /**
+     * Decides whether the automatically created polymer.json should minify
+     * files or not.
+     * <p>
+     * Default is <code>true</code>, which will automatically minify all
+     * CSS/HTML/JS files to improve loading performance.
+     * <p>
+     * Note that this only affects the generated polymer.json and changing this
+     * property later has no effect.
+     */
+    @Parameter(property = "vaadin.frontend.minify", defaultValue = "true")
+    protected boolean frontendMinify;
+
     private ObjectMapper mapper = new ObjectMapper();
 
     @Override
@@ -168,6 +196,10 @@ public class UpdateFrontendMojo extends AbstractMojo {
         data = data.replaceAll("#artifactId#", mavenProject.getArtifactId());
         data = data.replaceAll("#frontend-target-folder#",
                 frontendTargetFolder);
+        data = data.replaceAll("#frontend-bundle#",
+                String.valueOf(frontendBundle));
+        data = data.replaceAll("#frontend-minify#",
+                String.valueOf(frontendMinify));
 
         return data;
     }
