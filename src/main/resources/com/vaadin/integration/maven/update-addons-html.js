@@ -18,13 +18,13 @@ dependencies.forEach(dependency => {
           // Assume that custom elements are defined inside their own file,
           // which thus must contain a "-". This excludes typical demo/test
           // files such as index.html
-          toImport.push("<link rel=\"import\" href=\"" + folder + "/" + file + "\">");
+          toImport.push("<link rel=\"import\" href=\"" + dependency + "/" + file + "\">");
         }
     });
 });
 
 var oldBundle = "";
-var bundleFile = "bundle.html";
+var bundleFile = "bower_components/bundle.html";
 if (fs.existsSync(bundleFile)) {
 	oldBundle = fs.readFileSync(bundleFile);
 }
@@ -32,7 +32,6 @@ var newBundle = toImport.join("\n")+"\n";
 
 if (oldBundle == newBundle) {
 	// No changes
-	// process.exit(1);
 } else {
 	fs.writeFileSync(bundleFile, newBundle);
 }

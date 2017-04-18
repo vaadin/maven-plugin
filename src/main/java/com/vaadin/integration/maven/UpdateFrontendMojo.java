@@ -49,6 +49,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @Mojo(name = "update-frontend", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
 public class UpdateFrontendMojo extends AbstractMojo {
 
+    private static final String VAADIN_BOWER_OK_PROPERTY = "vaadin.bower.ok";
+
     private static final String FRONTEND_DIR = "src/main/frontend/";
 
     private static final String APPLICATION_BOWER_COMPONENTS_ADDON_CACHE = FRONTEND_DIR
@@ -111,7 +113,7 @@ public class UpdateFrontendMojo extends AbstractMojo {
         }
 
         boolean bowerUpToDate = currentBowerJsonDeps.equals(found);
-        mavenProject.getProperties().setProperty("vaadin.bower.ok",
+        mavenProject.getProperties().setProperty(VAADIN_BOWER_OK_PROPERTY,
                 String.valueOf(bowerUpToDate));
         if (!bowerUpToDate) {
             getLog().info("Dependencies have been updated");

@@ -1,5 +1,5 @@
 {
-  "entrypoint": "bundle.html",
+  "entrypoint": "bower_components/bundle.html",
   "sources": [
     "bower_components/**/*.svg",
     "bower_components/**/*.gif",
