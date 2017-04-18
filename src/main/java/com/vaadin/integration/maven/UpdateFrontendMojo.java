@@ -29,21 +29,28 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Finds any "bower.json" file in any dependency and includes the dependencies
- * from there.
+ * from there into a generated bower.json file.
  * <p>
  * Running this target creates a
  * {@literal src/main/frontend/vaadin-addons/bower.json} (folder configurable),
- * containing the found dependencies. An existing file will be overwritten.
+ * containing the located dependencies. Any existing file at this location will
+ * be overwritten.
  * <p>
  * When dependencies are found, this goal will also create a project
- * {@literal bower.json} and related files in {@literal src/main/frontend}
- * unless the folder already contains a {@literal bower.json}. These files will
- * only be generated once and never overwritten.
+ * {@literal bower.json} and related build files in {@literal src/main/frontend}
+ * unless the folder already contains a {@literal bower.json}. The generated
+ * files will build an ES5 (IE11) and ES6 (most other browsers) compatible
+ * version of the included dependencies, and also by default generate a
+ * {@literal bundle.html} where all dependencies are bundled into one file. The
+ * bundle is useful for HTTP/1 deployments where each request has a notable
+ * overhead whereas it is unnecessary for HTTP/2 deployments where each request
+ * has no overhead and having individual files enables better caching. These
+ * files will only be generated once and never overwritten.
  * <p>
- * This target sets the {@code vaadin.bower.ok} property to either
- * <code>false</code> or <code>true</code> depending on whether the bower.json
- * was updated or not. This property can be used together with e.g. a
- * {@code skip} configuration of other plugins.
+ * When executed, this target sets the {@code vaadin.bower.ok} property to
+ * either <code>false</code> or <code>true</code> depending on whether the
+ * bower.json was updated or not. This property can be used together with e.g. a
+ * {@code skip} configuration of other plugins such as frontend-maven-plugin.
  *
  */
 @Mojo(name = "update-frontend", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
@@ -64,20 +71,48 @@ public class UpdateFrontendMojo extends AbstractMojo {
      * like bower.json will be created and there the files will be processed and
      * possibly bundled.
      * <p>
-     * Default is `src/main/frontend`
+     * Default is {@literal src/main/frontend}
      */
-    @Parameter(property = "vaadin.frontend.dir", defaultValue = "src/main/frontend")
-    protected String frontendFolder;
+    @Parameter(property = "vaadin.frontend.dir", defaultValue = "${basedir}/src/main/frontend")
+    protected File frontendFolder;
 
     /**
      * The frontend target folder for the project. This is where all static
      * files will end up after processing and possibly bundling.
      * <p>
-     * Default is `src/main/webapp/VAADIN/frontend`, where the
+     * Default is {@literal src/main/webapp/VAADIN/frontend}, where the
      * {@code frontend://} protocol will look for them
      */
     @Parameter(property = "vaadin.frontend.targetdir", defaultValue = "src/main/webapp/VAADIN/frontend")
     protected String frontendTargetFolder;
+
+    /**
+     * Decides whether the automatically created polymer.json should create a
+     * bundle of all HTML imports or not.
+     * <p>
+     * Default is <code>true</code>, which will automatically create a
+     * {@code bundle.html} which is loaded instead of all separate HTML imports.
+     * This improves loading times for applications using HTTP/1 but is not
+     * needed for applications using HTTP/2.
+     * <p>
+     * Note that this only affects the generated polymer.json and changing this
+     * property later has no effect.
+     */
+    @Parameter(property = "vaadin.frontend.bundle", defaultValue = "true")
+    protected boolean frontendBundle;
+
+    /**
+     * Decides whether the automatically created polymer.json should minify
+     * files or not.
+     * <p>
+     * Default is <code>true</code>, which will automatically minify all
+     * CSS/HTML/JS files to improve loading performance.
+     * <p>
+     * Note that this only affects the generated polymer.json and changing this
+     * property later has no effect.
+     */
+    @Parameter(property = "vaadin.frontend.minify", defaultValue = "true")
+    protected boolean frontendMinify;
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -150,14 +185,15 @@ public class UpdateFrontendMojo extends AbstractMojo {
     }
 
     private void writeFrontendTemplate(String templateName) {
-        String targetFile = getFrontendFile(templateName);
+        File targetFile = getFrontendFile(templateName);
         try {
             String contents = getTemplate(templateName);
             try (FileOutputStream out = new FileOutputStream(targetFile)) {
                 IOUtils.write(contents, out, "UTF-8");
             }
         } catch (IOException e) {
-            getLog().error("Unable to create " + targetFile, e);
+            getLog().error("Unable to create " + targetFile.getAbsolutePath(),
+                    e);
         }
 
     }
@@ -168,25 +204,25 @@ public class UpdateFrontendMojo extends AbstractMojo {
         data = data.replaceAll("#artifactId#", mavenProject.getArtifactId());
         data = data.replaceAll("#frontend-target-folder#",
                 frontendTargetFolder);
+        data = data.replaceAll("#frontend-bundle#",
+                String.valueOf(frontendBundle));
+        data = data.replaceAll("#frontend-minify#",
+                String.valueOf(frontendMinify));
 
         return data;
     }
 
     private boolean applicationBowerJsonExists() {
-        return new File(getFrontendFile(BOWER_JSON)).exists();
+        return getFrontendFile(BOWER_JSON).exists();
     }
 
-    private String getFrontendFile(String relativeFile) {
-        if (frontendFolder.endsWith("/")) {
-            return frontendFolder + relativeFile;
-        } else {
-            return frontendFolder + "/" + relativeFile;
-        }
+    private File getFrontendFile(String relativeFile) {
+        return new File(frontendFolder, relativeFile);
     }
 
     private void removeCachedAddonBowerFolder() {
-        File cacheDir = new File(
-                getFrontendFile(APPLICATION_BOWER_COMPONENTS_ADDON_CACHE));
+        File cacheDir = getFrontendFile(
+                APPLICATION_BOWER_COMPONENTS_ADDON_CACHE);
         if (cacheDir.exists()) {
             try {
                 FileUtils.deleteDirectory(cacheDir);
@@ -201,8 +237,8 @@ public class UpdateFrontendMojo extends AbstractMojo {
 
     private void generateAddonBowerJson(LinkedHashMap<String, String> found)
             throws MojoExecutionException {
-        File addonsBowerJson = new File(
-                getFrontendFile(FRONTEND_VAADIN_ADDONS_BOWER_JSON));
+        File addonsBowerJson = getFrontendFile(
+                FRONTEND_VAADIN_ADDONS_BOWER_JSON);
         getLog().info("Updating " + addonsBowerJson.getAbsolutePath()
                 + " with the new dependencies");
 
@@ -273,8 +309,8 @@ public class UpdateFrontendMojo extends AbstractMojo {
     private LinkedHashMap<String, String> getCurrentBowerJsonDeps()
             throws MojoExecutionException {
         LinkedHashMap<String, String> dependencies = new LinkedHashMap<>();
-        File addonsBowerJson = new File(
-                getFrontendFile(FRONTEND_VAADIN_ADDONS_BOWER_JSON));
+        File addonsBowerJson = getFrontendFile(
+                FRONTEND_VAADIN_ADDONS_BOWER_JSON);
         if (!addonsBowerJson.exists()) {
             return dependencies;
         }

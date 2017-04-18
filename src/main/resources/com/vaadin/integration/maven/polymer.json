@@ -9,29 +9,29 @@
   "builds": [
     {
       "name": "es5",
-      "bundle": true,
+      "bundle": #frontend-bundle#,
       "js": {
-        "minify": true,
+        "minify": #frontend-minify#,
         "compile": true
       },
       "css": {
-        "minify": true
+        "minify": #frontend-minify#
       },
       "html": {
-        "minify": true
+        "minify": #frontend-minify#
       }
     },
     {
       "name": "es6",
-      "bundle": true,
+      "bundle": #frontend-bundle#,
       "js": {
-        "minify": true
+        "minify": #frontend-minify#
       },
       "css": {
-        "minify": true
+        "minify": #frontend-minify#
       },
       "html": {
-        "minify": true
+        "minify": #frontend-minify#
       }
     }
   ]
