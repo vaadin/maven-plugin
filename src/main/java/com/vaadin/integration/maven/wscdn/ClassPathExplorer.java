@@ -38,8 +38,6 @@ import java.util.jar.Manifest;
 
 import com.vaadin.integration.maven.wscdn.CvalChecker.UnreachableCvalServerException;
 
-import sun.net.www.protocol.file.FileURLConnection;
-
 /**
  * Utility class to collect widgetset related information from classpath.
  * Utility will seek all directories from classpaths, and jar files having
@@ -238,86 +236,84 @@ public class ClassPathExplorer {
                 // and files in jar
 
                 URLConnection openConnection = location.openConnection();
-                if (openConnection instanceof JarURLConnection || openConnection instanceof FileURLConnection) {
 
-                    JarFile jarFile;
-                    if (openConnection instanceof JarURLConnection) {
-                        JarURLConnection conn = (JarURLConnection) openConnection;
-                        jarFile = conn.getJarFile();
-                    } else {
-                        jarFile = new JarFile(location.getFile());
-                    }
+                JarFile jarFile;
+                if (openConnection instanceof JarURLConnection) {
+                    JarURLConnection conn = (JarURLConnection) openConnection;
+                    jarFile = conn.getJarFile();
+                } else {
+                    jarFile = new JarFile(location.getFile());
+                }
 
-                    Manifest manifest = jarFile.getManifest();
-                    if (manifest == null) {
-                        // No manifest so this is not a Vaadin Add-on
-                        return;
-                    }
+                Manifest manifest = jarFile.getManifest();
+                if (manifest == null) {
+                    // No manifest so this is not a Vaadin Add-on
+                    return;
+                }
 
-                    // Check for widgetset attribute
-                    String value = manifest.getMainAttributes().getValue(
-                            "Vaadin-Widgetsets");
-                    if (value != null) {
-                        String[] widgetsetNames = value.split(",");
-                        for (int i = 0; i < widgetsetNames.length; i++) {
-                            String widgetsetname = widgetsetNames[i].trim();
-                            if (!widgetsetname.equals("")) {
-                                widgetsets.put(widgetsetname, location);
-                            }
-                        }
-
-                        Attributes attribs = manifest.getMainAttributes();
-                        String license = attribs.getValue(VAADIN_ADDON_LICENSE);
-                        String name = attribs.getValue(VAADIN_ADDON_NAME);
-                        String vers = attribs.getValue(VAADIN_ADDON_VERSION) == null ? ""
-                                : attribs.getValue(VAADIN_ADDON_VERSION);
-                        String title = attribs.getValue(VAADIN_ADDON_TITLE) == null ? name
-                                : attribs.getValue(VAADIN_ADDON_TITLE);
-
-                        String awidgetsets = attribs
-                                .getValue(VAADIN_ADDON_WIDGETSET) == null ? name
-                                        : attribs.getValue(
-                                                VAADIN_ADDON_WIDGETSET);
-
-                        if (name != null && license != null) {
-                            if (VAADIN_AGPL.equals(license)) {
-                                // For agpl version, we don't care
-                            } else if (VAADIN_CVAL.equals(license)) {
-                                // We only check cval licensed products
-                                CvalInfo info;
-
-                                try {
-                                    info = cvalChecker.validateProduct(name,
-                                            vers,
-                                            title);
-                                    printValidLicense(info, title, vers);
-                                } catch (UnreachableCvalServerException e) {
-                                    info = new CvalInfo();
-                                    final Product product = new Product();
-                                    product.setName(name);
-                                    info.setProduct(product);
-                                    printServerUnreachable(title, vers);
-                                }
-//                                for (String w : awidgetsets.split("[, ]+")) {
-//                                    ret.add(new CValUiInfo(title, String
-//                                            .valueOf(computeMajorVersion(vers)),
-//                                            w,
-//                                            info.getType()));
-//                                }
-                            }
+                // Check for widgetset attribute
+                String value = manifest.getMainAttributes().getValue(
+                        "Vaadin-Widgetsets");
+                if (value != null) {
+                    String[] widgetsetNames = value.split(",");
+                    for (int i = 0; i < widgetsetNames.length; i++) {
+                        String widgetsetname = widgetsetNames[i].trim();
+                        if (!widgetsetname.equals("")) {
+                            widgetsets.put(widgetsetname, location);
                         }
                     }
 
-                    // Check for theme attribute
-                    value = manifest.getMainAttributes().getValue(
-                            "Vaadin-Stylesheets");
-                    if (value != null) {
-                        String[] stylesheets = value.split(",");
-                        for (int i = 0; i < stylesheets.length; i++) {
-                            String stylesheet = stylesheets[i].trim();
-                            if (!stylesheet.equals("")) {
-                                addonStyles.put(stylesheet, location);
+                    Attributes attribs = manifest.getMainAttributes();
+                    String license = attribs.getValue(VAADIN_ADDON_LICENSE);
+                    String name = attribs.getValue(VAADIN_ADDON_NAME);
+                    String vers = attribs.getValue(VAADIN_ADDON_VERSION) == null ? ""
+                            : attribs.getValue(VAADIN_ADDON_VERSION);
+                    String title = attribs.getValue(VAADIN_ADDON_TITLE) == null ? name
+                            : attribs.getValue(VAADIN_ADDON_TITLE);
+
+                    String awidgetsets = attribs
+                            .getValue(VAADIN_ADDON_WIDGETSET) == null ? name
+                                    : attribs.getValue(
+                                            VAADIN_ADDON_WIDGETSET);
+
+                    if (name != null && license != null) {
+                        if (VAADIN_AGPL.equals(license)) {
+                            // For agpl version, we don't care
+                        } else if (VAADIN_CVAL.equals(license)) {
+                            // We only check cval licensed products
+                            CvalInfo info;
+
+                            try {
+                                info = cvalChecker.validateProduct(name,
+                                        vers,
+                                        title);
+                                printValidLicense(info, title, vers);
+                            } catch (UnreachableCvalServerException e) {
+                                info = new CvalInfo();
+                                final Product product = new Product();
+                                product.setName(name);
+                                info.setProduct(product);
+                                printServerUnreachable(title, vers);
                             }
+//                          for (String w : awidgetsets.split("[, ]+")) {
+//                              ret.add(new CValUiInfo(title, String
+//                                      .valueOf(computeMajorVersion(vers)),
+//                                      w,
+//                                      info.getType()));
+//                          }
+                        }
+                    }
+                }
+
+                // Check for theme attribute
+                value = manifest.getMainAttributes().getValue(
+                        "Vaadin-Stylesheets");
+                if (value != null) {
+                    String[] stylesheets = value.split(",");
+                    for (int i = 0; i < stylesheets.length; i++) {
+                        String stylesheet = stylesheets[i].trim();
+                        if (!stylesheet.equals("")) {
+                            addonStyles.put(stylesheet, location);
                         }
                     }
                 }
