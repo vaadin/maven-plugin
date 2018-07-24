@@ -33,7 +33,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
-          <version>@pom.version@</version>
+          <version>@gwt.version@</version>
         </plugin>
         <plugin>
           <artifactId>maven-war-plugin</artifactId>
