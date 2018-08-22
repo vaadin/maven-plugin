@@ -301,16 +301,9 @@
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-client</artifactId>
-      <version>LATEST</version>
+      <version>${vaadin.version}</version>
       <scope>test</scope>
     </dependency>
-<!--
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-client-compiler</artifactId>
-      <version>${vaadin.version}</version>
-    </dependency>
--->
 
     <dependency>
       <!-- used to unpack gwt native libs -->
