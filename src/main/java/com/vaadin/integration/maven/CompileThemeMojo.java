@@ -29,6 +29,16 @@ public class CompileThemeMojo extends AbstractThemeMojo {
     @Parameter(defaultValue = "false", property = "vaadin.theme.ignore.warnings")
     private boolean ignoreThemeWarnings;
 
+    /**
+     * Continues to compile even though a directory with no styles was encountered.
+     * This is useful to have a working theme compilation when using Subversion, Mercurial, 
+     * Dimensions and other systems that create hidden folders next to the files they version.
+     * Note: If you have no theme and set this parameter to true the compilation will succeed despite.
+     */
+    @Parameter(defaultValue = "false", property = "vaadin.theme.ignore.non-theme-folders")
+    private boolean ignoreNonThemeFolders;
+    
+    
     @Override
     protected void checkVaadinVersion() throws MojoExecutionException {
         // restrict to Vaadin 7.0 and later, otherwise skip and log
@@ -51,6 +61,10 @@ public class CompileThemeMojo extends AbstractThemeMojo {
 
         if (ignoreThemeWarnings) {
             cmd.arg("-ignore-warnings:true");
+        }
+        
+        if(ignoreNonThemeFolders) {
+        	cmd.arg("-ignore-non-theme-folders:true");
         }
 
         File themeDir = configureThemeClasspath(cmd, theme);
