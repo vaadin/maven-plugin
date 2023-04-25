@@ -301,6 +301,11 @@
       <version>${vaadin.version}</version>
     </dependency>
 -->
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>license-checker</artifactId>
+      <version>1.12.3</version>
+    </dependency>
 
     <dependency>
       <!-- used to unpack gwt native libs -->

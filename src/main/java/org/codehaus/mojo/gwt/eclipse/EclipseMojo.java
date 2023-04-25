@@ -191,6 +191,7 @@ public class EclipseMojo
             getLog().info( "create exploded Jetty webapp in " + hostedWebapp );
             lib.mkdirs();
 
+            @SuppressWarnings("deprecation")
             Collection<Artifact> artifacts = getProject().getRuntimeArtifacts();
             for ( Artifact artifact : artifacts )
             {

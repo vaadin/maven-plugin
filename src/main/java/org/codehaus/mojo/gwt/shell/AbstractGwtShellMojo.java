@@ -41,8 +41,7 @@ import org.codehaus.mojo.gwt.AbstractGwtModuleMojo;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 
-import com.vaadin.integration.maven.wscdn.ClassPathExplorer;
-import com.vaadin.integration.maven.wscdn.CvalChecker;
+import com.vaadin.integration.maven.ClassPathExplorer;
 import com.vaadin.wscdn.client.WidgetSetRequest;
 
 /**
@@ -381,12 +380,7 @@ extends AbstractGwtModuleMojo
             }
         }
         Map<String, URL> availableWidgetSets;
-        try {
-            availableWidgetSets = ClassPathExplorer
-                    .getAvailableWidgetSets(urls);
-        } catch (CvalChecker.InvalidCvalException ex) {
-            throw new MojoExecutionException("Cval license check failed!", ex);
-        }
+        availableWidgetSets = ClassPathExplorer.getAvailableWidgetSets(urls);
         Set<Artifact> uniqueArtifacts = new HashSet<Artifact>();
 
         for (String name : availableWidgetSets.keySet()) {
