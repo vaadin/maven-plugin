@@ -18,6 +18,7 @@ package org.codehaus.mojo.gwt.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -33,7 +34,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.mojo.gwt.AbstractGwtModuleMojo;
 import org.codehaus.mojo.gwt.ClasspathBuilder;
 import org.codehaus.mojo.gwt.ClasspathBuilderException;
 import org.codehaus.mojo.gwt.GwtModule;
@@ -65,7 +65,6 @@ public class DefaultGwtModuleReader
         this.classpathBuilder = classpathBuilder;
     }
 
-    @SuppressWarnings("unchecked")
     public List<String> getGwtModules()
     {
         //Use a Set to avoid duplicate when user set src/main/java as <resource>
@@ -155,10 +154,18 @@ public class DefaultGwtModuleReader
             {
                 urls[i++] = file.toURI().toURL();
             }
-            InputStream stream = new URLClassLoader( urls ).getResourceAsStream( modulePath );
-            if ( stream != null )
-            {
-                return readModule( name, stream );
+
+            try (
+                URLClassLoader loader = new URLClassLoader(urls);
+                InputStream stream = loader.getResourceAsStream( modulePath )
+                ) {
+
+                if ( stream != null )
+                {
+                    return readModule( name, stream );
+                }
+            } catch(IOException ioex) {
+                log.error(ioex.getMessage());
             }
         }
         catch ( MalformedURLException e )
