@@ -13,30 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.vaadin.integration.maven.wscdn;
+package com.vaadin.integration.maven;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
-import com.vaadin.integration.maven.wscdn.CvalChecker.UnreachableCvalServerException;
 
 import sun.net.www.protocol.file.FileURLConnection;
 
@@ -59,37 +53,6 @@ import sun.net.www.protocol.file.FileURLConnection;
  *
  */
 public class ClassPathExplorer {
-
-    private static final String VAADIN_ADDON_VERSION_ATTRIBUTE = "Vaadin-Package-Version";
-
-    // Manifest attributes
-    public static final String VAADIN_ADDON_LICENSE = "AdVaaLicen";
-    public static final String VAADIN_ADDON_NAME = "AdVaaName";
-    public static final String VAADIN_ADDON_WIDGETSET = "Vaadin-Widgetsets";
-    public static final String VAADIN_ADDON_VERSION = "Implementation-Version";
-    public static final String VAADIN_ADDON_TITLE = "Implementation-Title";
-    public static final String LINE = "----------------------------------------------------------------------------------------------------------------------";
-
-
-    // License types
-    public static final String VAADIN_AGPL = "agpl";
-    public static final String VAADIN_CVAL = "cval";
-
-    static CvalChecker cvalChecker = new CvalChecker();
-
-    /**
-     * File filter that only accepts directories.
-     */
-    private final static FileFilter DIRECTORIES_ONLY = new FileFilter() {
-        @Override
-        public boolean accept(File f) {
-            if (f.exists() && f.isDirectory()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    };
 
     /**
      * Contains information about widgetsets and themes found on the classpath
@@ -132,7 +95,7 @@ public class ClassPathExplorer {
      * @return map from widgetset classname to widgetset location URL
      */
     public static Map<String, URL> getAvailableWidgetSets(
-            Map<String, URL> classpathLocations) throws CvalChecker.InvalidCvalException {
+            Map<String, URL> classpathLocations) {
         return getAvailableWidgetSetsAndStylesheets(classpathLocations).
                 getWidgetsets();
     }
@@ -145,7 +108,7 @@ public class ClassPathExplorer {
      * @return
      */
     public static LocationInfo getAvailableWidgetSetsAndStylesheets(
-            Map<String, URL> classpathLocations) throws CvalChecker.InvalidCvalException {
+            Map<String, URL> classpathLocations) {
         long start = System.currentTimeMillis();
         Map<String, URL> widgetsets = new HashMap<String, URL>();
         Map<String, URL> themes = new HashMap<String, URL>();
@@ -189,7 +152,7 @@ public class ClassPathExplorer {
     private static void searchForWidgetSetsAndAddonStyles(
             String locationString, Map<String, URL> inClasspathLocations,
             Map<String, URL> widgetsets,
-            Map<String, URL> addonStyles) throws CvalChecker.InvalidCvalException {
+            Map<String, URL> addonStyles) {
 
         URL location = inClasspathLocations.get(locationString);
         File directory = new File(location.getFile());
@@ -265,47 +228,6 @@ public class ClassPathExplorer {
                                 widgetsets.put(widgetsetname, location);
                             }
                         }
-
-                        Attributes attribs = manifest.getMainAttributes();
-                        String license = attribs.getValue(VAADIN_ADDON_LICENSE);
-                        String name = attribs.getValue(VAADIN_ADDON_NAME);
-                        String vers = attribs.getValue(VAADIN_ADDON_VERSION) == null ? ""
-                                : attribs.getValue(VAADIN_ADDON_VERSION);
-                        String title = attribs.getValue(VAADIN_ADDON_TITLE) == null ? name
-                                : attribs.getValue(VAADIN_ADDON_TITLE);
-
-                        String awidgetsets = attribs
-                                .getValue(VAADIN_ADDON_WIDGETSET) == null ? name
-                                        : attribs.getValue(
-                                                VAADIN_ADDON_WIDGETSET);
-
-                        if (name != null && license != null) {
-                            if (VAADIN_AGPL.equals(license)) {
-                                // For agpl version, we don't care
-                            } else if (VAADIN_CVAL.equals(license)) {
-                                // We only check cval licensed products
-                                CvalInfo info;
-
-                                try {
-                                    info = cvalChecker.validateProduct(name,
-                                            vers,
-                                            title);
-                                    printValidLicense(info, title, vers);
-                                } catch (UnreachableCvalServerException e) {
-                                    info = new CvalInfo();
-                                    final Product product = new Product();
-                                    product.setName(name);
-                                    info.setProduct(product);
-                                    printServerUnreachable(title, vers);
-                                }
-//                                for (String w : awidgetsets.split("[, ]+")) {
-//                                    ret.add(new CValUiInfo(title, String
-//                                            .valueOf(computeMajorVersion(vers)),
-//                                            w,
-//                                            info.getType()));
-//                                }
-                            }
-                        }
                     }
 
                     // Check for theme attribute
@@ -326,201 +248,6 @@ public class ClassPathExplorer {
             }
 
         }
-    }
-
-    /**
-     * Splits the current class path into entries, and filters them accepting
-     * directories, Vaadin add-on JARs with widgetsets and Vaadin JARs.
-     *
-     * Some other non-JAR entries may also be included in the result.
-     *
-     * @return filtered list of class path entries
-     */
-    private static List<String> getRawClasspathEntries() {
-        // try to keep the order of the classpath
-        List<String> locations = new ArrayList<String>();
-
-        String pathSep = System.getProperty("path.separator");
-        String classpath = System.getProperty("java.class.path");
-
-        if (classpath.startsWith("\"")) {
-            classpath = classpath.substring(1);
-        }
-        if (classpath.endsWith("\"")) {
-            classpath = classpath.substring(0, classpath.length() - 1);
-        }
-
-        debug("Classpath: " + classpath);
-
-        String[] split = classpath.split(pathSep);
-        for (String classpathEntry : split) {
-            if (acceptClassPathEntry(classpathEntry)) {
-                locations.add(classpathEntry);
-            }
-        }
-
-        return locations;
-    }
-
-    /**
-     * Determine every URL location defined by the current classpath, and it's
-     * associated package name.
-     *
-     * See {@link #classpathLocations} for information on output format.
-     *
-     * @param classpathEntries raw class path entries as split from the Java
-     * class path string
-     * @return map of classpath locations, see {@link #classpathLocations}
-     */
-    private static Map<String, URL> getClasspathLocations(
-            List<String> classpathEntries) {
-        long start = System.currentTimeMillis();
-        // try to keep the order of the classpath
-        Map<String, URL> locations = new LinkedHashMap<String, URL>();
-        for (String classpathEntry : classpathEntries) {
-            File file = new File(classpathEntry);
-            include(null, file, locations);
-            System.err.println("INCLUDE: " + classpathEntry);
-        }
-        long end = System.currentTimeMillis();
-        if (debug) {
-            debug("getClassPathLocations took " + (end - start) + "ms");
-        }
-        return locations;
-    }
-
-    /**
-     * Checks a class path entry to see whether it can contain widgets and
-     * widgetsets.
-     *
-     * All directories are automatically accepted. JARs are accepted if they
-     * have the "Vaadin-Widgetsets" attribute in their manifest or the JAR file
-     * name contains "vaadin-" or ".vaadin.".
-     *
-     * Also other non-JAR entries may be accepted, the caller should be prepared
-     * to handle them.
-     *
-     * @param classpathEntry class path entry string as given in the Java class
-     * path
-     * @return true if the entry should be considered when looking for widgets
-     * or widgetsets
-     */
-    private static boolean acceptClassPathEntry(String classpathEntry) {
-        if (!classpathEntry.endsWith(".jar")) {
-            // accept all non jars (practically directories)
-            return true;
-        } else {
-            // accepts jars that comply with vaadin-component packaging
-            // convention (.vaadin. or vaadin- as distribution packages),
-            if (classpathEntry.contains("vaadin-")
-                    || classpathEntry.contains(".vaadin.")) {
-                return true;
-            } else {
-                URL url;
-                try {
-                    url = new URL("file:"
-                            + new File(classpathEntry).getCanonicalPath());
-                    url = new URL("jar:" + url.toExternalForm() + "!/");
-                    JarURLConnection conn = (JarURLConnection) url
-                            .openConnection();
-                    debug(url.toString());
-
-                    JarFile jarFile = conn.getJarFile();
-                    Manifest manifest = jarFile.getManifest();
-                    if (manifest != null) {
-                        Attributes mainAttributes = manifest
-                                .getMainAttributes();
-                        if (mainAttributes.getValue("Vaadin-Widgetsets") != null) {
-                            return true;
-                        }
-                        if (mainAttributes.getValue("Vaadin-Stylesheets") != null) {
-                            return true;
-                        }
-                    }
-                } catch (MalformedURLException e) {
-                    if (debug) {
-                        error("Failed to inspect JAR file", e);
-                    }
-                } catch (IOException e) {
-                    if (debug) {
-                        error("Failed to inspect JAR file", e);
-                    }
-                }
-
-                return false;
-            }
-        }
-    }
-
-    /**
-     * Recursively add subdirectories and jar files to locations - see
-     * {@link #classpathLocations}.
-     *
-     * @param name
-     * @param file
-     * @param locations
-     */
-    private static void include(String name, File file,
-            Map<String, URL> locations) {
-        if (!file.exists()) {
-            return;
-        }
-        if (!file.isDirectory()) {
-            // could be a JAR file
-            includeJar(file, locations);
-            return;
-        }
-
-        if (file.isHidden() || file.getPath().contains(File.separator + ".")) {
-            return;
-        }
-
-        if (name == null) {
-            name = "";
-        } else {
-            name += ".";
-        }
-
-        // add all directories recursively
-        File[] dirs = file.listFiles(DIRECTORIES_ONLY);
-        for (File dir : dirs) {
-            try {
-                // add the present directory
-                if (!dir.isHidden() && !dir.getPath().contains(
-                        File.separator + ".")) {
-                    String key = dir.getCanonicalPath() + "/" + name + dir.
-                            getName();
-                    locations.put(key, new URL("file://" + dir.
-                            getCanonicalPath()));
-                }
-            } catch (Exception ioe) {
-                return;
-            }
-            include(name + dir.getName(), dir, locations);
-        }
-    }
-
-    /**
-     * Add a jar file to locations - see {@link #classpathLocations}.
-     *
-     * @param name
-     * @param locations
-     */
-    private static void includeJar(File file, Map<String, URL> locations) {
-        try {
-            URL url = new URL("file:" + file.getCanonicalPath());
-            url = new URL("jar:" + url.toExternalForm() + "!/");
-            JarURLConnection conn = (JarURLConnection) url.openConnection();
-            JarFile jarFile = conn.getJarFile();
-            if (jarFile != null) {
-                // the key does not matter here as long as it is unique
-                locations.put(url.toString(), url);
-            }
-        } catch (Exception e) {
-            // e.printStackTrace();
-
-        }
-
     }
 
     /**
@@ -588,34 +315,15 @@ public class ClassPathExplorer {
         return gwtModuleName.toLowerCase().contains("widgetset");
     }
 
-    static private void printValidLicense(CvalInfo info, String title,
-            String version) {
-        String msg = info.getMessage();
-        if (msg == null) {
-            String key = "evaluation".equals(info.getType()) ? "evaluation"
-                    : "valid";
-            msg = getErrorMessage(key, title, computeMajorVersion(version),
-                    info.getLicensee());
-        }
-        System.out.println("\n" + LINE + "\n" + msg + "\n" + LINE + "\n");
-    }
-
-    static private void printServerUnreachable(String name, String version) {
-        System.out.println(LINE
-                + "\n"
-                + getErrorMessage("unreachable", name,
-                        computeMajorVersion(version)) + "\n" + LINE);
-    }
-
     static final int computeMajorVersion(String productVersion) {
         return productVersion == null || productVersion.isEmpty() ? 0
                 : Integer.parseInt(productVersion.replaceFirst("[^\\d]+.*$", ""));
     }
     
-        static String getErrorMessage(String key, Object... pars) {
+    static String getErrorMessage(String key, Object... pars) {
         Locale loc = Locale.getDefault();
         ResourceBundle res = ResourceBundle.getBundle(
-                CvalChecker.class.getName(), loc);
+                "CvalChecker", loc);
         String msg = res.getString(key);
         return new MessageFormat(msg, loc).format(pars);
     }
