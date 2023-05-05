@@ -114,7 +114,7 @@
     <mavenVersion>3.0.5</mavenVersion>
     <gwt.version>2.7.0</gwt.version>
     <gwtVersion>${gwt.version}</gwtVersion>
-    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.5</mavenPluginPluginVersion>
     <mojo.java.target>1.6</mojo.java.target>
     <doxia-sitetoolsVersion>1.6</doxia-sitetoolsVersion>
     <!--  to be able on powerfull ci machine to change it tru the cli :-) -->
@@ -274,6 +274,25 @@
         <groupId>com.vaadin.wscdn</groupId>
         <artifactId>wscdn-client</artifactId>
         <version>${wscdn.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <version>${gwt.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>license-checker</artifactId>
+      <version>1.12.3</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.gwt</groupId>
+          <artifactId>gwt-user</artifactId>
+        </exclusion>
+      </exclusions> 
     </dependency>
 
     <!-- Dependencies of WSCDN -->

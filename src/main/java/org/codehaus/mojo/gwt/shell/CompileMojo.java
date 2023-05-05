@@ -24,11 +24,11 @@ package org.codehaus.mojo.gwt.shell;
  */
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
@@ -45,6 +45,9 @@ import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SingleTargetSourceMapping;
 import org.codehaus.plexus.util.StringUtils;
 
+import com.vaadin.pro.licensechecker.BuildType;
+import com.vaadin.pro.licensechecker.LicenseChecker;
+import com.vaadin.pro.licensechecker.LicenseException;
 import com.vaadin.wscdn.client.Connection;
 import com.vaadin.wscdn.client.WidgetSetRequest;
 
@@ -65,6 +68,7 @@ public class CompileMojo
 {
 
     private static final String DEVELOPER_LICENSE_SUFFIX = ".developer.license";
+    private static final String FRAMEWORK_PRODUCT = "vaadin-framework";
 
     @Parameter(property = "gwt.compiler.skip", defaultValue = "false")
     private boolean skip;
@@ -413,11 +417,32 @@ public class CompileMojo
     @Parameter(defaultValue = "${project.build.directory}/wscdn-widgetset")
     private File lastWidgetset;
 
-
     @Override
     public void doExecute( )
         throws MojoExecutionException, MojoFailureException
     {
+        // Figure out Vaadin version
+        String vaadinVersion = null;
+        Set<Artifact> artifacts = getProject().getArtifacts();
+        for (Artifact artifact : artifacts) {
+            // Store the vaadin version
+            if (artifact.getArtifactId().equals("vaadin-server")) {
+                vaadinVersion = artifact.getVersion();
+            }
+        }
+
+        // Always check for Vaadin license
+        try {
+            LicenseChecker.checkLicense(FRAMEWORK_PRODUCT, vaadinVersion, BuildType.DEVELOPMENT);
+        } catch (LicenseException ex) {
+            getLog().error("Vaadin version check failed", ex);
+            throw new MojoFailureException(ex, ex.getMessage(),
+            "Vaadin license checking failed. Make sure you have a valid " +
+            "Vaadin development license, and that it is accessible to the " +
+            "license checker. For more information, see " + 
+            "https://vaadin.com/licensing-faq-and-troubleshooting");
+        }
+
         if ( skip || "pom".equals( getProject().getPackaging() ) || "cdn".equals(widgetsetMode) )
         {
             getLog().info( "GWT compilation is skipped" );
@@ -449,6 +474,7 @@ public class CompileMojo
         return jvmArgs;
     }
 
+    @SuppressWarnings("deprecation")
     private void compile( String[] modules )
         throws MojoExecutionException
     {
