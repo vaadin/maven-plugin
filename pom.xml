@@ -4,7 +4,7 @@
     ~ use this file except in compliance with the License. You may obtain a copy of
     ~ the License at
     ~
-    ~ http://www.apache.org/licenses/LICENSE-2.0
+    ~ https://www.apache.org/licenses/LICENSE-2.0
     ~
     ~ Unless required by applicable law or agreed to in writing, software
     ~ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -13,13 +13,13 @@
     ~ the License.
 
     ~ NOTE: For help with the syntax of this file, see:
-    ~ http://maven.apache.org/doxia/references/apt-format.html
+    ~ https://maven.apache.org/doxia/references/apt-format.html
     ~
     ~
     ~ Based on the gwt-maven-plugin. 
     ~ See mojo.codehaus.org/gwt-maven-plugin/
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.codehaus.mojo</groupId>
@@ -34,9 +34,9 @@
   <description>
     Maven plugin for Vaadin.
   </description>
-  <url>http://vaadin.com</url>
+  <url>https://vaadin.com</url>
   <organization>
-  	<url>http://vaadin.com</url>
+  	<url>https://vaadin.com</url>
   	<name>Vaadin Ltd</name>
   </organization>
   <inceptionYear>2012</inceptionYear>
@@ -45,7 +45,7 @@
   </prerequisites>
   <licenses>
     <license>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <name>Apache 2.0</name>
       <distribution>repo</distribution>
     </license>
@@ -90,13 +90,13 @@
     </contributor>
   </contributors>
   <scm>
-    <connection>scm:http:http://dev.vaadin.com/git/integration/maven/vaadin-maven-plugin.git</connection>
+    <connection>scm:http:https://dev.vaadin.com/git/integration/maven/vaadin-maven-plugin.git</connection>
     <developerConnection>scm:ssh:git@dev.vaadin.com/integration/maven/vaadin-maven-plugin</developerConnection>
-    <url>http://dev.vaadin.com/git/?p=integration/maven/vaadin-maven-plugin.git</url>
+    <url>https://dev.vaadin.com/git/?p=integration/maven/vaadin-maven-plugin.git</url>
   </scm>
   <issueManagement>
     <system>trac</system>
-    <url>http://dev.vaadin.com</url>
+    <url>https://dev.vaadin.com</url>
   </issueManagement>
 <!--  <ciManagement>
     <system>buildhive</system>
@@ -131,18 +131,18 @@
     <repository>
       <id>vaadin-staging</id>
       <name>Vaadin release staging repository</name>
-      <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
     <snapshotRepository>
       <id>vaadin-snapshots</id>
       <name>Vaadin snapshot repository</name>
-      <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+      <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
   <repositories>
     <repository>
       <id>vaadin-snapshots</id>
-      <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+      <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
       <releases>
         <enabled>false</enabled>
       </releases>
@@ -152,7 +152,7 @@
     </repository>
     <repository>
       <id>codehaus-snapshots</id>
-      <url>http://nexus.codehaus.org/snapshots</url>
+      <url>https://nexus.codehaus.org/snapshots</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -315,6 +315,13 @@
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-jackson2-provider</artifactId>
         <version>3.0.10.Final</version>
+    </dependency>
+
+    <!-- Dependencies of license checker..? -->
+    <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+      <version>2.0.2</version>
     </dependency>
 
     <dependency>
@@ -650,7 +657,7 @@
         <artifactId>maven-plugin-plugin</artifactId>
         <version>${mavenPluginPluginVersion}</version>
         <configuration>
-          <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
+          <!-- see https://jira.codehaus.org/browse/MNG-5346 -->
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           <requirements>
             <jdk>${maven.compiler.target}</jdk>
