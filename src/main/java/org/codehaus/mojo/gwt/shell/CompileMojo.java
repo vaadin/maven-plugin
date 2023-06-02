@@ -427,14 +427,15 @@ public class CompileMojo
         Set<Artifact> artifacts = getProject().getArtifacts();
         for (Artifact artifact : artifacts) {
             // Store the vaadin version
-            if (artifact.getArtifactId().equals("vaadin-server")) {
+            if ("vaadin-server".equals(artifact.getArtifactId())) {
                 vaadinVersion = artifact.getVersion();
             }
         }
 
         // Always check for Vaadin license
         try {
-            LicenseChecker.checkLicense(FRAMEWORK_PRODUCT, vaadinVersion, BuildType.DEVELOPMENT);
+            BuildType bt = null;  // Accept any license type
+            LicenseChecker.checkLicense(FRAMEWORK_PRODUCT, vaadinVersion, bt);
         } catch (LicenseException ex) {
             getLog().error("Vaadin version check failed", ex);
             throw new MojoFailureException(ex, ex.getMessage(),
