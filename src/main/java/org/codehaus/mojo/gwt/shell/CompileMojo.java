@@ -433,7 +433,8 @@ public class CompileMojo
 
         // Always check for Vaadin license
         try {
-            LicenseChecker.checkLicense(FRAMEWORK_PRODUCT, vaadinVersion, BuildType.DEVELOPMENT);
+            BuildType bt = null; // Allow both production and development licenses
+            LicenseChecker.checkLicense(FRAMEWORK_PRODUCT, vaadinVersion, bt);
         } catch (LicenseException ex) {
             getLog().error("Vaadin version check failed", ex);
             throw new MojoFailureException(ex, ex.getMessage(),
