@@ -427,8 +427,10 @@ public class CompileMojo
         Set<Artifact> artifacts = getProject().getArtifacts();
         for (Artifact artifact : artifacts) {
             // Store the vaadin version
-            if ("vaadin-server".equals(artifact.getArtifactId())) {
+            if ("vaadin-server".equals(artifact.getArtifactId()) ||
+                    "vaadin-server-mpr-jakarta".equals(artifact.getArtifactId())) {
                 vaadinVersion = artifact.getVersion();
+                break;
             }
         }
 
