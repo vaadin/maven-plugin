@@ -427,9 +427,15 @@ public class CompileMojo
         Set<Artifact> artifacts = getProject().getArtifacts();
         for (Artifact artifact : artifacts) {
             // Store the vaadin version
-            if ("vaadin-server".equals(artifact.getArtifactId())) {
+            if ("vaadin-server".equals(artifact.getArtifactId()) ||
+                    "vaadin-server-mpr-jakarta".equals(artifact.getArtifactId())) {
                 vaadinVersion = artifact.getVersion();
             }
+        }
+        if (vaadinVersion == null) {
+            throw new IllegalStateException("Unable to determine Vaadin version: " +
+                    "'com.vaadin:vaadin-server' or 'com.vaadin:vaadin-server-mpr-jakarta' " +
+                    "not found in project dependencies.");
         }
 
         // Always check for Vaadin license
