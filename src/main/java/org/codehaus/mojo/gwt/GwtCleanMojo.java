@@ -35,9 +35,7 @@ import org.codehaus.plexus.util.FileUtils;
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  */
 @Mojo(name = "clean", threadSafe = true, defaultPhase = LifecyclePhase.CLEAN)
-public class GwtCleanMojo
-extends AbstractGwtModuleMojo
-{
+public class GwtCleanMojo extends AbstractGwtModuleMojo {
 
     /**
      * {@inheritDoc}
@@ -45,32 +43,25 @@ extends AbstractGwtModuleMojo
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     @Override
-    public void execute()
-            throws MojoExecutionException, MojoFailureException
-    {
-        for ( String name : getModules() )
-        {
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        for (String name : getModules()) {
             try {
-                File output = new File( getOutputDirectory(), readModule( name ).getPath() );
-                clean( output );
+                File output = new File(getOutputDirectory(), readModule(name).getPath());
+                clean(output);
             } catch (GwtModuleReaderException e) {
                 // Only log info if a defined module is not found
                 getLog().info(e.getMessage());
             }
         }
-        clean( new File( getOutputDirectory(), ".gwt-tmp" ) );
-        clean( new File( getOutputDirectory(), "../gwt-unitCache" ) );
+        clean(new File(getOutputDirectory(), ".gwt-tmp"));
+        clean(new File(getOutputDirectory(), "../gwt-unitCache"));
     }
 
-    private void clean( File output )
-    {
-        try
-        {
-            FileUtils.deleteDirectory( output );
-        }
-        catch ( IOException e )
-        {
-            getLog().warn( "Failed to delete directory " + output );
+    private void clean(File output) {
+        try {
+            FileUtils.deleteDirectory(output);
+        } catch (IOException e) {
+            getLog().warn("Failed to delete directory " + output);
         }
     }
 }

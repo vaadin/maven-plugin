@@ -53,10 +53,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  * @version $Id$
  */
-public abstract class AbstractGwtModuleMojo
-extends AbstractGwtMojo
-implements GwtModuleReader
-{
+public abstract class AbstractGwtModuleMojo extends AbstractGwtMojo implements GwtModuleReader {
     /**
      * The project GWT modules. If not set, the plugin will scan the project for <code>.gwt.xml</code> files.
      */
@@ -70,10 +67,9 @@ implements GwtModuleReader
     private String module;
 
     @Override
-    public List<String> getGwtModules()
-    {
+    public List<String> getGwtModules() {
         String[] modules = getModules();
-        return ArrayUtils.isEmpty( modules )? new ArrayList<String>(0) : Arrays.asList( modules );
+        return ArrayUtils.isEmpty(modules) ? new ArrayList<String>(0) : Arrays.asList(modules);
     }
 
     /**
@@ -82,146 +78,116 @@ implements GwtModuleReader
      * @return the modules
      */
     // FIXME move to DefaultGwtModuleReader !
-    public String[] getModules()
-    {
+    public String[] getModules() {
         // module has higher priority if set by expression
-        if ( module != null )
-        {
-            return new String[] { module };
+        if (module != null) {
+            return new String[] {module};
         }
-        if ( modules == null )
-        {
-            //Use a Set to avoid duplicate when user set src/main/java as <resource>
+        if (modules == null) {
+            // Use a Set to avoid duplicate when user set src/main/java as <resource>
             Set<String> mods = new HashSet<String>();
 
             Collection<String> sourcePaths = getProject().getCompileSourceRoots();
-            for ( String sourcePath : sourcePaths )
-            {
-                File sourceDirectory = new File( sourcePath );
-                if ( sourceDirectory.exists() )
-                {
+            for (String sourcePath : sourcePaths) {
+                File sourceDirectory = new File(sourcePath);
+                if (sourceDirectory.exists()) {
                     DirectoryScanner scanner = new DirectoryScanner();
-                    scanner.setBasedir( sourceDirectory.getAbsolutePath() );
-                    scanner.setIncludes( new String[] { "**/*" + DefaultGwtModuleReader.GWT_MODULE_EXTENSION } );
+                    scanner.setBasedir(sourceDirectory.getAbsolutePath());
+                    scanner.setIncludes(new String[] {"**/*" + DefaultGwtModuleReader.GWT_MODULE_EXTENSION});
                     scanner.scan();
 
-                    mods.addAll( Arrays.asList( scanner.getIncludedFiles() ) );
+                    mods.addAll(Arrays.asList(scanner.getIncludedFiles()));
                 }
             }
 
             Collection<Resource> resources = getProject().getResources();
-            for ( Resource resource : resources )
-            {
-                File resourceDirectoryFile = new File( resource.getDirectory() );
-                if ( !resourceDirectoryFile.exists() )
-                {
+            for (Resource resource : resources) {
+                File resourceDirectoryFile = new File(resource.getDirectory());
+                if (!resourceDirectoryFile.exists()) {
                     continue;
                 }
                 DirectoryScanner scanner = new DirectoryScanner();
-                scanner.setBasedir( resource.getDirectory() );
-                scanner.setIncludes( new String[] { "**/*" + DefaultGwtModuleReader.GWT_MODULE_EXTENSION } );
+                scanner.setBasedir(resource.getDirectory());
+                scanner.setIncludes(new String[] {"**/*" + DefaultGwtModuleReader.GWT_MODULE_EXTENSION});
                 scanner.scan();
-                mods.addAll( Arrays.asList( scanner.getIncludedFiles() ) );
+                mods.addAll(Arrays.asList(scanner.getIncludedFiles()));
             }
 
-            if ( mods.isEmpty() )
-            {
-                getLog().warn( "GWT plugin is configured to detect modules, but none were found." );
+            if (mods.isEmpty()) {
+                getLog().warn("GWT plugin is configured to detect modules, but none were found.");
             }
 
             modules = new String[mods.size()];
             int i = 0;
-            for ( String fileName : mods )
-            {
+            for (String fileName : mods) {
                 String path =
-                        fileName.substring( 0, fileName.length() - DefaultGwtModuleReader.GWT_MODULE_EXTENSION.length() );
-                modules[i++] = path.replace( File.separatorChar, '.' );
+                        fileName.substring(0, fileName.length() - DefaultGwtModuleReader.GWT_MODULE_EXTENSION.length());
+                modules[i++] = path.replace(File.separatorChar, '.');
             }
-            if ( modules.length > 0 )
-            {
-                getLog().info( "auto discovered modules " + Arrays.asList( modules ) );
+            if (modules.length > 0) {
+                getLog().info("auto discovered modules " + Arrays.asList(modules));
             }
-
         }
         return modules;
     }
 
     @Override
-    public GwtModule readModule( String name )
-            throws GwtModuleReaderException
-    {
-        String modulePath = name.replace( '.', '/' ) + DefaultGwtModuleReader.GWT_MODULE_EXTENSION;
+    public GwtModule readModule(String name) throws GwtModuleReaderException {
+        String modulePath = name.replace('.', '/') + DefaultGwtModuleReader.GWT_MODULE_EXTENSION;
         Collection<String> sourceRoots = getProject().getCompileSourceRoots();
-        for ( String sourceRoot : sourceRoots )
-        {
-            File root = new File( sourceRoot );
-            File xml = new File( root, modulePath );
-            if ( xml.exists() )
-            {
-                getLog().debug( "GWT module " + name + " found in " + root );
-                return readModule( name, xml );
+        for (String sourceRoot : sourceRoots) {
+            File root = new File(sourceRoot);
+            File xml = new File(root, modulePath);
+            if (xml.exists()) {
+                getLog().debug("GWT module " + name + " found in " + root);
+                return readModule(name, xml);
             }
         }
         Collection<Resource> resources = getProject().getResources();
-        for ( Resource resource : resources )
-        {
-            File root = new File( resource.getDirectory() );
-            File xml = new File( root, modulePath );
-            if ( xml.exists() )
-            {
-                getLog().debug( "GWT module " + name + " found in " + root );
-                return readModule( name, xml );
+        for (Resource resource : resources) {
+            File root = new File(resource.getDirectory());
+            File xml = new File(root, modulePath);
+            if (xml.exists()) {
+                getLog().debug("GWT module " + name + " found in " + root);
+                return readModule(name, xml);
             }
         }
 
-        try
-        {
-            Collection<File> classpath = getClasspath( Artifact.SCOPE_COMPILE );
+        try {
+            Collection<File> classpath = getClasspath(Artifact.SCOPE_COMPILE);
             // also use Vaadin client package
             Collection<File> gwtUserJars = getGwtUserJar();
 
             URL[] urls = new URL[classpath.size() + gwtUserJars.size()];
             int i = 0;
-            for ( File file : classpath )
-            {
+            for (File file : classpath) {
                 urls[i++] = file.toURI().toURL();
             }
-            for ( File file : gwtUserJars )
-            {
+            for (File file : gwtUserJars) {
                 urls[i++] = file.toURI().toURL();
             }
 
-
-            InputStream stream = new URLClassLoader( urls ).getResourceAsStream( modulePath );
-            if ( stream != null )
-            {
-                return readModule( name, stream );
+            InputStream stream = new URLClassLoader(urls).getResourceAsStream(modulePath);
+            if (stream != null) {
+                return readModule(name, stream);
             }
-        }
-        catch ( MalformedURLException e )
-        {
+        } catch (MalformedURLException e) {
             // ignored;
-        } catch (MojoExecutionException e)
-        {
+        } catch (MojoExecutionException e) {
             throw new GwtModuleReaderException(e.getMessage(), e);
         }
 
-        throw new GwtModuleReaderException( "GWT Module " + name + " not found in project sources or resources." );
+        throw new GwtModuleReaderException("GWT Module " + name + " not found in project sources or resources.");
     }
 
-    private GwtModule readModule( String name, File file )
-            throws GwtModuleReaderException
+    private GwtModule readModule(String name, File file) throws GwtModuleReaderException {
 
-    {
-        try
-        {
-            GwtModule module = readModule( name, new FileInputStream( file ) );
+        try {
+            GwtModule module = readModule(name, new FileInputStream(file));
             module.setSourceFile(file);
             return module;
-        }
-        catch ( FileNotFoundException e )
-        {
-            throw new GwtModuleReaderException( "Failed to read module file " + file );
+        } catch (FileNotFoundException e) {
+            throw new GwtModuleReaderException("Failed to read module file " + file);
         }
     }
 
@@ -229,20 +195,14 @@ implements GwtModuleReader
      * @param module2
      * @return
      */
-    private GwtModule readModule( String name, InputStream xml )
-            throws GwtModuleReaderException
-    {
-        try
-        {
-            Xpp3Dom dom = Xpp3DomBuilder.build( ReaderFactory.newXmlReader( xml ) );
-            return new GwtModule( name, dom, this );
-        }
-        catch ( Exception e )
-        {
+    private GwtModule readModule(String name, InputStream xml) throws GwtModuleReaderException {
+        try {
+            Xpp3Dom dom = Xpp3DomBuilder.build(ReaderFactory.newXmlReader(xml));
+            return new GwtModule(name, dom, this);
+        } catch (Exception e) {
             String error = "Failed to read module XML file " + xml;
-            getLog().error( error );
-            throw new GwtModuleReaderException( error, e );
+            getLog().error(error);
+            throw new GwtModuleReaderException(error, e);
         }
     }
-
 }

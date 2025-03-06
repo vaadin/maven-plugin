@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.vaadin.integration.maven.ClassPathExplorer;
+import com.vaadin.wscdn.client.WidgetSetRequest;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -40,9 +42,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.mojo.gwt.AbstractGwtModuleMojo;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
-
-import com.vaadin.integration.maven.ClassPathExplorer;
-import com.vaadin.wscdn.client.WidgetSetRequest;
 
 /**
  * Support running GWT SDK Tools as forked JVM with classpath set according to project source/resource directories and
@@ -53,9 +52,7 @@ import com.vaadin.wscdn.client.WidgetSetRequest;
  * @author willpugh
  * @version $Id$
  */
-public abstract class AbstractGwtShellMojo
-extends AbstractGwtModuleMojo
-{
+public abstract class AbstractGwtShellMojo extends AbstractGwtModuleMojo {
     /**
      * Location on filesystem where GWT will write generated content for review (-gen option to GWT Compiler).
      * <p>
@@ -106,7 +103,7 @@ extends AbstractGwtModuleMojo
      * for most GWT use cases.
      * </p>
      */
-    @Parameter(property = "gwt.extraJvmArgs", defaultValue="-Xmx1G")
+    @Parameter(property = "gwt.extraJvmArgs", defaultValue = "-Xmx1G")
     private String extraJvmArgs;
 
     /**
@@ -144,7 +141,7 @@ extends AbstractGwtModuleMojo
      *
      * @since 2.5.0-rc1
      */
-    @Parameter(defaultValue="false", property = "gwt.persistentunitcache")
+    @Parameter(defaultValue = "false", property = "gwt.persistentunitcache")
     private Boolean persistentunitcache;
 
     /**
@@ -166,7 +163,6 @@ extends AbstractGwtModuleMojo
     @Parameter(defaultValue = "local", property = "vaadin.widgetset.mode")
     protected String widgetsetMode;
 
-
     // methods
 
     /**
@@ -175,68 +171,53 @@ extends AbstractGwtModuleMojo
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     @Override
-    public final void execute()
-            throws MojoExecutionException, MojoFailureException
-    {
+    public final void execute() throws MojoExecutionException, MojoFailureException {
         doExecute();
     }
 
-    public abstract void doExecute()
-            throws MojoExecutionException, MojoFailureException;
+    public abstract void doExecute() throws MojoExecutionException, MojoFailureException;
 
-    protected String getExtraJvmArgs()
-    {
+    protected String getExtraJvmArgs() {
         return extraJvmArgs;
     }
 
-    protected String getLogLevel()
-    {
+    protected String getLogLevel() {
         return logLevel;
     }
 
-    protected String getStyle()
-    {
+    protected String getStyle() {
         return style;
     }
 
-
-    protected String getJvm()
-    {
+    protected String getJvm() {
         return jvm;
     }
 
     /**
      * hook to post-process the dependency-based classpath
      */
-    protected void postProcessClassPath( Collection<File> classpath )
-    {
+    protected void postProcessClassPath(Collection<File> classpath) {
         // Nothing to do in most case
     }
 
-    private List<String> getJvmArgs()
-    {
+    private List<String> getJvmArgs() {
         List<String> extra = new ArrayList<String>();
         String userExtraJvmArgs = getExtraJvmArgs();
-        if ( userExtraJvmArgs != null )
-        {
-            try
-            {
-                return new ArrayList<String>(Arrays.asList( CommandLineUtils.translateCommandline( StringUtils.removeDuplicateWhitespace( userExtraJvmArgs ) ) ) );
-            }
-            catch ( Exception e )
-            {
-                throw new RuntimeException( e );
+        if (userExtraJvmArgs != null) {
+            try {
+                return new ArrayList<String>(Arrays.asList(CommandLineUtils.translateCommandline(
+                        StringUtils.removeDuplicateWhitespace(userExtraJvmArgs))));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
 
         // Pass through any license info for the compiler
         Properties props = System.getProperties();
-        for (Object o : props.keySet())
-        {
+        for (Object o : props.keySet()) {
             String key = (String) o;
-            if (key != null && key.endsWith(".developer.license"))
-            {
-                extra.add( "-D" + key + "=" + System.getProperty(key) );
+            if (key != null && key.endsWith(".developer.license")) {
+                extra.add("-D" + key + "=" + System.getProperty(key));
             }
         }
 
@@ -246,25 +227,22 @@ extends AbstractGwtModuleMojo
     /**
      * @param timeOut the timeOut to set
      */
-    public void setTimeOut( int timeOut )
-    {
+    public void setTimeOut(int timeOut) {
         this.timeOut = timeOut;
     }
 
     protected JavaCommand createJavaCommand() {
         return new JavaCommand()
-        .setLog( getLog() )
-        .setJvm( getJvm() )
-        .setJvmArgs( getJvmArgs() )
-        .setTimeOut( timeOut )
-        .addClassPathProcessors( new ClassPathProcessor()
-        {
-            @Override
-            public void postProcessClassPath( List<File> files )
-            {
-                AbstractGwtShellMojo.this.postProcessClassPath( files );
-            }
-        } );
+                .setLog(getLog())
+                .setJvm(getJvm())
+                .setJvmArgs(getJvmArgs())
+                .setTimeOut(timeOut)
+                .addClassPathProcessors(new ClassPathProcessor() {
+                    @Override
+                    public void postProcessClassPath(List<File> files) {
+                        AbstractGwtShellMojo.this.postProcessClassPath(files);
+                    }
+                });
     }
     /**
      * Add sources.jar artifacts for project dependencies listed as compileSourcesArtifacts. This is a GWT hack to avoid
@@ -275,79 +253,64 @@ extends AbstractGwtModuleMojo
      * The hack can also be used to include utility code from external librariries that may not have been designed for
      * GWT.
      */
-    protected void addCompileSourceArtifacts(JavaCommand cmd)
-            throws MojoExecutionException
-    {
-        if ( compileSourcesArtifacts == null )
-        {
+    protected void addCompileSourceArtifacts(JavaCommand cmd) throws MojoExecutionException {
+        if (compileSourcesArtifacts == null) {
             return;
         }
-        for ( String include : compileSourcesArtifacts )
-        {
+        for (String include : compileSourcesArtifacts) {
             List<String> parts = new ArrayList<String>();
-            parts.addAll( Arrays.asList(include.split(":")) );
-            if ( parts.size() == 2 )
-            {
+            parts.addAll(Arrays.asList(include.split(":")));
+            if (parts.size() == 2) {
                 // type is optional as it will mostly be "jar"
-                parts.add( "jar" );
+                parts.add("jar");
             }
-            String dependencyId = StringUtils.join( parts.iterator(), ":" );
+            String dependencyId = StringUtils.join(parts.iterator(), ":");
             boolean found = false;
 
-            for ( Artifact artifact : getProjectArtifacts() )
-            {
-                getLog().debug( "compare " + dependencyId + " with " + artifact.getDependencyConflictId() );
-                if ( artifact.getDependencyConflictId().equals( dependencyId ) )
-                {
-                    getLog().debug( "Add " + dependencyId + " sources.jar artifact to compile classpath" );
-                    Artifact sources =
-                            resolve( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                                    "jar", "sources" );
-                    cmd.addToClasspath( sources.getFile() );
+            for (Artifact artifact : getProjectArtifacts()) {
+                getLog().debug("compare " + dependencyId + " with " + artifact.getDependencyConflictId());
+                if (artifact.getDependencyConflictId().equals(dependencyId)) {
+                    getLog().debug("Add " + dependencyId + " sources.jar artifact to compile classpath");
+                    Artifact sources = resolve(
+                            artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), "jar", "sources");
+                    cmd.addToClasspath(sources.getFile());
                     found = true;
                     break;
                 }
             }
-            if ( !found ) {
-                getLog().warn(
-                        "Declared compileSourcesArtifact was not found in project dependencies " + dependencyId );
+            if (!found) {
+                getLog().warn("Declared compileSourcesArtifact was not found in project dependencies " + dependencyId);
             }
         }
     }
 
     protected void addArgumentDeploy(JavaCommand cmd) {
-        if ( deploy != null )
-        {
-            cmd.arg( "-deploy" ).arg( String.valueOf( deploy ) );
+        if (deploy != null) {
+            cmd.arg("-deploy").arg(String.valueOf(deploy));
         }
     }
 
-    protected void addArgumentGen( JavaCommand cmd )
-    {
-        if ( genParam )
-        {
-            if ( !gen.exists() )
-            {
+    protected void addArgumentGen(JavaCommand cmd) {
+        if (genParam) {
+            if (!gen.exists()) {
                 gen.mkdirs();
             }
-            cmd.arg( "-gen", gen.getAbsolutePath() );
+            cmd.arg("-gen", gen.getAbsolutePath());
         }
     }
 
     protected void addPersistentUnitCache(JavaCommand cmd) {
-        if ( persistentunitcache != null )
-        {
-            cmd.systemProperty( "gwt.persistentunitcache", String.valueOf( persistentunitcache.booleanValue() ) );
+        if (persistentunitcache != null) {
+            cmd.systemProperty("gwt.persistentunitcache", String.valueOf(persistentunitcache.booleanValue()));
         }
-        if ( persistentunitcachedir != null )
-        {
-            cmd.systemProperty( "gwt.persistentunitcachedir", persistentunitcachedir.getAbsolutePath() );
+        if (persistentunitcachedir != null) {
+            cmd.systemProperty("gwt.persistentunitcachedir", persistentunitcachedir.getAbsolutePath());
         }
     }
 
     /**
      * Create a CDN widgetset compilation request.
-     * 
+     *
      * @return created request
      * @throws MojoExecutionException
      * @throws MojoFailureException
@@ -387,9 +350,7 @@ extends AbstractGwtModuleMojo
             URL url = availableWidgetSets.get(name);
             for (Artifact a : artifacts) {
                 String u = url.toExternalForm();
-                if (u.contains(a.getArtifactId())
-                        && u.contains(a.getBaseVersion()) && !u.contains(
-                                "vaadin-client")) {
+                if (u.contains(a.getArtifactId()) && u.contains(a.getBaseVersion()) && !u.contains("vaadin-client")) {
                     uniqueArtifacts.add(a);
                 }
             }
@@ -397,15 +358,12 @@ extends AbstractGwtModuleMojo
 
         WidgetSetRequest wsReq = new WidgetSetRequest();
         for (Artifact a : uniqueArtifacts) {
-            wsReq.addon(a.getGroupId(), a.getArtifactId(), a.
-                    getBaseVersion());
+            wsReq.addon(a.getGroupId(), a.getArtifactId(), a.getBaseVersion());
         }
-        getLog().info((wsReq.getAddons() != null ? wsReq.getAddons().
-                size() : 0) + " addons found.");
+        getLog().info((wsReq.getAddons() != null ? wsReq.getAddons().size() : 0) + " addons found.");
 
         wsReq.setCompileStyle(getStyle());
         wsReq.setVaadinVersion(vaadinVersion);
         return wsReq;
     }
-
 }

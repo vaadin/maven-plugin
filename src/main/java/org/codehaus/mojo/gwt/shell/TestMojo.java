@@ -42,10 +42,12 @@ import org.codehaus.plexus.util.StringUtils;
  * @see http://code.google.com/intl/fr/webtoolkit/doc/latest/DevGuideTesting.html
  * @version $Id: TestMojo.java 9466 2009-04-16 12:03:15Z ndeloof $
  */
-@Mojo(name = "test", defaultPhase = LifecyclePhase.INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
-public class TestMojo
-extends AbstractGwtShellMojo
-{
+@Mojo(
+        name = "test",
+        defaultPhase = LifecyclePhase.INTEGRATION_TEST,
+        requiresDependencyResolution = ResolutionScope.TEST,
+        threadSafe = true)
+public class TestMojo extends AbstractGwtShellMojo {
 
     /**
      * Set this to 'true' to skip running tests, but still compile them. Its use is NOT RECOMMENDED,
@@ -389,33 +391,23 @@ extends AbstractGwtShellMojo
     private int failures;
 
     @Override
-    public void doExecute()
-            throws MojoExecutionException, MojoFailureException
-    {
-        if ( skip || skipTests || skipExec )
-        {
+    public void doExecute() throws MojoExecutionException, MojoFailureException {
+        if (skip || skipTests || skipExec) {
             return;
         }
-        new TestTemplate( getProject(), includes, excludes, new TestTemplate.CallBack()
-        {
+        new TestTemplate(getProject(), includes, excludes, new TestTemplate.CallBack() {
             @Override
-            public void doWithTest( File sourceDir, String test )
-                    throws MojoExecutionException
-            {
-                forkToRunTest( test );
+            public void doWithTest(File sourceDir, String test) throws MojoExecutionException {
+                forkToRunTest(test);
             }
-        } );
+        });
 
-        if ( failures > 0 )
-        {
-            if ( testFailureIgnore )
-            {
-                getLog().error( "There are test failures.\n\nPlease refer to " + reportsDirectory
-                        + " for the individual test results." );
-            }
-            else
-            {
-                throw new MojoExecutionException( "There was test failures." );
+        if (failures > 0) {
+            if (testFailureIgnore) {
+                getLog().error("There are test failures.\n\nPlease refer to " + reportsDirectory
+                        + " for the individual test results.");
+            } else {
+                throw new MojoExecutionException("There was test failures.");
             }
         }
     }
@@ -426,129 +418,97 @@ extends AbstractGwtShellMojo
      * @param test the test to run
      * @throws MojoExecutionException some error occured
      */
-    private void forkToRunTest( String test )
-            throws MojoExecutionException
-    {
-        test = test.substring( 0, test.length() - 5 );
-        test = StringUtils.replace( test, File.separator, "." );
-        try
-        {
+    private void forkToRunTest(String test) throws MojoExecutionException {
+        test = test.substring(0, test.length() - 5);
+        test = StringUtils.replace(test, File.separator, ".");
+        try {
             File outFile = new File(out);
-            if (outFile.isAbsolute())
-            {
+            if (outFile.isAbsolute()) {
                 outFile.mkdirs();
+            } else {
+                new File(getProject().getBasedir(), out).mkdirs();
             }
-            else
-            {
-                new File( getProject().getBasedir(), out ).mkdirs();
-            }
-            try
-            {
-                JavaCommand cmd = createJavaCommand()
-                        .setMainClass( MavenTestRunner.class.getName() );
-                if ( gwtSdkFirstInClasspath )
-                {
-                    cmd.addToClasspath( getGwtUserJar() )
-                    .addToClasspath( getGwtDevJar() );
+            try {
+                JavaCommand cmd = createJavaCommand().setMainClass(MavenTestRunner.class.getName());
+                if (gwtSdkFirstInClasspath) {
+                    cmd.addToClasspath(getGwtUserJar()).addToClasspath(getGwtDevJar());
                 }
-                cmd.addToClasspath( getClasspath( Artifact.SCOPE_TEST ) );
-                if ( !gwtSdkFirstInClasspath )
-                {
-                    cmd.addToClasspath( getGwtUserJar() )
-                    .addToClasspath( getGwtDevJar() );
+                cmd.addToClasspath(getClasspath(Artifact.SCOPE_TEST));
+                if (!gwtSdkFirstInClasspath) {
+                    cmd.addToClasspath(getGwtUserJar()).addToClasspath(getGwtDevJar());
                 }
 
-                addCompileSourceArtifacts( cmd );
+                addCompileSourceArtifacts(cmd);
 
-                cmd.arg( test );
-                cmd.systemProperty( "surefire.reports", reportsDirectory.getAbsolutePath() );
-                cmd.systemProperty( "gwt.args", getGwtArgs() );
+                cmd.arg(test);
+                cmd.systemProperty("surefire.reports", reportsDirectory.getAbsolutePath());
+                cmd.systemProperty("gwt.args", getGwtArgs());
 
                 cmd.execute();
-            }
-            catch ( ForkedProcessExecutionException e )
-            {
+            } catch (ForkedProcessExecutionException e) {
                 failures++;
             }
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to run GWT tests", e );
+        } catch (Exception e) {
+            throw new MojoExecutionException("Failed to run GWT tests", e);
         }
     }
 
-    protected String getGwtArgs()
-    {
+    protected String getGwtArgs() {
         StringBuilder sb = new StringBuilder();
-        sb.append( "-war " ).append( quote( out ) );
-        sb.append( " -logLevel " ).append( quote( getLogLevel() ) );
-        sb.append( ( webMode || productionMode ) ? " -nodevMode" : " -devMode" );
-        sb.append( checkAssertions ? " -checkAssertions" : " -nocheckAssertions" );
-        sb.append( clusterFunctions ? " -XclusterFunctions" : " -XnoclusterFunctions" );
-        sb.append( disableCastChecking ? " -XnocheckCasts" : " -XcheckCasts" );
-        sb.append( disableClassMetadata ? " -XnoclassMetadata" : " -XclassMetadata" );
-        sb.append( disableRunAsync ? " -XnocodeSplitting" : " -XcodeSplitting" );
-        sb.append( draftCompile ? " -draftCompile" : " -nodraftCompile" );
-        sb.append( inlineLiteralParameters ? " -XinlineLiteralParameters" : " -XnoinlineLiteralParameters" );
-        sb.append( optimizeDataflow ? " -XoptimizeDataflow" : " -XnooptimizeDataflow" );
-        sb.append( ordinalizeEnums ? " -XordinalizeEnums" : " -XnoordinalizeEnums" );
-        sb.append( removeDuplicateFunctions ? " -XremoveDuplicateFunctions" : " -XnoremoveDuplicateFunctions" );
-        sb.append( showUi ? " -showUi" : " -noshowUi" );
-        sb.append( " -sourceLevel " ).append( quote( sourceLevel ) );
-        sb.append( " -testBeginTimeout " ).append( testBeginTimeout );
-        sb.append( " -testMethodTimeout ").append( testMethodTimeout );
-        sb.append( " -Xtries " ).append( tries );
-        sb.append( incremental ? " -incremental" : " -noincremental" );
+        sb.append("-war ").append(quote(out));
+        sb.append(" -logLevel ").append(quote(getLogLevel()));
+        sb.append((webMode || productionMode) ? " -nodevMode" : " -devMode");
+        sb.append(checkAssertions ? " -checkAssertions" : " -nocheckAssertions");
+        sb.append(clusterFunctions ? " -XclusterFunctions" : " -XnoclusterFunctions");
+        sb.append(disableCastChecking ? " -XnocheckCasts" : " -XcheckCasts");
+        sb.append(disableClassMetadata ? " -XnoclassMetadata" : " -XclassMetadata");
+        sb.append(disableRunAsync ? " -XnocodeSplitting" : " -XcodeSplitting");
+        sb.append(draftCompile ? " -draftCompile" : " -nodraftCompile");
+        sb.append(inlineLiteralParameters ? " -XinlineLiteralParameters" : " -XnoinlineLiteralParameters");
+        sb.append(optimizeDataflow ? " -XoptimizeDataflow" : " -XnooptimizeDataflow");
+        sb.append(ordinalizeEnums ? " -XordinalizeEnums" : " -XnoordinalizeEnums");
+        sb.append(removeDuplicateFunctions ? " -XremoveDuplicateFunctions" : " -XnoremoveDuplicateFunctions");
+        sb.append(showUi ? " -showUi" : " -noshowUi");
+        sb.append(" -sourceLevel ").append(quote(sourceLevel));
+        sb.append(" -testBeginTimeout ").append(testBeginTimeout);
+        sb.append(" -testMethodTimeout ").append(testMethodTimeout);
+        sb.append(" -Xtries ").append(tries);
+        sb.append(incremental ? " -incremental" : " -noincremental");
 
-        if ( optimizationLevel >= 0 )
-        {
-            sb.append( " -optimize " ).append( optimizationLevel );
+        if (optimizationLevel >= 0) {
+            sb.append(" -optimize ").append(optimizationLevel);
         }
-        if ( precompile != null && !precompile.trim().isEmpty() )
-        {
-            sb.append( " -precompile " ).append( quote( precompile ) );
+        if (precompile != null && !precompile.trim().isEmpty()) {
+            sb.append(" -precompile ").append(quote(precompile));
         }
-        if ( logDir != null )
-        {
-            sb.append( " -logdir " ).append( quote( logDir.getAbsolutePath() ) );
+        if (logDir != null) {
+            sb.append(" -logdir ").append(quote(logDir.getAbsolutePath()));
         }
-        if ( workDir != null )
-        {
-            sb.append( " -workDir " ).append( quote( workDir.getAbsolutePath() ) );
+        if (workDir != null) {
+            sb.append(" -workDir ").append(quote(workDir.getAbsolutePath()));
         }
 
-        if ( namespace != null && !namespace.trim().isEmpty() )
-        {
-            sb.append( " -Xnamespace " ).append( quote( namespace ) );
+        if (namespace != null && !namespace.trim().isEmpty()) {
+            sb.append(" -Xnamespace ").append(quote(namespace));
         }
-        if ( jsInteropMode != null && jsInteropMode.length() > 0 && !jsInteropMode.equals( "NONE" ) )
-        {
-            sb.append( " -XjsInteropMode " ).append( quote( jsInteropMode ) );
+        if (jsInteropMode != null && jsInteropMode.length() > 0 && !jsInteropMode.equals("NONE")) {
+            sb.append(" -XjsInteropMode ").append(quote(jsInteropMode));
         }
 
-        if ( mode.equalsIgnoreCase( "manual" ) )
-        {
-            sb.append( " -runStyle Manual:1" );
+        if (mode.equalsIgnoreCase("manual")) {
+            sb.append(" -runStyle Manual:1");
+        } else if (mode.equalsIgnoreCase("htmlunit")) {
+            sb.append(" -runStyle ").append(quote("HtmlUnit:" + htmlunit));
+        } else if (mode.equalsIgnoreCase("selenium")) {
+            sb.append(" -runStyle ").append(quote("Selenium:" + selenium));
+        } else if (!mode.trim().isEmpty()) {
+            sb.append(" -runStyle ").append(quote(mode));
         }
-        else if ( mode.equalsIgnoreCase( "htmlunit" ) )
-        {
-            sb.append( " -runStyle ").append( quote( "HtmlUnit:" + htmlunit ) );
+        if (userAgents != null && !userAgents.trim().isEmpty()) {
+            sb.append(" -userAgents ").append(quote(userAgents));
         }
-        else if ( mode.equalsIgnoreCase( "selenium" ) )
-        {
-            sb.append( " -runStyle ").append( quote( "Selenium:" + selenium ) );
-        }
-        else if ( !mode.trim().isEmpty() )
-        {
-            sb.append( " -runStyle ").append( quote( mode ) );
-        }
-        if ( userAgents != null && !userAgents.trim().isEmpty() )
-        {
-            sb.append( " -userAgents " ).append( quote( userAgents ) );
-        }
-        if ( batch != null && !batch.trim().isEmpty() )
-        {
-            sb.append( " -batch " ).append( quote( batch ) );
+        if (batch != null && !batch.trim().isEmpty()) {
+            sb.append(" -batch ").append(quote(batch));
         }
         // TODO Is addArgumentDeploy(cmd) also needed to get readable test stacktraces with an alternative deploy dir?
 
@@ -556,14 +516,13 @@ extends AbstractGwtShellMojo
     }
 
     private String quote(String arg) {
-        return StringUtils.quoteAndEscape( arg, '"', new char[] { '"', ' ', '\t', '\r', '\n' } );
+        return StringUtils.quoteAndEscape(arg, '"', new char[] {'"', ' ', '\t', '\r', '\n'});
     }
 
     @Override
-    protected void postProcessClassPath( Collection<File> classpath )
-    {
-        classpath.add( getClassPathElementFor( TestMojo.class ) );
-        classpath.add( getClassPathElementFor( ReporterManager.class ) );
+    protected void postProcessClassPath(Collection<File> classpath) {
+        classpath.add(getClassPathElementFor(TestMojo.class));
+        classpath.add(getClassPathElementFor(ReporterManager.class));
         try {
             for (File f : getGwtDevJar()) {
                 classpath.add(f);
@@ -577,43 +536,35 @@ extends AbstractGwtShellMojo
      * @param clazz class to check for classpath resolution
      * @return The classpath element this class was loaded from
      */
-    private File getClassPathElementFor( Class<?> clazz )
-    {
-        String classFile = clazz.getName().replace( '.', '/' ) + ".class";
+    private File getClassPathElementFor(Class<?> clazz) {
+        String classFile = clazz.getName().replace('.', '/') + ".class";
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        if ( cl == null )
-        {
+        if (cl == null) {
             cl = getClass().getClassLoader();
         }
-        URL url = cl.getResource( classFile );
-        getLog().debug( "getClassPathElementFor " + clazz.getName() + " file " + url.toString() );
+        URL url = cl.getResource(classFile);
+        getLog().debug("getClassPathElementFor " + clazz.getName() + " file " + url.toString());
         String path = url.toString();
 
-        if ( path.startsWith( "jar:" ) )
-        {
-            path = path.substring( 4, path.indexOf( "!" ) );
+        if (path.startsWith("jar:")) {
+            path = path.substring(4, path.indexOf("!"));
+        } else {
+            path = path.substring(0, path.length() - classFile.length());
         }
-        else
-        {
-            path = path.substring( 0, path.length() - classFile.length() );
-        }
-        if ( path.startsWith( "file:" ) )
-        {
-            path = path.substring( 5 );
+        if (path.startsWith("file:")) {
+            path = path.substring(5);
             // windauze hack with maven 3 we get those !
-            path = path.replace( "%20", " " );
+            path = path.replace("%20", " ");
         }
-        File file = new File( path );
-        getLog().debug( "getClassPathElementFor " + clazz.getName() + " file " + file.getPath() );
+        File file = new File(path);
+        getLog().debug("getClassPathElementFor " + clazz.getName() + " file " + file.getPath());
         return file;
     }
 
     /**
      * @param testTimeOut the testTimeOut to set
      */
-    public void setTestTimeOut( int testTimeOut )
-    {
-        setTimeOut( testTimeOut );
+    public void setTestTimeOut(int testTimeOut) {
+        setTimeOut(testTimeOut);
     }
-
 }

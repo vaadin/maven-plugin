@@ -29,6 +29,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -41,10 +44,6 @@ import org.codehaus.mojo.gwt.shell.TestMojo;
 import org.codehaus.mojo.gwt.test.TestTemplate;
 import org.codehaus.plexus.util.WriterFactory;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-
 /**
  * Goal which creates Eclipse lauch configurations for GWTTestCases.
  *
@@ -55,9 +54,7 @@ import freemarker.template.TemplateException;
 @Deprecated
 @Mojo(name = "eclipseTest")
 @Execute(phase = LifecyclePhase.GENERATE_TEST_RESOURCES)
-public class EclipseTestMojo
-    extends TestMojo
-{
+public class EclipseTestMojo extends TestMojo {
     @Component
     private EclipseUtil eclipseUtil;
 
@@ -79,18 +76,13 @@ public class EclipseTestMojo
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     @Override
-    public void doExecute()
-        throws MojoExecutionException, MojoFailureException
-    {
+    public void doExecute() throws MojoExecutionException, MojoFailureException {
 
-        new TestTemplate( getProject(), includes, excludes, new TestTemplate.CallBack()
-        {
-            public void doWithTest( File sourceDir, String test )
-                throws MojoExecutionException
-            {
-                createLaunchConfigurationForGwtTestCase( sourceDir, test );
+        new TestTemplate(getProject(), includes, excludes, new TestTemplate.CallBack() {
+            public void doWithTest(File sourceDir, String test) throws MojoExecutionException {
+                createLaunchConfigurationForGwtTestCase(sourceDir, test);
             }
-        } );
+        });
     }
 
     /**
@@ -99,57 +91,46 @@ public class EclipseTestMojo
      * @param testSrc the source directory where the test lives
      * @throws MojoExecutionException some error occured
      */
-    private void createLaunchConfigurationForGwtTestCase( File testSrc, String test )
-        throws MojoExecutionException
-    {
-        File testFile = new File( testSrc, test );
+    private void createLaunchConfigurationForGwtTestCase(File testSrc, String test) throws MojoExecutionException {
+        File testFile = new File(testSrc, test);
 
-        String fqcn = test.replace( File.separatorChar, '.' ).substring( 0, test.lastIndexOf( '.' ) );
-        File launchFile = new File( getProject().getBasedir(), fqcn + ".launch" );
-        if ( launchFile.exists() && launchFile.lastModified() > testFile.lastModified() )
-        {
+        String fqcn = test.replace(File.separatorChar, '.').substring(0, test.lastIndexOf('.'));
+        File launchFile = new File(getProject().getBasedir(), fqcn + ".launch");
+        if (launchFile.exists() && launchFile.lastModified() > testFile.lastModified()) {
             return;
         }
 
         Configuration cfg = new Configuration();
-        cfg.setClassForTemplateLoading( EclipseTestMojo.class, "" );
+        cfg.setClassForTemplateLoading(EclipseTestMojo.class, "");
 
-        Map < String, Object > context = new HashMap < String, Object > ();
-        List < String > sources = new LinkedList < String >();
-        sources.addAll( executedProject.getTestCompileSourceRoots() );
-        sources.addAll( executedProject.getCompileSourceRoots() );
-        context.put( "sources", sources );
-        context.put( "test", fqcn );
+        Map<String, Object> context = new HashMap<String, Object>();
+        List<String> sources = new LinkedList<String>();
+        sources.addAll(executedProject.getTestCompileSourceRoots());
+        sources.addAll(executedProject.getCompileSourceRoots());
+        context.put("sources", sources);
+        context.put("test", fqcn);
         int basedir = getProject().getBasedir().getAbsolutePath().length();
-        context.put( "out", testOutputDirectory.getAbsolutePath().substring( basedir + 1 ) );
-        context.put( "extraJvmArgs", getExtraJvmArgs() );
-        context.put( "project", eclipseUtil.getProjectName( getProject() ) );
-        
+        context.put("out", testOutputDirectory.getAbsolutePath().substring(basedir + 1));
+        context.put("extraJvmArgs", getExtraJvmArgs());
+        context.put("project", eclipseUtil.getProjectName(getProject()));
 
-        try
-        {
+        try {
             Collection<String> gwtDevJarPath = new ArrayList<String>();
-            for (File f : getGwtDevJar())
-            {
-                gwtDevJarPath.add( f.getAbsolutePath().replace( '\\', '/' ) );
+            for (File f : getGwtDevJar()) {
+                gwtDevJarPath.add(f.getAbsolutePath().replace('\\', '/'));
             }
-            context.put( "gwtDevJarPath", gwtDevJarPath );
+            context.put("gwtDevJarPath", gwtDevJarPath);
 
-            Writer configWriter = WriterFactory.newXmlWriter( launchFile );
-            Template template = cfg.getTemplate( "test-launch.fm", "UTF-8" );
-            template.process( context, configWriter );
+            Writer configWriter = WriterFactory.newXmlWriter(launchFile);
+            Template template = cfg.getTemplate("test-launch.fm", "UTF-8");
+            template.process(context, configWriter);
             configWriter.flush();
             configWriter.close();
-            getLog().info( "Write launch configuration for GWT test : " + launchFile.getAbsolutePath() );
-        }
-        catch ( IOException ioe )
-        {
-            throw new MojoExecutionException( "Unable to write launch configuration", ioe );
-        }
-        catch ( TemplateException te )
-        {
-            throw new MojoExecutionException( "Unable to merge freemarker template", te );
+            getLog().info("Write launch configuration for GWT test : " + launchFile.getAbsolutePath());
+        } catch (IOException ioe) {
+            throw new MojoExecutionException("Unable to write launch configuration", ioe);
+        } catch (TemplateException te) {
+            throw new MojoExecutionException("Unable to merge freemarker template", te);
         }
     }
-
 }

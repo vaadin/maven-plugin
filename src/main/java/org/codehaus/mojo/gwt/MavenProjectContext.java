@@ -29,8 +29,7 @@ import org.apache.maven.project.MavenProject;
  * @author ndeloof
  * @version $Id$
  */
-public class MavenProjectContext
-{
+public class MavenProjectContext {
 
     private MavenProject project;
 
@@ -42,32 +41,27 @@ public class MavenProjectContext
      * @param project
      * @param localRepository
      */
-    public MavenProjectContext( MavenProject project, ArtifactRepository localRepository,
-                                List<ArtifactRepository> remoteRepositories )
-    {
+    public MavenProjectContext(
+            MavenProject project, ArtifactRepository localRepository, List<ArtifactRepository> remoteRepositories) {
         super();
         this.project = project;
         this.localRepository = localRepository;
         this.remoteRepositories = remoteRepositories;
     }
 
-    public MavenProject getProject()
-    {
+    public MavenProject getProject() {
         return project;
     }
 
-    public ArtifactRepository getLocalRepository()
-    {
+    public ArtifactRepository getLocalRepository() {
         return localRepository;
     }
 
-    public File getBuildDir()
-    {
-        return new File( project.getBuild().getDirectory() );
+    public File getBuildDir() {
+        return new File(project.getBuild().getDirectory());
     }
 
-    public List<ArtifactRepository> getRemoteRepositories()
-    {
+    public List<ArtifactRepository> getRemoteRepositories() {
         return remoteRepositories;
     }
 }

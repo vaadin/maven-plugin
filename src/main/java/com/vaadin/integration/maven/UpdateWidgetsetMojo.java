@@ -8,6 +8,11 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.logging.Logger;
 
+import com.vaadin.wscdn.client.AddonInfo;
+import com.vaadin.wscdn.client.Connection;
+import com.vaadin.wscdn.client.PublishState;
+import com.vaadin.wscdn.client.WidgetSetRequest;
+import com.vaadin.wscdn.client.WidgetSetResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
@@ -23,18 +28,15 @@ import org.codehaus.mojo.gwt.shell.JavaCommand;
 import org.codehaus.mojo.gwt.shell.JavaCommandException;
 import org.codehaus.plexus.util.IOUtil;
 
-import com.vaadin.wscdn.client.AddonInfo;
-import com.vaadin.wscdn.client.Connection;
-import com.vaadin.wscdn.client.PublishState;
-import com.vaadin.wscdn.client.WidgetSetRequest;
-import com.vaadin.wscdn.client.WidgetSetResponse;
-
 /**
  * Updates Vaadin widgetsets based on other widgetset packages on the classpath.
  * It is assumed that the project does not directly contain other GWT modules.
  * In part adapted from gwt-maven-plugin {@link CompileMojo}.
  */
-@Mojo(name = "update-widgetset", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(
+        name = "update-widgetset",
+        defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
 public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
     private static final String WSCDN_WIDGETSET_CLASS_NAME = "AppWidgetset";
 
@@ -64,8 +66,7 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     @Override
-    public final void doExecute() throws MojoExecutionException,
-    MojoFailureException {
+    public final void doExecute() throws MojoExecutionException, MojoFailureException {
         if ("pom".equals(getProject().getPackaging())) {
             getLog().info("GWT compilation is skipped");
             return;
@@ -78,23 +79,19 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
 
             generatedSourceDirectory.mkdirs();
 
-            File outputFile = new File(generatedSourceDirectory,
-                    WSCDN_WIDGETSET_CLASS_NAME
-                    + ".java");
+            File outputFile = new File(generatedSourceDirectory, WSCDN_WIDGETSET_CLASS_NAME + ".java");
 
             try {
                 triggerCdnBuild(wsReq, outputFile, "fetch".equals(widgetsetMode));
             } catch (IOException e) {
-                throw new MojoExecutionException(
-                        "Could not create widgetset info class", e);
+                throw new MojoExecutionException("Could not create widgetset info class", e);
             }
         } else {
             updateLocalWidgetset();
         }
     }
 
-    private final void updateLocalWidgetset() throws MojoExecutionException,
-    MojoFailureException {
+    private final void updateLocalWidgetset() throws MojoExecutionException, MojoFailureException {
 
         File appwsFile = new File(generatedWidgetsetDirectory, APP_WIDGETSET_FILE);
 
@@ -130,16 +127,16 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
                     fis.close();
                     if (template.replaceAll("\\s", "").equals(generatedws.replaceAll("\\s", ""))) {
                         if (!appwsFile.delete()) {
-                            getLogger().severe("Unable to delete generated widget set file: "+appwsFile.getAbsolutePath());
+                            getLogger()
+                                    .severe("Unable to delete generated widget set file: "
+                                            + appwsFile.getAbsolutePath());
                         }
                     }
                 }
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to create AppWidgetset", e);
             }
-
         }
-
     }
 
     private static Logger getLogger() {
@@ -160,22 +157,23 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
      * @throws IOException
      * @throws MojoExecutionException
      */
-    protected void triggerCdnBuild(WidgetSetRequest wsReq, File outputFile, boolean fetch) throws IOException, MojoExecutionException {
+    protected void triggerCdnBuild(WidgetSetRequest wsReq, File outputFile, boolean fetch)
+            throws IOException, MojoExecutionException {
         String wsName = null;
         String wsUrl = null;
 
         Connection conn = new Connection();
         WidgetSetResponse wsRes = conn.queryRemoteWidgetSet(wsReq, true);
-        if (wsRes != null && (wsRes.getStatus() == PublishState.AVAILABLE // Compiled and published
-                || wsRes.getStatus() == PublishState.COMPILED // Compiled succesfully, but not yet available
-                || wsRes.getStatus() == PublishState.COMPILING)) // Currently compiling the widgetset)
+        if (wsRes != null
+                && (wsRes.getStatus() == PublishState.AVAILABLE // Compiled and published
+                        || wsRes.getStatus() == PublishState.COMPILED // Compiled succesfully, but not yet available
+                        || wsRes.getStatus() == PublishState.COMPILING)) // Currently compiling the widgetset)
         {
             wsName = wsRes.getWidgetSetName();
             wsUrl = fetch ? "null" : "\"" + wsRes.getWidgetSetUrl() + "\"";
         } else {
             throw new MojoExecutionException(
-                    "Remote widgetset compilation failed: " + (wsRes != null ? wsRes.
-                            getStatus() : " (no response)"));
+                    "Remote widgetset compilation failed: " + (wsRes != null ? wsRes.getStatus() : " (no response)"));
         }
 
         PublishState status = fetch ? PublishState.AVAILABLE : wsRes.getStatus();
@@ -183,15 +181,13 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
         createWidgetsetInfoClass(wsReq, outputFile, wsName, wsUrl, status);
     }
 
-    private void createWidgetsetInfoClass(WidgetSetRequest wsReq,
-            File outputFile, String wsName, String wsUrl, PublishState status)
-                    throws IOException {
-        String widgetsetInfo = IOUtil.toString(getClass().getResourceAsStream(
-                "/widgetsetinfo.tmpl"));
+    private void createWidgetsetInfoClass(
+            WidgetSetRequest wsReq, File outputFile, String wsName, String wsUrl, PublishState status)
+            throws IOException {
+        String widgetsetInfo = IOUtil.toString(getClass().getResourceAsStream("/widgetsetinfo.tmpl"));
         widgetsetInfo = widgetsetInfo.replace("__wsUrl", wsUrl);
         widgetsetInfo = widgetsetInfo.replace("__wsName", wsName);
-        widgetsetInfo = widgetsetInfo.replace("__wsReady",
-                status == PublishState.AVAILABLE ? "true" : "false");
+        widgetsetInfo = widgetsetInfo.replace("__wsReady", status == PublishState.AVAILABLE ? "true" : "false");
 
         StringBuilder sb = new StringBuilder();
         if (wsReq.getAddons() != null) {
@@ -208,24 +204,19 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
                 sb.append("\n");
             }
         }
-        widgetsetInfo = widgetsetInfo.replace("__vaadin",
-                " * " + wsReq.getVaadinVersion());
-        widgetsetInfo = widgetsetInfo.replace("__style",
-                " * " + wsReq.getCompileStyle());
+        widgetsetInfo = widgetsetInfo.replace("__vaadin", " * " + wsReq.getVaadinVersion());
+        widgetsetInfo = widgetsetInfo.replace("__style", " * " + wsReq.getCompileStyle());
         widgetsetInfo = widgetsetInfo.replace("__addons", sb.toString());
 
         FileUtils.writeStringToFile(outputFile, widgetsetInfo);
 
         // Print some info
         if (wsName != null && wsUrl != null) {
-            getLog().info("Widgetset config created to " + outputFile.
-                    getAbsolutePath() + ". Public URL: " + wsUrl);
+            getLog().info("Widgetset config created to " + outputFile.getAbsolutePath() + ". Public URL: " + wsUrl);
         } else {
-            getLog().info("Widget set created to " + outputFile.
-                    getAbsolutePath() + ".");
+            getLog().info("Widget set created to " + outputFile.getAbsolutePath() + ".");
         }
     }
-
 
     private void updateWidgetset(String module, boolean generated) throws MojoExecutionException {
         // class path order has "compile" sources first as it should
@@ -246,7 +237,7 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
         if (null != sourcePaths) {
             for (String sourcePath : sourcePaths) {
                 File sourceDirectory = new File(sourcePath);
-                if ( sourceDirectory.exists() ) {
+                if (sourceDirectory.exists()) {
                     cmd.addToClasspath(sourceDirectory);
                 }
             }
@@ -259,19 +250,15 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
                 Resource res = (Resource) resObj;
                 File resourceDirectory = new File(res.getDirectory());
                 if (resourceDirectory.exists()) {
-                    getLog().info(
-                            "Adding resource directory to command classpath: "
-                                    + resourceDirectory);
+                    getLog().info("Adding resource directory to command classpath: " + resourceDirectory);
                     cmd.addToClasspath(resourceDirectory);
                 } else {
-                    getLog().warn(
-                            "Ignoring missing resource directory: "
-                                    + resourceDirectory);
+                    getLog().warn("Ignoring missing resource directory: " + resourceDirectory);
                 }
             }
         }
 
-        cmd.addToClasspath(getClasspath( Artifact.SCOPE_COMPILE ));
+        cmd.addToClasspath(getClasspath(Artifact.SCOPE_COMPILE));
 
         cmd.addToClasspath(getGwtUserJar()).addToClasspath(getGwtDevJar());
 
@@ -284,18 +271,16 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
     }
 
     protected File setupGeneratedWidgetsetDirectory() {
-        if ( !generatedWidgetsetDirectory.exists() )
-        {
-            getLog().debug( "Creating target directory " + generatedWidgetsetDirectory.getAbsolutePath() );
+        if (!generatedWidgetsetDirectory.exists()) {
+            getLog().debug("Creating target directory " + generatedWidgetsetDirectory.getAbsolutePath());
             generatedWidgetsetDirectory.mkdirs();
         }
 
-        getLog().debug( "Add resource directory " + generatedWidgetsetDirectory.getAbsolutePath() );
+        getLog().debug("Add resource directory " + generatedWidgetsetDirectory.getAbsolutePath());
         Resource resource = new Resource();
         resource.setDirectory(generatedWidgetsetDirectory.getAbsolutePath());
         getProject().addResource(resource);
 
         return generatedWidgetsetDirectory;
     }
-
 }

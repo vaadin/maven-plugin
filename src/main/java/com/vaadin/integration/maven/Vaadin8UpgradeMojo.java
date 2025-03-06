@@ -32,22 +32,21 @@ public class Vaadin8UpgradeMojo extends AbstractGwtShellMojo {
     private File getMigrationJarFile() throws MojoExecutionException {
         // TODO alternatively, could use Aether directly but with risk of
         // version conflicts
-        Artifact rootArtifact = artifactFactory.createArtifact(VAADIN_GROUP_ID,
-                "framework8-migration-tool", "8.0-SNAPSHOT", "compile", "jar");
+        Artifact rootArtifact = artifactFactory.createArtifact(
+                VAADIN_GROUP_ID, "framework8-migration-tool", "8.0-SNAPSHOT", "compile", "jar");
         ArtifactRepository vaadinSnapshotRepository = new MavenArtifactRepository(
                 "vaadin-snapshots",
                 "https://oss.sonatype.org/content/repositories/vaadin-snapshots",
                 new DefaultRepositoryLayout(),
-                new ArtifactRepositoryPolicy(true,
+                new ArtifactRepositoryPolicy(
+                        true,
                         ArtifactRepositoryPolicy.UPDATE_POLICY_DAILY,
                         ArtifactRepositoryPolicy.CHECKSUM_POLICY_FAIL),
                 new ArtifactRepositoryPolicy(false, null, null));
         try {
             // no need for transitive dependencies, as the tool is a
             // self-contained JAR including all dependencies
-            resolver.resolve(rootArtifact,
-                    Collections.singletonList(vaadinSnapshotRepository),
-                    localRepository);
+            resolver.resolve(rootArtifact, Collections.singletonList(vaadinSnapshotRepository), localRepository);
         } catch (Exception e) {
             throw new MojoExecutionException("Failed to resolve artifact", e);
         }
@@ -55,8 +54,7 @@ public class Vaadin8UpgradeMojo extends AbstractGwtShellMojo {
     }
 
     @Override
-    public void doExecute()
-            throws MojoExecutionException, MojoFailureException {
+    public void doExecute() throws MojoExecutionException, MojoFailureException {
         if (vaadinVersion == null) {
             vaadinVersion = getVaadinVersion();
         }
@@ -66,9 +64,10 @@ public class Vaadin8UpgradeMojo extends AbstractGwtShellMojo {
         }
 
         if (!vaadinVersion.startsWith("8.")) {
-            throw new MojoExecutionException("Unexpected Vaadin version ("
-                    + vaadinVersion
-                    + "). Upgrade the project to Vaadin 8 or use -Dvaadin.version=<version> with a version starting with 8");
+            throw new MojoExecutionException(
+                    "Unexpected Vaadin version ("
+                            + vaadinVersion
+                            + "). Upgrade the project to Vaadin 8 or use -Dvaadin.version=<version> with a version starting with 8");
         }
         try {
             JavaCommand cmd = createJavaCommand();
@@ -93,13 +92,11 @@ public class Vaadin8UpgradeMojo extends AbstractGwtShellMojo {
     protected String getVaadinVersion() {
         // find "vaadin-shared" and check its version
         for (Artifact artifact : getProjectArtifacts()) {
-            if (VAADIN_GROUP_ID.equals(artifact.getGroupId())
-                    && "vaadin-shared".equals(artifact.getArtifactId())) {
+            if (VAADIN_GROUP_ID.equals(artifact.getGroupId()) && "vaadin-shared".equals(artifact.getArtifactId())) {
                 return artifact.getVersion();
             }
         }
 
         return null;
     }
-
 }

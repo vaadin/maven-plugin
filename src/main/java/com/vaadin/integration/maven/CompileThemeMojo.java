@@ -13,7 +13,10 @@ import org.codehaus.mojo.gwt.shell.JavaCommandException;
 /**
  * Updates Vaadin themes based on addons containing themes on the classpath.
  */
-@Mojo(name = "compile-theme", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(
+        name = "compile-theme",
+        defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
 public class CompileThemeMojo extends AbstractThemeMojo {
     public static final String THEME_COMPILE_CLASS = "com.vaadin.sass.SassCompiler";
 
@@ -69,5 +72,4 @@ public class CompileThemeMojo extends AbstractThemeMojo {
             throw new MojoExecutionException("Compiling theme \"" + theme + "\" failed", e);
         }
     }
-
 }

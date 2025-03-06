@@ -29,6 +29,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
@@ -46,10 +49,6 @@ import org.codehaus.mojo.gwt.utils.GwtModuleReaderException;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-
 /**
  * Goal which creates Eclipse lauch configurations for GWT modules.
  *
@@ -58,9 +57,7 @@ import freemarker.template.TemplateException;
  */
 @Mojo(name = "eclipse", requiresDependencyResolution = ResolutionScope.COMPILE)
 @Execute(phase = LifecyclePhase.GENERATE_RESOURCES)
-public class EclipseMojo
-    extends AbstractGwtModuleMojo
-{
+public class EclipseMojo extends AbstractGwtModuleMojo {
     @Component
     private EclipseUtil eclipseUtil;
 
@@ -145,10 +142,9 @@ public class EclipseMojo
     /**
      * @param parameters additional parameter for module URL
      */
-    public void setAdditionalPageParameters( String parameters )
-    {
+    public void setAdditionalPageParameters(String parameters) {
         // escape the '&' char used for multiple parameters as the result must be XML compliant
-        this.additionalPageParameters = StringUtils.replace( parameters, "&", "&amp;" );
+        this.additionalPageParameters = StringUtils.replace(parameters, "&", "&amp;");
     }
 
     /**
@@ -156,58 +152,42 @@ public class EclipseMojo
      *
      * @see org.apache.maven.plugin.Mojo#execute()
      */
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        if ( !noserver )
-        {
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        if (!noserver) {
             // Jetty requires an exploded webapp
             setupExplodedWar();
-        }
-        else
-        {
-            getLog().info( "noServer is set! Skipping exploding war file..." );
+        } else {
+            getLog().info("noServer is set! Skipping exploding war file...");
         }
 
-        for ( String module : getModules() )
-        {
-            createLaunchConfigurationForHostedModeBrowser( module );
+        for (String module : getModules()) {
+            createLaunchConfigurationForHostedModeBrowser(module);
         }
     }
 
-    protected void setupExplodedWar()
-        throws MojoExecutionException
-    {
-        try
-        {
-            File classes = new File( hostedWebapp, "WEB-INF/classes" );
-            if ( !buildOutputDirectory.getAbsolutePath().equals( classes.getAbsolutePath() ) )
-            {
-                getLog().warn( "Your POM <build><outputdirectory> must match your "
-                    + "hosted webapp WEB-INF/classes folder for GWT Hosted browser to see your classes." );
+    protected void setupExplodedWar() throws MojoExecutionException {
+        try {
+            File classes = new File(hostedWebapp, "WEB-INF/classes");
+            if (!buildOutputDirectory.getAbsolutePath().equals(classes.getAbsolutePath())) {
+                getLog().warn("Your POM <build><outputdirectory> must match your "
+                        + "hosted webapp WEB-INF/classes folder for GWT Hosted browser to see your classes.");
             }
 
-            File lib = new File( hostedWebapp, "WEB-INF/lib" );
-            getLog().info( "create exploded Jetty webapp in " + hostedWebapp );
+            File lib = new File(hostedWebapp, "WEB-INF/lib");
+            getLog().info("create exploded Jetty webapp in " + hostedWebapp);
             lib.mkdirs();
 
             @SuppressWarnings("deprecation")
             Collection<Artifact> artifacts = getProject().getRuntimeArtifacts();
-            for ( Artifact artifact : artifacts )
-            {
-                if ( !artifact.getFile().isDirectory() )
-                {
-                    FileUtils.copyFileToDirectory( artifact.getFile(), lib );
-                }
-                else
-                {
+            for (Artifact artifact : artifacts) {
+                if (!artifact.getFile().isDirectory()) {
+                    FileUtils.copyFileToDirectory(artifact.getFile(), lib);
+                } else {
                     // TODO automatically add this one to GWT warnings exlusions
                 }
             }
-        }
-        catch ( IOException ioe )
-        {
-            throw new MojoExecutionException( "Failed to create Jetty exploded webapp", ioe );
+        } catch (IOException ioe) {
+            throw new MojoExecutionException("Failed to create Jetty exploded webapp", ioe);
         }
     }
 
@@ -217,89 +197,72 @@ public class EclipseMojo
      * @param module the GWT module
      * @throws MojoExecutionException some error occured
      */
-    private void createLaunchConfigurationForHostedModeBrowser( String module )
-        throws MojoExecutionException
-    {
-        try
-        {
-            File launchFile = new File( getProject().getBasedir(), readModule( module ).getPath() + ".launch" );
-            if ( launchFile.exists() )
-            {
-                getLog().info( "launch file exists " + launchFile.getName() + " skip generation " );
+    private void createLaunchConfigurationForHostedModeBrowser(String module) throws MojoExecutionException {
+        try {
+            File launchFile =
+                    new File(getProject().getBasedir(), readModule(module).getPath() + ".launch");
+            if (launchFile.exists()) {
+                getLog().info("launch file exists " + launchFile.getName() + " skip generation ");
                 return;
             }
 
             Configuration cfg = new Configuration();
-            cfg.setClassForTemplateLoading( EclipseMojo.class, "" );
+            cfg.setClassForTemplateLoading(EclipseMojo.class, "");
 
             Map<String, Object> context = new HashMap<String, Object>();
             // Read compileSourceRoots from executedProject to retrieve generated source directories
-            Collection<String> sources = new LinkedList<String>( executedProject.getCompileSourceRoots() );
+            Collection<String> sources = new LinkedList<String>(executedProject.getCompileSourceRoots());
             List<Resource> resources = executedProject.getResources();
-            for ( Resource resource : resources )
-            {
-                sources.add( resource.getDirectory() );
+            for (Resource resource : resources) {
+                sources.add(resource.getDirectory());
             }
-            context.put( "sources", sources );
-            context.put( "module", module );
-            context.put( "localRepository", localRepository.getBasedir() );
-            int idx = module.lastIndexOf( '.' );
-            String page = module.substring( idx + 1 ) + ".html";
-            if ( additionalPageParameters != null )
-            {
+            context.put("sources", sources);
+            context.put("module", module);
+            context.put("localRepository", localRepository.getBasedir());
+            int idx = module.lastIndexOf('.');
+            String page = module.substring(idx + 1) + ".html";
+            if (additionalPageParameters != null) {
                 page += "?" + additionalPageParameters;
             }
 
-            context.put( "modulePath", readModule( module ).getPath() );
-            context.put( "page", page );
+            context.put("modulePath", readModule(module).getPath());
+            context.put("page", page);
             int basedir = getProject().getBasedir().getAbsolutePath().length();
-            context.put( "out", getOutputDirectory().getAbsolutePath().substring( basedir + 1 ) );
-            context.put( "war", hostedWebapp.getAbsolutePath().substring( basedir + 1 ) );
+            context.put("out", getOutputDirectory().getAbsolutePath().substring(basedir + 1));
+            context.put("war", hostedWebapp.getAbsolutePath().substring(basedir + 1));
             String args = noserver ? "-noserver -port " + port : "";
-            if ( blacklist != null )
-            {
+            if (blacklist != null) {
                 args += " -blacklist " + blacklist;
             }
-            if ( whitelist != null )
-            {
+            if (whitelist != null) {
                 args += " -whitelist " + whitelist;
             }
-            if ( bindAddress != null )
-            {
+            if (bindAddress != null) {
                 args += " -bindAddress " + bindAddress;
             }
-            context.put( "additionalArguments", args );
-            context.put( "extraJvmArgs", extraJvmArgs );
-            context.put( "project", eclipseUtil.getProjectName( getProject() ) );
+            context.put("additionalArguments", args);
+            context.put("extraJvmArgs", extraJvmArgs);
+            context.put("project", eclipseUtil.getProjectName(getProject()));
 
             Collection<String> gwtDevJarPath = new ArrayList<String>();
-            for (File f : getGwtDevJar())
-            {
-                gwtDevJarPath.add( f.getAbsolutePath().replace( '\\', '/' ) );
+            for (File f : getGwtDevJar()) {
+                gwtDevJarPath.add(f.getAbsolutePath().replace('\\', '/'));
             }
-            context.put( "gwtDevJarPath", gwtDevJarPath );
+            context.put("gwtDevJarPath", gwtDevJarPath);
 
-            Writer configWriter = WriterFactory.newXmlWriter( launchFile );
+            Writer configWriter = WriterFactory.newXmlWriter(launchFile);
             String templateName = useGoogleEclipsePlugin ? "google.fm" : "launch.fm";
-            Template template = cfg.getTemplate( templateName, "UTF-8" );
-            template.process( context, configWriter );
+            Template template = cfg.getTemplate(templateName, "UTF-8");
+            template.process(context, configWriter);
             configWriter.flush();
             configWriter.close();
-            getLog().info( "Write launch configuration for GWT module : " + launchFile.getAbsolutePath() );
+            getLog().info("Write launch configuration for GWT module : " + launchFile.getAbsolutePath());
+        } catch (IOException ioe) {
+            throw new MojoExecutionException("Unable to write launch configuration", ioe);
+        } catch (TemplateException te) {
+            throw new MojoExecutionException("Unable to merge freemarker template", te);
+        } catch (GwtModuleReaderException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         }
-        catch ( IOException ioe )
-        {
-            throw new MojoExecutionException( "Unable to write launch configuration", ioe );
-        }
-        catch ( TemplateException te )
-        {
-            throw new MojoExecutionException( "Unable to merge freemarker template", te );
-        }
-        catch ( GwtModuleReaderException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        
     }
-
 }

@@ -19,18 +19,15 @@ package org.codehaus.mojo.gwt.shell;
  * under the License.
  */
 
-import org.apache.maven.plugins.annotations.Parameter;
-
 import java.io.File;
 
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * @author ndeloof
  * @version $Id$
  */
-public abstract class AbstractGwtWebMojo
-    extends AbstractGwtShellMojo
-{
+public abstract class AbstractGwtWebMojo extends AbstractGwtShellMojo {
     /**
      * Source web.xml deployment descriptor that is used for GWT shell and for deployment WAR to "merge" servlet
      * entries.
@@ -45,15 +42,11 @@ public abstract class AbstractGwtWebMojo
     @Parameter(defaultValue = "false")
     private boolean webXmlServletPathAsIs;
 
-    public File getWebXml()
-    {
+    public File getWebXml() {
         return webXml;
     }
 
-    public boolean isWebXmlServletPathAsIs()
-    {
+    public boolean isWebXmlServletPathAsIs() {
         return webXmlServletPathAsIs;
     }
-
-
 }
