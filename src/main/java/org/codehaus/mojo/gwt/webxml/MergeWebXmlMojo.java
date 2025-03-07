@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -85,6 +85,7 @@ public class MergeWebXmlMojo extends AbstractGwtWebMojo {
         return true;
     }
 
+    @Override
     public void doExecute() throws MojoExecutionException, MojoFailureException {
 
         if ("pom".equals(getProject().getPackaging())) {

@@ -25,7 +25,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -72,6 +72,7 @@ public class CSSMojo extends AbstractGwtShellMojo {
         return true;
     }
 
+    @Override
     public void doExecute() throws MojoExecutionException, MojoFailureException {
         setup();
 
@@ -109,6 +110,7 @@ public class CSSMojo extends AbstractGwtShellMojo {
                                     .addToClasspath(getGwtDevJar())
                                     .addToClasspath(getGwtUserJar())
                                     .setOut(new StreamConsumer() {
+                                        @Override
                                         public void consumeLine(String line) {
                                             content.append(line).append(SystemUtils.LINE_SEPARATOR);
                                         }
