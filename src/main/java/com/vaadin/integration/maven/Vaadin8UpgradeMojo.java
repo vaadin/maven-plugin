@@ -2,7 +2,6 @@ package com.vaadin.integration.maven;
 
 import java.io.File;
 import java.util.Collections;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;

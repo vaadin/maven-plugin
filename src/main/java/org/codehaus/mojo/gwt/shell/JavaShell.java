@@ -21,7 +21,6 @@ package org.codehaus.mojo.gwt.shell;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.shell.Shell;
 

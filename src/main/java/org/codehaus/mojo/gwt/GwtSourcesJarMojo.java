@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
-
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.plugin.MojoExecutionException;

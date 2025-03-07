@@ -21,7 +21,6 @@ package org.codehaus.mojo.gwt.test;
 
 import java.io.File;
 import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;

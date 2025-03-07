@@ -20,7 +20,6 @@ package org.codehaus.mojo.gwt.eclipse;
  */
 
 import java.io.File;
-
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;

@@ -1,10 +1,9 @@
 package org.codehaus.mojo.gwt.servlets;
 
-import java.util.Collection;
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import java.util.Collection;
+import java.util.List;
 
 @RemoteServiceRelativePath(value = "/HelloService")
 public interface HelloRemoteService extends RemoteService {

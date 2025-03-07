@@ -19,12 +19,10 @@ package org.codehaus.mojo.gwt.servlets;
  * under the License.
  */
 
-import javax.servlet.ServletException;
-
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.Collection;
 import java.util.List;
-
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import javax.servlet.ServletException;
 
 public class HelloRemoteServlet extends RemoteServiceServlet implements HelloRemoteService {
     public void init() throws ServletException {

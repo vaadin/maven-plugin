@@ -19,6 +19,9 @@ package org.codehaus.mojo.gwt.eclipse;
  * under the License.
  */
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
@@ -28,10 +31,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;

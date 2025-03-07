@@ -23,6 +23,11 @@ package org.codehaus.mojo.gwt.shell;
  *
  */
 
+import com.vaadin.pro.licensechecker.BuildType;
+import com.vaadin.pro.licensechecker.LicenseChecker;
+import com.vaadin.pro.licensechecker.LicenseException;
+import com.vaadin.wscdn.client.Connection;
+import com.vaadin.wscdn.client.WidgetSetRequest;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -30,12 +35,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-
-import com.vaadin.pro.licensechecker.BuildType;
-import com.vaadin.pro.licensechecker.LicenseChecker;
-import com.vaadin.pro.licensechecker.LicenseException;
-import com.vaadin.wscdn.client.Connection;
-import com.vaadin.wscdn.client.WidgetSetRequest;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;

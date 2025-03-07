@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.mojo.gwt.utils.DefaultGwtModuleReader;

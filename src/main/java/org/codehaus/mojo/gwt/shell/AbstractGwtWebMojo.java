@@ -20,7 +20,6 @@ package org.codehaus.mojo.gwt.shell;
  */
 
 import java.io.File;
-
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**

@@ -22,7 +22,6 @@ package org.codehaus.mojo.gwt.test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestResult;

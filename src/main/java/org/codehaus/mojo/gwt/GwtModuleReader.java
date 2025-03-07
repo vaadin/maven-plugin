@@ -20,7 +20,6 @@ package org.codehaus.mojo.gwt;
  */
 
 import java.util.List;
-
 import org.codehaus.mojo.gwt.utils.GwtModuleReaderException;
 
 /**

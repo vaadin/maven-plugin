@@ -22,7 +22,6 @@ package org.codehaus.mojo.gwt.shell;
  */
 
 import java.io.File;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

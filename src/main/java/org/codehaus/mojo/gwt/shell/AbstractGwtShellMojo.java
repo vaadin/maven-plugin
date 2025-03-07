@@ -19,6 +19,8 @@ package org.codehaus.mojo.gwt.shell;
  * under the License.
  */
 
+import com.vaadin.integration.maven.ClassPathExplorer;
+import com.vaadin.wscdn.client.WidgetSetRequest;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,9 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
-import com.vaadin.integration.maven.ClassPathExplorer;
-import com.vaadin.wscdn.client.WidgetSetRequest;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;

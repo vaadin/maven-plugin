@@ -1,5 +1,8 @@
 package org.codehaus.mojo.gwt;
 
+import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
+import static org.apache.maven.artifact.Artifact.SCOPE_RUNTIME;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -38,9 +40,6 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.codehaus.plexus.util.StringUtils;
-
-import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
-import static org.apache.maven.artifact.Artifact.SCOPE_RUNTIME;
 
 /**
  * Abstract Support class for all GWT-related operations.

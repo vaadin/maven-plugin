@@ -19,25 +19,24 @@ package org.codehaus.mojo.gwt;
  * under the License.
  */
 
+import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
+import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
+import static org.apache.maven.artifact.Artifact.SCOPE_RUNTIME;
+import static org.apache.maven.artifact.Artifact.SCOPE_SYSTEM;
+import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-
-import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
-import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
-import static org.apache.maven.artifact.Artifact.SCOPE_RUNTIME;
-import static org.apache.maven.artifact.Artifact.SCOPE_SYSTEM;
-import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 
 /**
  * Util to consolidate classpath manipulation stuff in one place.

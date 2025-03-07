@@ -21,7 +21,6 @@ package org.codehaus.mojo.gwt;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;

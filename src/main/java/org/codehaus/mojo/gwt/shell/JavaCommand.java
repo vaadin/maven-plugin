@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;

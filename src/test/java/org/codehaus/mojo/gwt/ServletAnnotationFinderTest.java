@@ -20,7 +20,6 @@ package org.codehaus.mojo.gwt;
  */
 
 import java.util.Set;
-
 import org.codehaus.mojo.gwt.servlets.HelloRemoteServlet;
 import org.codehaus.mojo.gwt.webxml.ServletAnnotationFinder;
 import org.codehaus.mojo.gwt.webxml.ServletDescriptor;

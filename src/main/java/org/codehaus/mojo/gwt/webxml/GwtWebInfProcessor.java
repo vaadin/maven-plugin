@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import org.codehaus.plexus.util.WriterFactory;
 import org.jdom2.Comment;
 import org.jdom2.Content;

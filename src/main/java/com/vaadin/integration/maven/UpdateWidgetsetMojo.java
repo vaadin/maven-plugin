@@ -1,5 +1,10 @@
 package com.vaadin.integration.maven;
 
+import com.vaadin.wscdn.client.AddonInfo;
+import com.vaadin.wscdn.client.Connection;
+import com.vaadin.wscdn.client.PublishState;
+import com.vaadin.wscdn.client.WidgetSetRequest;
+import com.vaadin.wscdn.client.WidgetSetResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,12 +12,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.logging.Logger;
-
-import com.vaadin.wscdn.client.AddonInfo;
-import com.vaadin.wscdn.client.Connection;
-import com.vaadin.wscdn.client.PublishState;
-import com.vaadin.wscdn.client.WidgetSetRequest;
-import com.vaadin.wscdn.client.WidgetSetResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
