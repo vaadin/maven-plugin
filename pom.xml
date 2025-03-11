@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-  <!--
+<!--
     ~ Licensed under the Apache License, Version 2.0 (the "License"); you may not
     ~ use this file except in compliance with the License. You may obtain a copy of
     ~ the License at
@@ -20,761 +20,826 @@
     ~ See mojo.codehaus.org/gwt-maven-plugin/
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.codehaus.mojo</groupId>
-    <artifactId>mojo-parent</artifactId>
-    <version>34</version>
-  </parent>
-  <groupId>com.vaadin</groupId>
-  <artifactId>vaadin-maven-plugin</artifactId>
-  <version>8.1-SNAPSHOT</version>
-  <packaging>maven-plugin</packaging>
-  <name>Vaadin Plug-in for Maven</name>
-  <description>
-    Maven plugin for Vaadin.
-  </description>
-  <url>https://vaadin.com</url>
-  <organization>
-  	<url>https://vaadin.com</url>
-  	<name>Vaadin Ltd</name>
-  </organization>
-  <inceptionYear>2012</inceptionYear>
-  <prerequisites>
-    <maven>3</maven>
-  </prerequisites>
-  <licenses>
-    <license>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <name>Apache 2.0</name>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <developers>
-    <developer>
-      <id>artur.signell</id>
-      <name>Artur Signell</name>
-      <email>artur@vaadin.com</email>
-    </developer>
-    <developer>
-      <id>henri.sara</id>
-      <name>Henri Sara</name>
-      <email>hesara@vaadin.com</email>
-    </developer>
-    <developer>
-      <id>charlie.collins</id>
-      <name>Charlie Collins</name>
-      <email>charlie.collins@gmail.com</email>
-    </developer>
-    <developer>
-      <id>olamy</id>
-      <name>Olivier Lamy</name>
-      <email>olamy@apache.org</email>
-    </developer>
-    <developer>
-      <id>t.broyer</id>
-      <name>Thomas Broyer</name>
-      <email>t.broyer@ltgt.net</email>
-    </developer>
-  </developers>
-  <contributors>
-    <contributor>
-      <name>Robert Scholte</name>
-    </contributor>
-    <contributor>
-      <name>Stefan Hübner</name>
-    </contributor>
-    <contributor>
-      <name>Jesse Farinacci</name>
-      <email>jieryn@gmail.com</email>
-    </contributor>
-  </contributors>
-  <scm>
-    <connection>scm:git:git://github.com/vaadin/maven-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:vaadin/maven-plugin.git</developerConnection>
-    <url>https://github.com/vaadin/maven-plugin</url>
-  </scm>
-  <issueManagement>
-    <system>GitHub Issues</system>
-    <url>https://github.com/vaadin/maven-plugin/issues</url>
-  </issueManagement>
-<!--  <ciManagement>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>mojo-parent</artifactId>
+        <version>87</version>
+    </parent>
+    <groupId>com.vaadin</groupId>
+    <artifactId>vaadin-maven-plugin</artifactId>
+    <version>8.1-SNAPSHOT</version>
+    <packaging>maven-plugin</packaging>
+    <name>Vaadin Plug-in for Maven</name>
+    <description>Maven plugin for Vaadin.</description>
+    <url>https://vaadin.com</url>
+    <inceptionYear>2012</inceptionYear>
+    <organization>
+        <name>Vaadin Ltd</name>
+        <url>https://vaadin.com</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>Apache 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>artur.signell</id>
+            <name>Artur Signell</name>
+            <email>artur@vaadin.com</email>
+        </developer>
+        <developer>
+            <id>henri.sara</id>
+            <name>Henri Sara</name>
+            <email>hesara@vaadin.com</email>
+        </developer>
+        <developer>
+            <id>charlie.collins</id>
+            <name>Charlie Collins</name>
+            <email>charlie.collins@gmail.com</email>
+        </developer>
+        <developer>
+            <id>olamy</id>
+            <name>Olivier Lamy</name>
+            <email>olamy@apache.org</email>
+        </developer>
+        <developer>
+            <id>t.broyer</id>
+            <name>Thomas Broyer</name>
+            <email>t.broyer@ltgt.net</email>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>Robert Scholte</name>
+        </contributor>
+        <contributor>
+            <name>Stefan Hübner</name>
+        </contributor>
+        <contributor>
+            <name>Jesse Farinacci</name>
+            <email>jieryn@gmail.com</email>
+        </contributor>
+    </contributors>
+    <prerequisites>
+        <maven>3</maven>
+    </prerequisites>
+    <scm>
+        <connection>scm:git:git://github.com/vaadin/maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:vaadin/maven-plugin.git</developerConnection>
+        <url>https://github.com/vaadin/maven-plugin</url>
+    </scm>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/vaadin/maven-plugin/issues</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>vaadin-staging</id>
+            <name>Vaadin release staging repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>vaadin-snapshots</id>
+            <name>Vaadin snapshot repository</name>
+            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <!--  <ciManagement>
     <system>buildhive</system>
     <url>https://buildhive.cloudbees.com/job/gwt-maven-plugin/job/gwt-maven-plugin/</url>
   </ciManagement>
 -->
-  <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <!-- TODO this would also be used in an archetype, currently broken -->
-    <!-- This property is used in a filtered resources to check the version compatibility -->
-    <vaadin.version>${project.version}</vaadin.version>
-    <gwt.version>2.8.2</gwt.version>
-    <!--  apt filtering doesn't support dot -->
-    <vaadinVersion>${vaadin.version}</vaadinVersion>
-    <gwtVersion>${gwt.version}</gwtVersion>
-    <mavenVersion>3.0.5</mavenVersion>
-    <mavenPluginPluginVersion>3.5</mavenPluginPluginVersion>
-    <mojo.java.target>1.8</mojo.java.target>
-    <doxia-sitetoolsVersion>1.6</doxia-sitetoolsVersion>
-    <!--  to be able on powerfull ci machine to change it tru the cli :-) -->
-    <it.localWorkers>-1</it.localWorkers>
-<!--    <stagingSiteRepositoryId>codehaus</stagingSiteRepositoryId>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <!-- TODO this would also be used in an archetype, currently broken -->
+        <!-- This property is used in a filtered resources to check the version compatibility -->
+        <vaadin.version>${project.version}</vaadin.version>
+        <gwt.version>2.8.2</gwt.version>
+        <!--  apt filtering doesn't support dot -->
+        <vaadinVersion>${vaadin.version}</vaadinVersion>
+        <gwtVersion>${gwt.version}</gwtVersion>
+        <mavenVersion>3.0.5</mavenVersion>
+        <mavenPluginPluginVersion>3.5</mavenPluginPluginVersion>
+        <mojo.java.target>1.8</mojo.java.target>
+        <doxia-sitetoolsVersion>1.6</doxia-sitetoolsVersion>
+        <!--  to be able on powerfull ci machine to change it tru the cli :-) -->
+        <it.localWorkers>-1</it.localWorkers>
+        <!--    <stagingSiteRepositoryId>codehaus</stagingSiteRepositoryId>
     <stagingSiteURL>dav:https://dav.codehaus.org/mojo/${project.artifactId}-${project.version}</stagingSiteURL>
 -->
-    <invokerPluginVersion>1.5</invokerPluginVersion>
+        <invokerPluginVersion>1.5</invokerPluginVersion>
 
-    <wscdn.version>0.9.2</wscdn.version>
-  </properties>
+        <wscdn.version>0.9.2</wscdn.version>
+    </properties>
 
-  <distributionManagement>
-    <repository>
-      <id>vaadin-staging</id>
-      <name>Vaadin release staging repository</name>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-    <snapshotRepository>
-      <id>vaadin-snapshots</id>
-      <name>Vaadin snapshot repository</name>
-      <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
-  <repositories>
-    <repository>
-      <id>vaadin-snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>google-snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/google-snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.maven.plugin-tools</groupId>
-      <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginPluginVersion}</version>
-      <!-- Not needed at runtime -->
-      <scope>provided</scope>
-    </dependency>
-    <!--  TODO: migrate our API usage and eventually remove that dependency -->
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-compat</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-model</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-api</artifactId>
-      <version>3.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-impl</artifactId>
-      <version>2.1</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.5.5</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-sink-api</artifactId>
-      <version>${doxia-sitetoolsVersion}</version>
-    </dependency>
-    
-    <!-- Doxia-sitetools -->
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-site-renderer</artifactId>
-      <version>${doxia-sitetoolsVersion}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-container-default</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-component-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>    
-    
-    <!-- TODO: get rid of this! -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>4.3.20.RELEASE</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>3.0.18</version>
-    </dependency>
-    <dependency>
-      <groupId>com.thoughtworks.qdox</groupId>
-      <artifactId>qdox</artifactId>
-      <version>1.12.1</version>
-    </dependency>
-    <dependency>
-      <!-- used to generate eclipse .lanch files -->
-      <groupId>org.freemarker</groupId>
-      <artifactId>freemarker</artifactId>
-      <version>2.3.20</version>
-    </dependency>
-
-    <dependency>
-        <groupId>com.vaadin.wscdn</groupId>
-        <artifactId>wscdn-client</artifactId>
-        <version>${wscdn.version}</version>
-    </dependency>
-
-    <!-- Dependencies of WSCDN -->
-    <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-client</artifactId>
-        <version>3.0.10.Final</version>
-    </dependency>
-    <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-jaxrs</artifactId>
-        <version>3.0.10.Final</version>
-    </dependency>
-    <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-jaxb-provider</artifactId>
-        <version>3.0.10.Final</version>
-    </dependency>       
-    <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-jackson2-provider</artifactId>
-        <version>3.0.10.Final</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-client</artifactId>
-      <version>LATEST</version>
-      <scope>test</scope>
-    </dependency>
-<!--
+    <dependencies>
+        <!-- ICU 2.6.1 (inherited via jaxen) contains bad class files that break ASM (helpmojo java-annotations extractor and animal-sniffer) -->
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+            <version>3.4.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.qdox</groupId>
+            <artifactId>qdox</artifactId>
+            <version>1.12.1</version>
+        </dependency>
+        <!--
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-client-compiler</artifactId>
       <version>${vaadin.version}</version>
     </dependency>
 -->
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>license-checker</artifactId>
-      <version>1.13.3</version>
-    </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>license-checker</artifactId>
+            <version>1.13.3</version>
+        </dependency>
 
-    <dependency>
-      <!-- used to unpack gwt native libs -->
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-archiver</artifactId>
-      <version>4.8.0</version>
-    </dependency>
-	<dependency>
-      <!--  used for GwtSourcesJarMojo -->
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-archiver</artifactId>
-      <version>2.5</version>
-	</dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.1</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <!-- used to run GWTTestCases -->
-      <groupId>org.apache.maven.surefire</groupId>
-      <artifactId>surefire-booter</artifactId>
-      <version>2.4.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.surefire</groupId>
-      <artifactId>surefire-api</artifactId>
-      <version>2.4.3</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.4</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
-    </dependency>    
-    <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>jdom2</artifactId>
-      <version>2.0.6.1</version>
-    </dependency>
-    <dependency>
-      <groupId>jaxen</groupId>
-      <artifactId>jaxen</artifactId>
-      <version>1.1.1</version>
-    </dependency>
-    <!-- ICU 2.6.1 (inherited via jaxen) contains bad class files that break ASM (helpmojo java-annotations extractor and animal-sniffer) -->
-    <dependency>
-      <groupId>com.ibm.icu</groupId>
-      <artifactId>icu4j</artifactId>
-      <version>3.4.4</version>
-    </dependency>
-    <dependency>
-      <!-- required when running GWT 1.6 Hosted server to fix JAXP parser mismatches -->
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>2.10.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-classworlds</artifactId>
-      <version>2.5.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-compiler-api</artifactId>
-      <version>2.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sonatype.plexus</groupId>
-      <artifactId>plexus-build-api</artifactId>
-      <version>0.0.7</version>
-    </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-client</artifactId>
+            <version>LATEST</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.plugin-testing</groupId>
-      <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>2.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <!-- used to check for up-to-date compilation output -->
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-compiler-javac</artifactId>
-      <version>2.3</version>
-    </dependency>
-    <dependency>
-      <!-- needed by license checker -->
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <version>1.4.01</version>
-    </dependency>
-  </dependencies>
-  <profiles>
+        <dependency>
+            <groupId>com.vaadin.wscdn</groupId>
+            <artifactId>wscdn-client</artifactId>
+            <version>${wscdn.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
 
-    <profile>
-      <id>run-its</id>
-      <activation>
-        <property>
-          <name>skipTests</name>
-          <value>!true</value>
-        </property>
-      </activation>
-      <build>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <!--  used for GwtSourcesJarMojo -->
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-archiver</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+            <version>${mavenVersion}</version>
+        </dependency>
+        <!--  TODO: migrate our API usage and eventually remove that dependency -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-compat</artifactId>
+            <version>${mavenVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>${mavenVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>${mavenVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>${mavenVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.doxia</groupId>
+            <artifactId>doxia-sink-api</artifactId>
+            <version>${doxia-sitetoolsVersion}</version>
+        </dependency>
+
+        <!-- Doxia-sitetools -->
+        <dependency>
+            <groupId>org.apache.maven.doxia</groupId>
+            <artifactId>doxia-site-renderer</artifactId>
+            <version>${doxia-sitetoolsVersion}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-container-default</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-component-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-testing</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>2.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>${mavenPluginPluginVersion}</version>
+            <!-- Not needed at runtime -->
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.reporting</groupId>
+            <artifactId>maven-reporting-api</artifactId>
+            <version>3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.reporting</groupId>
+            <artifactId>maven-reporting-impl</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>surefire-api</artifactId>
+            <version>2.4.3</version>
+        </dependency>
+        <dependency>
+            <!-- used to run GWTTestCases -->
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>surefire-booter</artifactId>
+            <version>2.4.3</version>
+        </dependency>
+
+        <dependency>
+            <!-- used to unpack gwt native libs -->
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-archiver</artifactId>
+            <version>4.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-classworlds</artifactId>
+            <version>2.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-compiler-api</artifactId>
+            <version>2.3</version>
+        </dependency>
+        <dependency>
+            <!-- used to check for up-to-date compilation output -->
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-compiler-javac</artifactId>
+            <version>2.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-container-default</artifactId>
+            <version>1.5.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>3.0.18</version>
+        </dependency>
+        <dependency>
+            <!-- used to generate eclipse .lanch files -->
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.20</version>
+        </dependency>
+
+        <!-- Dependencies of WSCDN -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>3.0.10.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jackson2-provider</artifactId>
+            <version>3.0.10.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxb-provider</artifactId>
+            <version>3.0.10.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>3.0.10.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom2</artifactId>
+            <version>2.0.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.plexus</groupId>
+            <artifactId>plexus-build-api</artifactId>
+            <version>0.0.7</version>
+        </dependency>
+
+        <!-- TODO: get rid of this! -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>4.3.20.RELEASE</version>
+        </dependency>
+        <dependency>
+            <!-- required when running GWT 1.6 Hosted server to fix JAXP parser mismatches -->
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.10.0</version>
+        </dependency>
+        <dependency>
+            <!-- needed by license checker -->
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.4.01</version>
+        </dependency>
+    </dependencies>
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>vaadin-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>google-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/google-snapshots/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/content/groups/snapshots-group/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/archetype</directory>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <configuration>
+                        <java>
+                            <endWithNewline />
+                            <removeUnusedImports />
+                            <importOrder>
+                                <wildcardsLast>true</wildcardsLast>
+                                <order>java|javax,org,com</order>
+                            </importOrder>
+                            <eclipse>
+                                <file>eclipse/VaadinJavaConventions.xml</file>
+                            </eclipse>
+                        </java>
+                        <pom>
+                            <sortPom>
+                                <expandEmptyElements>false</expandEmptyElements>
+                                <nrOfIndentSpace>4</nrOfIndentSpace>
+                                <sortDependencies>groupId,artifactId</sortDependencies>
+                            </sortPom>
+                        </pom>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.9</version>
-            <configuration>
-              <debug>true</debug>
-              <projectsDirectory>src/it</projectsDirectory>
-              <pomIncludes>
-                <pomInclude>*/pom.xml</pomInclude>
-              </pomIncludes>
-              <postBuildHookScript>verify</postBuildHookScript>
-              <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
-              <properties>
-                <gwt.compiler.localWorkers>${it.localWorkers}</gwt.compiler.localWorkers>
-              </properties>
-              <goals>
-                <goal>clean</goal>
-                <goal>integration-test</goal>
-              </goals>
-              <settingsFile>src/it/settings.xml</settingsFile>
-              <cloneProjectsTo>${project.build.directory}/it-tests</cloneProjectsTo>
-              <extraArtifacts>
-                <extraArtifact>com.google.gwt:gwt-servlet:${gwtVersion}:jar</extraArtifact>
-                <!-- for some reason, com.google.web.bindery:requestfactory isn't installed,
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-metadata</artifactId>
+                <version>1.5.5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>${mavenPluginPluginVersion}</version>
+                <configuration>
+                    <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                    <requirements>
+                        <jdk>${maven.compiler.target}</jdk>
+                    </requirements>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>descriptor</goal>
+                            <goal>helpmojo</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <escapeString>\</escapeString>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <stagingRepositoryId>${stagingSiteRepositoryId}</stagingRepositoryId>
+                    <stagingSiteURL>${stagingSiteURL}</stagingSiteURL>
+                </configuration>
+            </plugin>
+            <!-- disabled: bug when dealing with ICU classes (from jaxen)-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.11</version>
+                <configuration>
+                    <signature>
+                        <groupId>org.codehaus.mojo.signature</groupId>
+                        <artifactId>java16</artifactId>
+                        <version>1.1</version>
+                    </signature>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check-java-1.6-compat</id>
+                        <goals>
+                            <!-- Disabled as WSCDN depends on some Java 8 classes -->
+                            <!-- <goal>check</goal> -->
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- POM flattener -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <inherited>true</inherited>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <updatePomFile>true</updatePomFile>
+                            <flattenMode>bom</flattenMode>
+                            <!-- Uncomment this to get a full list of dependencies in the resulting POM -->
+                            <!--<flattenDependencyMode>all</flattenDependencyMode>-->
+                            <pomElements>
+                                <parent>expand</parent>
+                                <name>keep</name>
+                                <description>keep</description>
+                                <url>keep</url>
+                                <properties>keep</properties>
+                                <pluginManagement>keep</pluginManagement>
+                                <dependencyManagement>keep</dependencyManagement>
+                                <build>keep</build>
+                            </pomElements>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>flatten-clean</id>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <phase>clean</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <excludeDefaults>false</excludeDefaults>
+    </reporting>
+    <profiles>
+
+        <profile>
+            <id>run-its</id>
+            <activation>
+                <property>
+                    <name>skipTests</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>1.9</version>
+                        <configuration>
+                            <debug>true</debug>
+                            <projectsDirectory>src/it</projectsDirectory>
+                            <pomIncludes>
+                                <pomInclude>*/pom.xml</pomInclude>
+                            </pomIncludes>
+                            <postBuildHookScript>verify</postBuildHookScript>
+                            <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
+                            <properties>
+                                <gwt.compiler.localWorkers>${it.localWorkers}</gwt.compiler.localWorkers>
+                            </properties>
+                            <goals>
+                                <goal>clean</goal>
+                                <goal>integration-test</goal>
+                            </goals>
+                            <settingsFile>src/it/settings.xml</settingsFile>
+                            <cloneProjectsTo>${project.build.directory}/it-tests</cloneProjectsTo>
+                            <extraArtifacts>
+                                <extraArtifact>com.google.gwt:gwt-servlet:${gwtVersion}:jar</extraArtifact>
+                                <!-- for some reason, com.google.web.bindery:requestfactory isn't installed,
                      whereas it's needed by com.google.gwt:gwt -->
-                <extraArtifact>com.google.web.bindery:requestfactory:${gwtVersion}:pom</extraArtifact>
-              </extraArtifacts>
-            </configuration>
-            <executions>
-              <execution>
-                <id>integration-test</id>
-                <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
+                                <extraArtifact>com.google.web.bindery:requestfactory:${gwtVersion}:pom</extraArtifact>
+                            </extraArtifacts>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>grid</id>
+            <properties>
+                <invokerPluginVersion>1.6</invokerPluginVersion>
+                <itParallelThreads>1</itParallelThreads>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <configuration>
+                            <parallelThreads>${itParallelThreads}</parallelThreads>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <version>1.0</version>
+                        <executions>
+                            <execution>
+                                <id>mojo-enforcer-rules</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <phase>verify</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>linkcheck</id>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-linkcheck-plugin</artifactId>
+                        <version>1.0.1</version>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+
+        <profile>
+            <id>m2e</id>
+            <activation>
+                <property>
+                    <name>m2e.version</name>
+                </property>
+            </activation>
+            <properties>
+                <m2BuildDirectory>target</m2BuildDirectory>
+            </properties>
+            <build>
+                <directory>${m2BuildDirectory}</directory>
+                <plugins>
+                    <plugin>
+                        <groupId>org.maven.ide.eclipse</groupId>
+                        <artifactId>lifecycle-mapping</artifactId>
+                        <version>0.10.0</version>
+                        <configuration>
+                            <mappingId>customizable</mappingId>
+                            <configurators>
+                                <configurator id="org.maven.ide.eclipse.jdt.javaConfigurator" />
+                            </configurators>
+                            <mojoExecutions>
+                                <mojoExecution>org.apache.maven.plugins:maven-resources-plugin::</mojoExecution>
+                            </mojoExecutions>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>maven-3</id>
+            <activation>
+                <file>
+                    <!-- This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+                    <exists>${basedir}</exists>
+                </file>
+            </activation>
+            <properties>
+                <sitePluginVersion>3.0-beta-3</sitePluginVersion>
+            </properties>
+        </profile>
+
+        <!-- maven plug-in does not inherit vaadin-parent, so need to duplicate some of these profiles -->
+        <profile>
+            <id>release</id>
+            <properties>
+                <staging.server.id>vaadin-staging</staging.server.id>
+                <staging.server.url>https://oss.sonatype.org/</staging.server.url>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version>1.0.0</version>
+                        <configuration>
+                            <quiet>true</quiet>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <phase>initialize</phase>
+                                <configuration>
+                                    <files>
+                                        <file>${gpg.passphrase.file}</file>
+                                    </files>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <phase>verify</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <nexusUrl>${staging.server.url}</nexusUrl>
+                            <serverId>${staging.server.id}</serverId>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>prerelease</id>
+            <properties>
+                <staging.server.id>vaadin-prerelease-staging</staging.server.id>
+                <!-- staging.server.url is set by the build environment profile -->
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version>1.0.0</version>
+                        <configuration>
+                            <quiet>true</quiet>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <phase>initialize</phase>
+                                <configuration>
+                                    <files>
+                                        <file>${gpg.passphrase.file}</file>
+                                    </files>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <phase>verify</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <nexusUrl>${staging.server.url}</nexusUrl>
+                            <serverId>${staging.server.id}</serverId>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
     
-    <profile>
-      <id>grid</id>
-      <properties>
-        <invokerPluginVersion>1.6</invokerPluginVersion>
-        <itParallelThreads>1</itParallelThreads>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-invoker-plugin</artifactId>
-            <configuration>
-              <parallelThreads>${itParallelThreads}</parallelThreads>
-            </configuration>
-          </plugin>
-          <plugin>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <version>1.0</version>
-            <executions>
-              <execution>
-                <id>mojo-enforcer-rules</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>enforce</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>          
-        </plugins>
-      </build>  
-    </profile>
-    
-    <profile>
-      <id>linkcheck</id>
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-linkcheck-plugin</artifactId>
-            <version>1.0.1</version>
-          </plugin>
-        </plugins>
-      </reporting>    
-    </profile>
-    
-    <profile>
-      <id>m2e</id>
-      <properties>
-        <m2BuildDirectory>target</m2BuildDirectory>
-      </properties>
-      <activation>
-        <property>
-          <name>m2e.version</name>
-        </property>
-      </activation>
-      <build>
-        <directory>${m2BuildDirectory}</directory>
-        <plugins>
-          <plugin>
-            <groupId>org.maven.ide.eclipse</groupId>
-            <artifactId>lifecycle-mapping</artifactId>
-            <version>0.10.0</version>
-            <configuration>
-              <mappingId>customizable</mappingId>
-              <configurators>
-                <configurator id="org.maven.ide.eclipse.jdt.javaConfigurator" />
-              </configurators>
-              <mojoExecutions>
-                <mojoExecution>org.apache.maven.plugins:maven-resources-plugin::</mojoExecution>
-              </mojoExecutions>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>    
-    
-    <profile>
-      <id>maven-3</id>
-      <activation>
-        <file>
-          <!-- This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
-          <exists>${basedir}</exists>
-        </file>
-      </activation>
-      <properties>
-        <sitePluginVersion>3.0-beta-3</sitePluginVersion>
-      </properties>
-    </profile>    
-
-    <!-- maven plug-in does not inherit vaadin-parent, so need to duplicate some of these profiles -->
-    <profile>
-      <id>release</id>
-      <properties>
-        <staging.server.id>vaadin-staging</staging.server.id>
-        <staging.server.url>https://oss.sonatype.org/</staging.server.url>
-      </properties>
-      <build>
-        <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>properties-maven-plugin</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <quiet>true</quiet>
-          </configuration>
-          <executions>
-            <execution>
-              <phase>initialize</phase>
-              <goals>
-                <goal>read-project-properties</goal>
-              </goals>
-              <configuration>
-                <files>
-                  <file>${gpg.passphrase.file}</file>
-                </files>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>sign-artifacts</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>sign</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.8</version>
-          <extensions>true</extensions>
-           <configuration>
-             <nexusUrl>${staging.server.url}</nexusUrl>
-             <serverId>${staging.server.id}</serverId>
-           </configuration>
-        </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>prerelease</id>
-      <properties>
-        <staging.server.id>vaadin-prerelease-staging</staging.server.id>
-        <!-- staging.server.url is set by the build environment profile -->
-      </properties>
-      <build>
-        <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>properties-maven-plugin</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <quiet>true</quiet>
-          </configuration>
-          <executions>
-            <execution>
-              <phase>initialize</phase>
-              <goals>
-                <goal>read-project-properties</goal>
-              </goals>
-              <configuration>
-                <files>
-                  <file>${gpg.passphrase.file}</file>
-                </files>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>sign-artifacts</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>sign</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.8</version>
-          <extensions>true</extensions>
-           <configuration>
-             <nexusUrl>${staging.server.url}</nexusUrl>
-             <serverId>${staging.server.id}</serverId>
-           </configuration>
-        </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-  </profiles>
-
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-      <resource>
-        <directory>src/main/archetype</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-component-metadata</artifactId>
-        <version>1.5.5</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate-metadata</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>${mavenPluginPluginVersion}</version>
-        <configuration>
-          <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
-          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-          <requirements>
-            <jdk>${maven.compiler.target}</jdk>
-          </requirements>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>descriptor</goal>
-              <goal>helpmojo</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <configuration>
-          <escapeString>\</escapeString>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-        <configuration>
-          <stagingRepositoryId>${stagingSiteRepositoryId}</stagingRepositoryId>
-          <stagingSiteURL>${stagingSiteURL}</stagingSiteURL>
-        </configuration>
-      </plugin>
-      <!-- disabled: bug when dealing with ICU classes (from jaxen)-->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.11</version>
-        <configuration>
-          <signature>
-            <groupId>org.codehaus.mojo.signature</groupId>
-            <artifactId>java16</artifactId>
-            <version>1.1</version>
-          </signature>
-        </configuration>
-        <executions>
-          <execution>
-            <id>check-java-1.6-compat</id>
-            <phase>process-classes</phase>
-            <goals>
-                <!-- Disabled as WSCDN depends on some Java 8 classes -->
-<!--               <goal>check</goal> -->
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- -->
-    </plugins>
-  </build>
-
-  <reporting>
-    <excludeDefaults>false</excludeDefaults>
-  </reporting>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>apache.snapshots</id>
-      <url>https://repository.apache.org/content/groups/snapshots-group/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
-
 </project>

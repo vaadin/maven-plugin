@@ -21,40 +21,38 @@ package org.codehaus.mojo.gwt;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.MavenProject;
 
 /**
- * 
+ *
  * @author Robert Scholte
  *
  */
-public abstract class AbstractGwtMojoTestCase
-    extends AbstractMojoTestCase
-{
+public abstract class AbstractGwtMojoTestCase extends AbstractMojoTestCase {
 
     /**
-     * 
-     * @param pDir path to the pomDirectory, relative to the baseDir of this project
+     *
+     * @param pDir
+     *            path to the pomDirectory, relative to the baseDir of this
+     *            project
      * @return the GwtMojo corresponding with the goal
      * @throws Exception
      */
-    protected ArtifactResolver newMojo( String pDir )
-        throws Exception
-    {
-        File testRoot = new File( getBasedir(), pDir );
-        ArtifactResolver vm = (ArtifactResolver) lookupMojo( getGoal(), new File( testRoot, "pom.xml" ) );
+    protected ArtifactResolver newMojo(String pDir) throws Exception {
+        File testRoot = new File(getBasedir(), pDir);
+        ArtifactResolver vm = (ArtifactResolver) lookupMojo(getGoal(), new File(testRoot, "pom.xml"));
 
         MavenProject project = new MavenProjectStub();
-        //addCompileSourceRoot will generate singletonList if null, which doesn't support a second add.
-        setVariableValueToObject( project, "compileSourceRoots", new ArrayList<String>() );
-        project.addCompileSourceRoot( new File( testRoot, "src/main/java" ).getAbsolutePath() );
+        // addCompileSourceRoot will generate singletonList if null, which
+        // doesn't support a second add.
+        setVariableValueToObject(project, "compileSourceRoots", new ArrayList<String>());
+        project.addCompileSourceRoot(new File(testRoot, "src/main/java").getAbsolutePath());
 
-        //required field of mojo
-        setVariableValueToObject( vm, "project", project );
+        // required field of mojo
+        setVariableValueToObject(vm, "project", project);
 
         return vm;
     }

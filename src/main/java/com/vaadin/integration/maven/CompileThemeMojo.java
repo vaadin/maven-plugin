@@ -1,7 +1,6 @@
 package com.vaadin.integration.maven;
 
 import java.io.File;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -13,12 +12,16 @@ import org.codehaus.mojo.gwt.shell.JavaCommandException;
 /**
  * Updates Vaadin themes based on addons containing themes on the classpath.
  */
-@Mojo(name = "compile-theme", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(
+        name = "compile-theme",
+        defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
 public class CompileThemeMojo extends AbstractThemeMojo {
     public static final String THEME_COMPILE_CLASS = "com.vaadin.sass.SassCompiler";
 
     /**
-     * Create a compressed version of the theme alongside with the uncompressed one or not.
+     * Create a compressed version of the theme alongside with the uncompressed
+     * one or not.
      */
     @Parameter(defaultValue = "false", property = "vaadin.theme.compress")
     private boolean compressTheme;
@@ -69,5 +72,4 @@ public class CompileThemeMojo extends AbstractThemeMojo {
             throw new MojoExecutionException("Compiling theme \"" + theme + "\" failed", e);
         }
     }
-
 }
