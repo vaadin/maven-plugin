@@ -41,7 +41,9 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * see http://code.google.com/webtoolkit/doc/latest/DevGuideCompileReport.html#Usage
+ * see
+ * http://code.google.com/webtoolkit/doc/latest/DevGuideCompileReport.html#Usage
+ *
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  * @since 2.1.0-1
  */
@@ -72,9 +74,10 @@ public class CompileReport extends AbstractMavenReport {
     protected Renderer siteRenderer;
 
     /**
-     * The output directory for the report. Note that this parameter is only evaluated if the goal is run directly from
-     * the command line. If the goal is run indirectly as part of a site generation, the output directory configured in
-     * the Maven Site Plugin is used instead.
+     * The output directory for the report. Note that this parameter is only
+     * evaluated if the goal is run directly from the command line. If the goal
+     * is run indirectly as part of a site generation, the output directory
+     * configured in the Maven Site Plugin is used instead.
      *
      * @since 2.1.0-1
      */

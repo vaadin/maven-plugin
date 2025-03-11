@@ -79,7 +79,8 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
                 if (!isNewer) {
                     getLog().warn("Your project declares dependency on vaadin-shared "
                             + artifactVersion
-                            + ". This goal requires at least Vaadin version " + major + "." + minor);
+                            + ". This goal requires at least Vaadin version "
+                            + major + "." + minor);
                 } else {
                     return true;
                 }
@@ -93,9 +94,12 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
     /**
      * Configure the classpath for theme update/compilation.
      *
-     * @param cmd command for which to configure the classpath
-     * @param theme theme path relative to a resource directory
-     * @return the first suitable theme directory found (to be used as the output directory)
+     * @param cmd
+     *            command for which to configure the classpath
+     * @param theme
+     *            theme path relative to a resource directory
+     * @return the first suitable theme directory found (to be used as the
+     *         output directory)
      * @throws MojoExecutionException
      */
     protected File configureThemeClasspath(JavaCommand cmd, String theme) throws MojoExecutionException {
@@ -131,8 +135,8 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
 
     /**
      * Return the available themes in the project source/resources folder. If a
-     * theme has been set by expression, only that theme is returned.
-     * It is possible to specify more themes, comma separated.
+     * theme has been set by expression, only that theme is returned. It is
+     * possible to specify more themes, comma separated.
      *
      * @return the theme names
      */

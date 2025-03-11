@@ -83,15 +83,17 @@ public class GenerateAsyncMojo extends AbstractGwtMojo {
     private String servicePattern;
 
     /**
-     * Return a com.google.gwt.http.client.Request on async interface to allow cancellation.
+     * Return a com.google.gwt.http.client.Request on async interface to allow
+     * cancellation.
      */
     @Parameter(defaultValue = "false")
     private boolean returnRequest;
 
     /**
-     * A (MessageFormat) Pattern to get the GWT-RPC servlet URL based on service interface name. For example to
-     * "{0}.rpc" if you want to map GWT-RPC calls to "*.rpc" in web.xml, for example when using Spring dispatch servlet
-     * to handle RPC requests.
+     * A (MessageFormat) Pattern to get the GWT-RPC servlet URL based on service
+     * interface name. For example to "{0}.rpc" if you want to map GWT-RPC calls
+     * to "*.rpc" in web.xml, for example when using Spring dispatch servlet to
+     * handle RPC requests.
      */
     @Parameter(defaultValue = "{0}", property = "gwt.rpcPattern")
     private String rpcPattern;
@@ -148,9 +150,11 @@ public class GenerateAsyncMojo extends AbstractGwtMojo {
     }
 
     /**
-     * @param sourceRoot the base directory to scan for RPC services
+     * @param sourceRoot
+     *            the base directory to scan for RPC services
      * @return true if some file have been generated
-     * @throws Exception generation failure
+     * @throws Exception
+     *             generation failure
      */
     private boolean scanAndGenerateAsync(File sourceRoot, JavaDocBuilder builder) throws Exception {
         Scanner scanner = buildContext.newScanner(sourceRoot);
@@ -166,7 +170,8 @@ public class GenerateAsyncMojo extends AbstractGwtMojo {
             File targetFile = getTargetFile(source);
             if (!force && buildContext.isUptodate(targetFile, sourceFile)) {
                 getLog().debug(targetFile.getAbsolutePath() + " is up to date. Generation skipped");
-                // up to date, but still need to report generated-sources directory as sourceRoot
+                // up to date, but still need to report generated-sources
+                // directory as sourceRoot
                 fileGenerated = true;
                 continue;
             }
@@ -190,9 +195,12 @@ public class GenerateAsyncMojo extends AbstractGwtMojo {
     }
 
     /**
-     * @param clazz the RPC service java class
-     * @param targetFile RemoteAsync file to generate
-     * @throws Exception generation failure
+     * @param clazz
+     *            the RPC service java class
+     * @param targetFile
+     *            RemoteAsync file to generate
+     * @throws Exception
+     *             generation failure
      */
     private void generateAsync(JavaClass clazz, File targetFile) throws IOException {
         PrintWriter writer = new PrintWriter(
@@ -318,7 +326,8 @@ public class GenerateAsyncMojo extends AbstractGwtMojo {
     }
 
     private String getTopLevelClassName(String sourceFile) {
-        String className = sourceFile.substring(0, sourceFile.length() - 5); // strip ".java"
+        String className = sourceFile.substring(0, sourceFile.length() - 5); // strip
+        // ".java"
         return className.replace(File.separatorChar, '.');
     }
 

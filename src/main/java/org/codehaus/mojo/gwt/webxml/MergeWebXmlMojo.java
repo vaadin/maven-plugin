@@ -39,10 +39,12 @@ import org.codehaus.mojo.gwt.GwtModule;
 import org.codehaus.mojo.gwt.shell.AbstractGwtWebMojo;
 
 /**
- * Merges GWT servlet elements into deployment descriptor (and non GWT servlets into shell).
+ * Merges GWT servlet elements into deployment descriptor (and non GWT servlets
+ * into shell).
  * <p>
- * <b>If you use {@link #scanRemoteServiceRelativePathAnnotation} you must bind this mojo to at least compile phase</b>
- * Because the classpath scanner need to see compile classes
+ * <b>If you use {@link #scanRemoteServiceRelativePathAnnotation} you must bind
+ * this mojo to at least compile phase</b> Because the classpath scanner need to
+ * see compile classes
  *
  * @author cooper
  * @version $Id$
@@ -55,8 +57,10 @@ import org.codehaus.mojo.gwt.shell.AbstractGwtWebMojo;
 public class MergeWebXmlMojo extends AbstractGwtWebMojo {
 
     /**
-     * Location on filesystem where merged web.xml will be created. The maven-war-plugin must be configured to use this
-     * path as <a href="http://maven.apache.org/plugins/maven-war-plugin/war-mojo.html#webXml"> webXml</a> parameter
+     * Location on filesystem where merged web.xml will be created. The
+     * maven-war-plugin must be configured to use this path as <a href=
+     * "http://maven.apache.org/plugins/maven-war-plugin/war-mojo.html#webXml">
+     * webXml</a> parameter
      */
     @Parameter(defaultValue = "${project.build.directory}/web.xml")
     private File mergedWebXml;
@@ -119,7 +123,8 @@ public class MergeWebXmlMojo extends AbstractGwtWebMojo {
                         packageName = packageNamePerModule.get(gwtModule.getPath());
                     }
                     if (StringUtils.isNotBlank(packageName)) {
-                        getLog().debug("search annotated servlet with package name " + packageName + " in module "
+                        getLog().debug("search annotated servlet with package name "
+                                + packageName + " in module "
                                 + gwtModule.getName());
                         Set<ServletDescriptor> annotatedServlets = servletAnnotationFinder.findServlets(
                                 packageName,
@@ -127,7 +132,8 @@ public class MergeWebXmlMojo extends AbstractGwtWebMojo {
                                 getAnnotationSearchClassLoader());
                         servlets.addAll(annotatedServlets);
                     } else {
-                        getLog().debug("cannot find package name for module " + gwtModule.getName() + " or path "
+                        getLog().debug("cannot find package name for module "
+                                + gwtModule.getName() + " or path "
                                 + gwtModule.getPath());
                     }
                 }

@@ -116,7 +116,9 @@ public class MavenTestRunner extends TestRunner {
 
     /**
      * A test started.
-     * @param test the test
+     *
+     * @param test
+     *            the test
      */
     @Override
     public void startTest(Test test) {
@@ -128,7 +130,9 @@ public class MavenTestRunner extends TestRunner {
 
     /**
      * A test ended.
-     * @param test the test
+     *
+     * @param test
+     *            the test
      */
     @Override
     public void endTest(Test test) {
@@ -141,8 +145,11 @@ public class MavenTestRunner extends TestRunner {
 
     /**
      * An error occurred.
-     * @param test the test
-     * @param t the error
+     *
+     * @param test
+     *            the test
+     * @param t
+     *            the error
      */
     @Override
     public void addError(Test test, Throwable t) {
@@ -155,8 +162,11 @@ public class MavenTestRunner extends TestRunner {
 
     /**
      * A failure occurred.
-     * @param test the test
-     * @param t the failure
+     *
+     * @param test
+     *            the test
+     * @param t
+     *            the failure
      */
     @Override
     public void addFailure(Test test, AssertionFailedError t) {
@@ -168,8 +178,10 @@ public class MavenTestRunner extends TestRunner {
     }
 
     /**
-     * @param test the test
-     * @param t a throwable
+     * @param test
+     *            the test
+     * @param t
+     *            a throwable
      * @return a StackTraceWriter to trace the error
      */
     private StackTraceWriter getStackTraceWriter(Test test, Throwable t) {

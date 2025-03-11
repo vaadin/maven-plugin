@@ -20,7 +20,8 @@ public class CompileThemeMojo extends AbstractThemeMojo {
     public static final String THEME_COMPILE_CLASS = "com.vaadin.sass.SassCompiler";
 
     /**
-     * Create a compressed version of the theme alongside with the uncompressed one or not.
+     * Create a compressed version of the theme alongside with the uncompressed
+     * one or not.
      */
     @Parameter(defaultValue = "false", property = "vaadin.theme.compress")
     private boolean compressTheme;

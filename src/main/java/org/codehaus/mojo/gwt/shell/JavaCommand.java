@@ -250,8 +250,10 @@ public class JavaCommand {
         try {
             String[] arguments = command.toArray(new String[command.size()]);
 
-            // On windows, the default Shell will fall into command line length limitation issue
-            // On Unixes, not using a Shell breaks the classpath (NoClassDefFoundError:
+            // On windows, the default Shell will fall into command line length
+            // limitation issue
+            // On Unixes, not using a Shell breaks the classpath
+            // (NoClassDefFoundError:
             // com/google/gwt/dev/Compiler).
             Commandline cmd = Os.isFamily(Os.FAMILY_WINDOWS) ? new Commandline(new JavaShell()) : new Commandline();
 
@@ -288,7 +290,8 @@ public class JavaCommand {
 
     private String getJavaCommand() throws JavaCommandException {
         if (StringUtils.isEmpty(jvm)) {
-            // use the same JVM as the one used to run Maven (the "java.home" one)
+            // use the same JVM as the one used to run Maven (the "java.home"
+            // one)
             jvm = System.getProperty("java.home");
         }
 

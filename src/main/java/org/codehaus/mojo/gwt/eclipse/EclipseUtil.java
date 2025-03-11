@@ -34,7 +34,8 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 @Component(role = EclipseUtil.class)
 public class EclipseUtil extends AbstractLogEnabled {
     /**
-     * Read the Eclipse project name for .project file. Fall back to artifactId on error
+     * Read the Eclipse project name for .project file. Fall back to artifactId
+     * on error
      *
      * @return project name in eclipse workspace
      */

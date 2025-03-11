@@ -48,7 +48,8 @@ import org.codehaus.plexus.util.WriterFactory;
  *
  * @version $Id$
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
- * @deprecated use google eclipse plugin http://code.google.com/intl/fr-FR/eclipse/docs/users_guide.html
+ * @deprecated use google eclipse plugin
+ *             http://code.google.com/intl/fr-FR/eclipse/docs/users_guide.html
  */
 @Deprecated
 @Mojo(name = "eclipseTest")
@@ -86,9 +87,13 @@ public class EclipseTestMojo extends TestMojo {
 
     /**
      * Create an eclipse launch configuration file for the specified test
-     * @param test the GWTTestCase
-     * @param testSrc the source directory where the test lives
-     * @throws MojoExecutionException some error occured
+     *
+     * @param test
+     *            the GWTTestCase
+     * @param testSrc
+     *            the source directory where the test lives
+     * @throws MojoExecutionException
+     *             some error occured
      */
     private void createLaunchConfigurationForGwtTestCase(File testSrc, String test) throws MojoExecutionException {
         File testFile = new File(testSrc, test);

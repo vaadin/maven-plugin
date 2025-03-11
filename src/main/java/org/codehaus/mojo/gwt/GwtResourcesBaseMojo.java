@@ -30,8 +30,9 @@ import org.codehaus.mojo.gwt.utils.GwtModuleReaderException;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
- * Collect GWT java source code and module descriptor to be added as resources. Common
- * functionality for different implementations GwtResourcesMojo and GwtSourcesJarMojo
+ * Collect GWT java source code and module descriptor to be added as resources.
+ * Common functionality for different implementations GwtResourcesMojo and
+ * GwtSourcesJarMojo
  *
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  * @author <a href="mailto:vlads@pyx4j.com">Vlad Skarzhevskyy</a>
@@ -53,7 +54,8 @@ abstract class GwtResourcesBaseMojo extends AbstractGwtModuleMojo {
     }
 
     /**
-     * Collect GWT java source code and module descriptor to be added as resources.
+     * Collect GWT java source code and module descriptor to be added as
+     * resources.
      */
     protected Collection<ResourceFile> getAllResourceFiles() throws MojoExecutionException {
         try {
@@ -104,7 +106,8 @@ abstract class GwtResourcesBaseMojo extends AbstractGwtModuleMojo {
 
     /**
      * @param source
-     * @param include TODO
+     * @param include
+     *            TODO
      * @param name
      */
     private Collection<ResourceFile> getAsResources(
@@ -115,7 +118,8 @@ abstract class GwtResourcesBaseMojo extends AbstractGwtModuleMojo {
 
         for (String path : paths) {
             File basedir = new File(path);
-            // the default "src/main/resource" may not phisicaly exist in project
+            // the default "src/main/resource" may not phisicaly exist in
+            // project
             if (!basedir.exists()) {
                 continue;
             }

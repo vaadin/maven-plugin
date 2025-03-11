@@ -133,10 +133,12 @@ public class ClassPathExplorer {
      * If the location is a JAR file, the comma-separated values of the
      * "Vaadin-Widgetsets" attribute in its manifest are added to widgetsets.
      *
-     * @param locationString an entry in {@link #classpathLocations}
-     * @param widgetsets a map from widgetset name (including package, with dots
-     * as separators) to a URL (see {@link #classpathLocations}) - new entries
-     * are added to this map
+     * @param locationString
+     *            an entry in {@link #classpathLocations}
+     * @param widgetsets
+     *            a map from widgetset name (including package, with dots as
+     *            separators) to a URL (see {@link #classpathLocations}) - new
+     *            entries are added to this map
      */
     private static void searchForWidgetSetsAndAddonStyles(
             String locationString,

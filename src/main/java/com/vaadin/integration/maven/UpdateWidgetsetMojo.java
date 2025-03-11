@@ -47,7 +47,8 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
     private static final String APP_WIDGETSET_FILE = APP_WIDGETSET_MODULE + GWT_MODULE_EXTENSION;
 
     /**
-     * Folder where generated AppWidgetset will be created (automatically added to resources).
+     * Folder where generated AppWidgetset will be created (automatically added
+     * to resources).
      */
     @Parameter(defaultValue = "${project.build.directory}/generated-resources/gwt", required = true)
     private File generatedWidgetsetDirectory;
@@ -97,7 +98,8 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
         // compile one widgetset at a time
         String[] modules = getModules();
         if (modules.length == 1 && APP_WIDGETSET_MODULE.equals(modules[0]) && appwsFile.exists()) {
-            // this branch is needed to avoid a second call to update-widgetset in the package phase
+            // this branch is needed to avoid a second call to update-widgetset
+            // in the package phase
             // from creating an extra AppWidgetset file in the source directory
             updateWidgetset(modules[0], true);
         } else if (modules.length > 0) {
@@ -118,9 +120,12 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
                 }
                 updateWidgetset(APP_WIDGETSET_MODULE, true);
 
-                // if there was nothing relevant on the widgetset path, remove the generated widgetset
-                // TODO this is an ugly workaround as the corresponding class in Vaadin framework does
-                // not have sufficient API to only generate the widgetset when it is needed
+                // if there was nothing relevant on the widgetset path, remove
+                // the generated widgetset
+                // TODO this is an ugly workaround as the corresponding class in
+                // Vaadin framework does
+                // not have sufficient API to only generate the widgetset when
+                // it is needed
                 try (FileInputStream fis = new FileInputStream(appwsFile)) {
                     String generatedws = IOUtil.toString(fis);
                     fis.close();
@@ -164,9 +169,17 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
         Connection conn = new Connection();
         WidgetSetResponse wsRes = conn.queryRemoteWidgetSet(wsReq, true);
         if (wsRes != null
-                && (wsRes.getStatus() == PublishState.AVAILABLE // Compiled and published
-                        || wsRes.getStatus() == PublishState.COMPILED // Compiled succesfully, but not yet available
-                        || wsRes.getStatus() == PublishState.COMPILING)) // Currently compiling the widgetset)
+                && (wsRes.getStatus() == PublishState.AVAILABLE // Compiled
+                        // and
+                        // published
+                        || wsRes.getStatus() == PublishState.COMPILED // Compiled
+                        // succesfully,
+                        // but not yet
+                        // available
+                        || wsRes.getStatus() == PublishState.COMPILING)) // Currently
+        // compiling
+        // the
+        // widgetset)
         {
             wsName = wsRes.getWidgetSetName();
             wsUrl = fetch ? "null" : "\"" + wsRes.getWidgetSetUrl() + "\"";
@@ -226,12 +239,14 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
         cmd.setMainClass(WIDGETSET_BUILDER_CLASS);
         cmd.setLog(getLog());
 
-        // if using an auto-generated AppWidgetset, the generated source directory must be first on the classpath
+        // if using an auto-generated AppWidgetset, the generated source
+        // directory must be first on the classpath
         if (generated) {
             cmd.addToClasspath(generatedWidgetsetDirectory);
         }
 
-        // make sure source paths are first on the classpath to update the .gwt.xml there, not in target
+        // make sure source paths are first on the classpath to update the
+        // .gwt.xml there, not in target
         Collection<String> sourcePaths = getProject().getCompileSourceRoots();
         if (null != sourcePaths) {
             for (String sourcePath : sourcePaths) {
@@ -242,7 +257,8 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
             }
         }
 
-        // also add resource paths early on the classpath to update the .gwt.xml there, not in target
+        // also add resource paths early on the classpath to update the .gwt.xml
+        // there, not in target
         Collection<?> resources = getProject().getResources();
         if (null != resources) {
             for (Object resObj : resources) {

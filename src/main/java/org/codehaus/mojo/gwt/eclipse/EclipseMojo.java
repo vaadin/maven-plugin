@@ -61,11 +61,12 @@ public class EclipseMojo extends AbstractGwtModuleMojo {
     private EclipseUtil eclipseUtil;
 
     /**
-     * Extra JVM arguments that are passed to the GWT-Maven generated scripts (for compiler, shell, etc - typically use
-     * -Xmx2G here, or -XstartOnFirstThread, etc).
+     * Extra JVM arguments that are passed to the GWT-Maven generated scripts
+     * (for compiler, shell, etc - typically use -Xmx2G here, or
+     * -XstartOnFirstThread, etc).
      * <p>
-     * Can be set from command line using '-Dgwt.extraJvmArgs=...', defaults to setting max Heap size to be large enough
-     * for most GWT use cases.
+     * Can be set from command line using '-Dgwt.extraJvmArgs=...', defaults to
+     * setting max Heap size to be large enough for most GWT use cases.
      */
     @Parameter(property = "gwt.extraJvmArgs", defaultValue = "-Xmx1G")
     private String extraJvmArgs;
@@ -89,7 +90,8 @@ public class EclipseMojo extends AbstractGwtModuleMojo {
     private File hostedWebapp;
 
     /**
-     * Additional parameters to append to the module URL. For example, gwt-log users will set "log_level=DEBUG"
+     * Additional parameters to append to the module URL. For example, gwt-log
+     * users will set "log_level=DEBUG"
      */
     @Parameter
     private String additionalPageParameters;
@@ -131,18 +133,22 @@ public class EclipseMojo extends AbstractGwtModuleMojo {
     private String bindAddress;
 
     /**
-     * Setup a launch configuration for using the Google Eclipse Plugin. This is the recommended setup, as the home-made
-     * launch configuration has many limitations. This parameter is only for backward compatibility, the standard lauch
-     * configuration template will be removed in a future release.
+     * Setup a launch configuration for using the Google Eclipse Plugin. This is
+     * the recommended setup, as the home-made launch configuration has many
+     * limitations. This parameter is only for backward compatibility, the
+     * standard lauch configuration template will be removed in a future
+     * release.
      */
     @Parameter(defaultValue = "true", property = "use.google.eclipse.plugin")
     private boolean useGoogleEclipsePlugin;
 
     /**
-     * @param parameters additional parameter for module URL
+     * @param parameters
+     *            additional parameter for module URL
      */
     public void setAdditionalPageParameters(String parameters) {
-        // escape the '&' char used for multiple parameters as the result must be XML compliant
+        // escape the '&' char used for multiple parameters as the result must
+        // be XML compliant
         this.additionalPageParameters = StringUtils.replace(parameters, "&", "&amp;");
     }
 
@@ -191,10 +197,13 @@ public class EclipseMojo extends AbstractGwtModuleMojo {
     }
 
     /**
-     * create an Eclipse launch configuration file to Eclipse to run the module in hosted browser
+     * create an Eclipse launch configuration file to Eclipse to run the module
+     * in hosted browser
      *
-     * @param module the GWT module
-     * @throws MojoExecutionException some error occured
+     * @param module
+     *            the GWT module
+     * @throws MojoExecutionException
+     *             some error occured
      */
     private void createLaunchConfigurationForHostedModeBrowser(String module) throws MojoExecutionException {
         try {
@@ -209,7 +218,8 @@ public class EclipseMojo extends AbstractGwtModuleMojo {
             cfg.setClassForTemplateLoading(EclipseMojo.class, "");
 
             Map<String, Object> context = new HashMap<String, Object>();
-            // Read compileSourceRoots from executedProject to retrieve generated source directories
+            // Read compileSourceRoots from executedProject to retrieve
+            // generated source directories
             Collection<String> sources = new LinkedList<String>(executedProject.getCompileSourceRoots());
             List<Resource> resources = executedProject.getResources();
             for (Resource resource : resources) {

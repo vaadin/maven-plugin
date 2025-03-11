@@ -35,19 +35,27 @@ public class TestTemplate {
      */
     public interface CallBack {
         /**
-         * @param sourceDir where the test was found
-         * @param test the test name
-         * @throws MojoExecutionException some error occured
+         * @param sourceDir
+         *            where the test was found
+         * @param test
+         *            the test name
+         * @throws MojoExecutionException
+         *             some error occured
          */
         void doWithTest(File sourceDir, String test) throws MojoExecutionException;
     }
 
     /**
-     * @param project the maven project
-     * @param includes inclusion patterns
-     * @param excludes exclusion patterns
-     * @param callBack what to do with thoses tests
-     * @throws MojoExecutionException some error occured
+     * @param project
+     *            the maven project
+     * @param includes
+     *            inclusion patterns
+     * @param excludes
+     *            exclusion patterns
+     * @param callBack
+     *            what to do with thoses tests
+     * @throws MojoExecutionException
+     *             some error occured
      */
     public TestTemplate(MavenProject project, String includes, String excludes, CallBack callBack)
             throws MojoExecutionException {

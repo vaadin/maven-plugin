@@ -117,9 +117,11 @@ public class GwtWebInfProcessor {
     private Document insertServlets(File webXml, Collection<ServletDescriptor> servletDescriptors)
             throws JDOMException, IOException {
         /*
-         * <!ELEMENT web-app (icon?, display-name?, description?, distributable?, context-param*, filter*,
-         * filter-mapping*, listener*, servlet*, servlet-mapping*, session-config?, mime-mapping*, welcome-file-list?,
-         * error-page*, taglib*, resource-env-ref*, resource-ref*, security-constraint*, login-config?, security-role*,
+         * <!ELEMENT web-app (icon?, display-name?, description?,
+         * distributable?, context-param*, filter*, filter-mapping*, listener*,
+         * servlet*, servlet-mapping*, session-config?, mime-mapping*,
+         * welcome-file-list?, error-page*, taglib*, resource-env-ref*,
+         * resource-ref*, security-constraint*, login-config?, security-role*,
          * env-entry*, ejb-ref*, ejb-local-ref*)>
          */
         Document dom = getWebXmlAsDocument(webXml);

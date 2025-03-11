@@ -38,9 +38,9 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
- * Creates CSS interfaces for css files.
- * Will use the utility tool provided in gwt sdk which create a corresponding Java interface for accessing
- * the classnames used in the file.
+ * Creates CSS interfaces for css files. Will use the utility tool provided in
+ * gwt sdk which create a corresponding Java interface for accessing the
+ * classnames used in the file.
  *
  * @author Stale Undheim <undheim@corporater.com>
  * @author olamy
@@ -76,7 +76,8 @@ public class CSSMojo extends AbstractGwtShellMojo {
         setup();
 
         // java -cp gwt-dev.jar:gwt-user.jar
-        // com.google.gwt.resources.css.InterfaceGenerator -standalone -typeName some.package.MyCssResource -css
+        // com.google.gwt.resources.css.InterfaceGenerator -standalone -typeName
+        // some.package.MyCssResource -css
         // input.css
         if (cssFiles != null) {
             for (String file : cssFiles) {

@@ -28,15 +28,16 @@ import org.apache.maven.plugins.annotations.Parameter;
  */
 public abstract class AbstractGwtWebMojo extends AbstractGwtShellMojo {
     /**
-     * Source web.xml deployment descriptor that is used for GWT shell and for deployment WAR to "merge" servlet
-     * entries.
+     * Source web.xml deployment descriptor that is used for GWT shell and for
+     * deployment WAR to "merge" servlet entries.
      */
     @Parameter(defaultValue = "${basedir}/src/main/webapp/WEB-INF/web.xml", required = true)
     private File webXml;
 
     /**
-     * Specifies whether or not to add the module name as a prefix to the servlet path when merging web.xml. If you set
-     * this to false the exact path from the GWT module will be used, nothing else will be prepended.
+     * Specifies whether or not to add the module name as a prefix to the
+     * servlet path when merging web.xml. If you set this to false the exact
+     * path from the GWT module will be used, nothing else will be prepended.
      */
     @Parameter(defaultValue = "false")
     private boolean webXmlServletPathAsIs;

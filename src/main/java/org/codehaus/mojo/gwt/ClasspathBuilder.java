@@ -48,16 +48,23 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 public class ClasspathBuilder extends AbstractLogEnabled {
 
     /**
-     * Build classpath list using either gwtHome (if present) or using *project* dependencies. Note that this is ONLY
-     * used for the script/cmd writers (so the scopes are not for the compiler, or war plugins, etc). This is required
-     * so that the script writers can get the dependencies they need regardless of the Maven scopes (still want to use
-     * the Maven scopes for everything else Maven, but for GWT-Maven we need to access deps differently - directly at
-     * times).
+     * Build classpath list using either gwtHome (if present) or using *project*
+     * dependencies. Note that this is ONLY used for the script/cmd writers (so
+     * the scopes are not for the compiler, or war plugins, etc). This is
+     * required so that the script writers can get the dependencies they need
+     * regardless of the Maven scopes (still want to use the Maven scopes for
+     * everything else Maven, but for GWT-Maven we need to access deps
+     * differently - directly at times).
      *
-     * @param project The maven project the Mojo is running for
-     * @param artifacts the project artifacts (all scopes)
-     * @param scope artifact scope to use
-     * @param isGenerator whether to use processed resources and compiled classes (false), or raw resources (true).
+     * @param project
+     *            The maven project the Mojo is running for
+     * @param artifacts
+     *            the project artifacts (all scopes)
+     * @param scope
+     *            artifact scope to use
+     * @param isGenerator
+     *            whether to use processed resources and compiled classes
+     *            (false), or raw resources (true).
      * @return file collection for classpath
      * @throws MojoExecutionException
      */
@@ -68,12 +75,15 @@ public class ClasspathBuilder extends AbstractLogEnabled {
 
         Set<File> items = new LinkedHashSet<File>();
 
-        // Note : Don't call addSourceWithActiveProject as a GWT dependency MUST be a valid GWT library module :
+        // Note : Don't call addSourceWithActiveProject as a GWT dependency MUST
+        // be a valid GWT library module :
         // * include java sources in the JAR as resources
         // * define a gwt.xml module file to declare the required inherits
-        // addSourceWithActiveProject would make some java sources available to GWT compiler that should not be
+        // addSourceWithActiveProject would make some java sources available to
+        // GWT compiler that should not be
         // accessible in
-        // a non-reactor build, making the build less deterministic and encouraging bad design.
+        // a non-reactor build, making the build less deterministic and
+        // encouraging bad design.
 
         if (!isGenerator) {
             items.add(new File(project.getBuild().getOutputDirectory()));
@@ -82,8 +92,10 @@ public class ClasspathBuilder extends AbstractLogEnabled {
         if (isGenerator) {
             addResources(items, project.getResources());
         }
-        // Use our own ClasspathElements fitering, as for RUNTIME we need to include PROVIDED artifacts,
-        // that is not the default Maven policy, as RUNTIME is used here to build the GWTShell execution classpath
+        // Use our own ClasspathElements fitering, as for RUNTIME we need to
+        // include PROVIDED artifacts,
+        // that is not the default Maven policy, as RUNTIME is used here to
+        // build the GWTShell execution classpath
 
         if (scope.equals(SCOPE_TEST)) {
             addSources(items, project.getTestCompileSourceRoots());
@@ -106,7 +118,8 @@ public class ClasspathBuilder extends AbstractLogEnabled {
                 }
             }
         } else if (scope.equals(SCOPE_RUNTIME)) {
-            // Add all dependencies BUT "TEST" as we need PROVIDED ones to setup the execution
+            // Add all dependencies BUT "TEST" as we need PROVIDED ones to setup
+            // the execution
             // GWTShell that is NOT a full JEE server
             for (Artifact artifact : artifacts) {
                 getLogger().debug("candidate artifact : " + artifact);
@@ -122,7 +135,8 @@ public class ClasspathBuilder extends AbstractLogEnabled {
     }
 
     /**
-     * Add all sources and resources also with active (maven reactor active) referenced project sources and resources.
+     * Add all sources and resources also with active (maven reactor active)
+     * referenced project sources and resources.
      *
      * @param project
      * @param items
@@ -145,7 +159,8 @@ public class ClasspathBuilder extends AbstractLogEnabled {
     }
 
     /**
-     * Add all sources and resources also with active (maven reactor active) referenced project sources and resources.
+     * Add all sources and resources also with active (maven reactor active)
+     * referenced project sources and resources.
      *
      * @param project
      * @param items
@@ -229,9 +244,11 @@ public class ClasspathBuilder extends AbstractLogEnabled {
     }
 
     /**
-     * Add source path and resource paths of the project to the list of classpath items.
+     * Add source path and resource paths of the project to the list of
+     * classpath items.
      *
-     * @param items Classpath items.
+     * @param items
+     *            Classpath items.
      * @param sourceRoots
      */
     private void addSources(final Collection<File> items, final Collection<String> sourceRoots) {
@@ -241,9 +258,11 @@ public class ClasspathBuilder extends AbstractLogEnabled {
     }
 
     /**
-     * Add source path and resource paths of the project to the list of classpath items.
+     * Add source path and resource paths of the project to the list of
+     * classpath items.
      *
-     * @param items Classpath items.
+     * @param items
+     *            Classpath items.
      * @param resources
      */
     private void addResources(final Collection<File> items, final Collection<Resource> resources) {

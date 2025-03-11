@@ -62,7 +62,8 @@ public class DefaultGwtModuleReader implements GwtModuleReader {
     }
 
     public List<String> getGwtModules() {
-        // Use a Set to avoid duplicate when user set src/main/java as <resource>
+        // Use a Set to avoid duplicate when user set src/main/java as
+        // <resource>
         Set<String> mods = new HashSet<String>();
 
         Collection<String> sourcePaths = (Collection<String>) mavenProject.getCompileSourceRoots();

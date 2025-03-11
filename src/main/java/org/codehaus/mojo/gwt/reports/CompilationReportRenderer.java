@@ -29,8 +29,8 @@ import org.codehaus.mojo.gwt.GwtModule;
 import org.codehaus.plexus.i18n.I18N;
 
 /**
- * project compilation report renderer to display links to
- * all modules report
+ * project compilation report renderer to display links to all modules report
+ *
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  * @since 2.1.0-1
  */

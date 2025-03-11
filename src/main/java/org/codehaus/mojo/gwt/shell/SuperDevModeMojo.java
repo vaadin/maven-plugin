@@ -55,8 +55,8 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo {
     private Integer codeServerPort;
 
     /**
-     * The root of the directory tree where the code server will write compiler output.
-     * If not supplied, a temporary directory will be used.
+     * The root of the directory tree where the code server will write compiler
+     * output. If not supplied, a temporary directory will be used.
      */
     @Parameter
     private File codeServerWorkDir;
@@ -87,7 +87,8 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo {
     private String sourceLevel;
 
     /**
-     * Stop compiling if a module has a Java file with a compile error, even if unused.
+     * Stop compiling if a module has a Java file with a compile error, even if
+     * unused.
      * <p>
      * Can be set from command line using '-Dgwt.compiler.strict=true'.
      *
@@ -113,7 +114,8 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo {
     private String jsInteropMode;
 
     /**
-     * EXPERIMENTAL: Emit extra information allow chrome dev tools to display Java identifiers in many places instead of JavaScript functions.
+     * EXPERIMENTAL: Emit extra information allow chrome dev tools to display
+     * Java identifiers in many places instead of JavaScript functions.
      * <p>
      * Value can be one of NONE, ONLY_METHOD_NAME, ABBREVIATED or FULL.
      *
@@ -123,7 +125,8 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo {
     private String methodNameDisplayMode;
 
     /**
-     * An output directory where files for launching Super Dev Mode will be written. (Optional.)
+     * An output directory where files for launching Super Dev Mode will be
+     * written. (Optional.)
      *
      * @since 2.7.0
      */

@@ -96,13 +96,15 @@ public abstract class AbstractGwtMojo extends AbstractMojo {
     // --- Plugin parameters ---------------------------------------------------
 
     /**
-     * Folder where generated-source will be created (automatically added to compile classpath).
+     * Folder where generated-source will be created (automatically added to
+     * compile classpath).
      */
     @Parameter(defaultValue = "${project.build.directory}/generated-sources/gwt", required = true)
     private File generateDirectory;
 
     /**
-     * Location on filesystem where GWT will write output files (-out option to GWTCompiler).
+     * Location on filesystem where GWT will write output files (-out option to
+     * GWTCompiler).
      */
     @Parameter(
             property = "gwt.war",
@@ -111,7 +113,8 @@ public abstract class AbstractGwtMojo extends AbstractMojo {
     private File webappDirectory;
 
     /**
-     * Prefix to prepend to module names inside {@code webappDirectory} or in URLs in DevMode.
+     * Prefix to prepend to module names inside {@code webappDirectory} or in
+     * URLs in DevMode.
      * <p>
      * Could also be seen as a suffix to {@code webappDirectory}.
      */
@@ -119,25 +122,29 @@ public abstract class AbstractGwtMojo extends AbstractMojo {
     protected String modulePathPrefix;
 
     /**
-     * Location of the web application static resources (same as maven-war-plugin parameter)
+     * Location of the web application static resources (same as
+     * maven-war-plugin parameter)
      */
     @Parameter(defaultValue = "${basedir}/src/main/webapp")
     protected File warSourceDirectory;
 
     /**
-     * Select the place where GWT application is built. In <code>inplace</code> mode, the warSourceDirectory is used to
-     * match the same use case of the {@link war:inplace
-     * https://maven.apache.org/plugins/maven-war-plugin/inplace-mojo.html} goal.
+     * Select the place where GWT application is built. In <code>inplace</code>
+     * mode, the warSourceDirectory is used to match the same use case of the
+     * {@link war:inplace
+     * https://maven.apache.org/plugins/maven-war-plugin/inplace-mojo.html}
+     * goal.
      */
     @Parameter(defaultValue = "false", property = "gwt.inplace")
     private boolean inplace;
 
     /**
-     * The forked command line will use gwt sdk jars first in classpath.
-     * see issue https://code.google.com/p/google-web-toolkit/issues/detail?id=5290
+     * The forked command line will use gwt sdk jars first in classpath. see
+     * issue https://code.google.com/p/google-web-toolkit/issues/detail?id=5290
      *
      * @since 2.1.0-1
-     * @deprecated tweak your dependencies and/or split your project with a client-only module
+     * @deprecated tweak your dependencies and/or split your project with a
+     *             client-only module
      */
     @Deprecated
     @Parameter(defaultValue = "false", property = "gwt.gwtSdkFirstInClasspath")
@@ -161,11 +168,15 @@ public abstract class AbstractGwtMojo extends AbstractMojo {
     /**
      * Add classpath elements to a classpath URL set
      *
-     * @param elements the initial URL set
-     * @param urls the urls to add
-     * @param startPosition the position to insert URLS
+     * @param elements
+     *            the initial URL set
+     * @param urls
+     *            the urls to add
+     * @param startPosition
+     *            the position to insert URLS
      * @return full classpath URL set
-     * @throws MojoExecutionException some error occured
+     * @throws MojoExecutionException
+     *             some error occured
      */
     protected int addClasspathElements(Collection<?> elements, URL[] urls, int startPosition)
             throws MojoExecutionException {
@@ -191,9 +202,11 @@ public abstract class AbstractGwtMojo extends AbstractMojo {
     /**
      * Build the GWT classpath for the specified scope
      *
-     * @param scope Artifact.SCOPE_COMPILE or Artifact.SCOPE_TEST
+     * @param scope
+     *            Artifact.SCOPE_COMPILE or Artifact.SCOPE_TEST
      * @return a collection of dependencies as Files for the specified scope.
-     * @throws MojoExecutionException if classPath building failed
+     * @throws MojoExecutionException
+     *             if classPath building failed
      */
     public Collection<File> getClasspath(String scope) throws MojoExecutionException {
         try {
@@ -213,7 +226,8 @@ public abstract class AbstractGwtMojo extends AbstractMojo {
     }
 
     /**
-     * Whether to use processed resources and compiled classes ({@code false}), or raw resources ({@code true }).
+     * Whether to use processed resources and compiled classes ({@code false}),
+     * or raw resources ({@code true }).
      */
     protected boolean isGenerator() {
         return false;
@@ -290,9 +304,7 @@ public abstract class AbstractGwtMojo extends AbstractMojo {
 
                 if (logVersion) {
                     getLog().debug("Trying to resolve the version of "
-                            + VAADIN_GROUP_ID
-                            + ":"
-                            + artifactId
+                            + VAADIN_GROUP_ID + ":" + artifactId
                             + " based on the version of vaadin-shared in the project POM");
                 }
 
@@ -300,7 +312,8 @@ public abstract class AbstractGwtMojo extends AbstractMojo {
                 // version number from vaadin-shared
                 Artifact vaadinSharedArtifact = getArtifact(VAADIN_GROUP_ID, "vaadin-shared", null);
                 if (vaadinSharedArtifact == null) {
-                    // No vaadin-shared found, this is possibly when running clean and artifacts have not been resolved
+                    // No vaadin-shared found, this is possibly when running
+                    // clean and artifacts have not been resolved
                     // https://maven.apache.org/ref/3.2.3/apidocs/org/apache/maven/project/MavenProject.html#getArtifacts()
                     return Collections.emptyList();
                 }
@@ -311,11 +324,12 @@ public abstract class AbstractGwtMojo extends AbstractMojo {
 
                 if (logVersion) {
                     getLog().info("Using " + rootArtifact.getGroupId() + ":"
-                            + rootArtifact.getArtifactId()
-                            + " version " + rootArtifact.getVersion());
+                            + rootArtifact.getArtifactId() + " version "
+                            + rootArtifact.getVersion());
                 }
 
-                // metadata (POM) for rootArtifact not in memory in this case => need this to resolve transitive
+                // metadata (POM) for rootArtifact not in memory in this case =>
+                // need this to resolve transitive
                 // dependencies!
                 ResolutionGroup resolutionGroup =
                         artifactMetadataSource.retrieve(rootArtifact, localRepository, remoteRepositories);
@@ -405,8 +419,10 @@ public abstract class AbstractGwtMojo extends AbstractMojo {
             ArtifactVersion mojoGwtArtifactVersion = new DefaultArtifactVersion(mojoGwtVersion);
             ArtifactVersion userGwtArtifactVersion = new DefaultArtifactVersion(gwtUser.getVersion());
             if (userGwtArtifactVersion.compareTo(mojoGwtArtifactVersion) < 0) {
-                getLog().warn("Your project declares dependency on gwt-user " + gwtUser.getVersion()
-                        + ". This plugin is designed for at least gwt version " + mojoGwtVersion);
+                getLog().warn("Your project declares dependency on gwt-user "
+                        + gwtUser.getVersion()
+                        + ". This plugin is designed for at least gwt version "
+                        + mojoGwtVersion);
             }
         }
     }
@@ -428,7 +444,8 @@ public abstract class AbstractGwtMojo extends AbstractMojo {
     }
 
     /**
-     * @param path file to add to the project compile directories
+     * @param path
+     *            file to add to the project compile directories
      */
     protected void addCompileSourceRoot(File path) {
         getProject().addCompileSourceRoot(path.getAbsolutePath());

@@ -37,8 +37,8 @@ import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
 import org.springframework.util.ClassUtils;
 
 /**
- * The goal is to find classed annotated with RemoteServiceRelativePath
- * to generated {@link ServletDescriptor}
+ * The goal is to find classed annotated with RemoteServiceRelativePath to
+ * generated {@link ServletDescriptor}
  *
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  * @since 2.1.0-1
@@ -113,7 +113,8 @@ public class ServletAnnotationFinder extends AbstractLogEnabled {
         PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver =
                 new PathMatchingResourcePatternResolver(classLoader);
         String patternFinder = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
-                + ClassUtils.convertClassNameToResourcePath(packageName) + "/**/*.class";
+                + ClassUtils.convertClassNameToResourcePath(packageName)
+                + "/**/*.class";
 
         Resource[] resources = pathMatchingResourcePatternResolver.getResources(patternFinder);
         SimpleMetadataReaderFactory simpleMetadataReaderFactory = new SimpleMetadataReaderFactory();

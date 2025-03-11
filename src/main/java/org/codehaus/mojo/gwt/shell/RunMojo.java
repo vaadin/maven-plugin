@@ -69,21 +69,26 @@ public class RunMojo extends AbstractGwtWebMojo {
     private MavenProject executedProject;
 
     /**
-     * URL that should be automatically opened in the GWT shell. For example com.myapp.gwt.Module/Module.html.
+     * URL that should be automatically opened in the GWT shell. For example
+     * com.myapp.gwt.Module/Module.html.
      * <p>
-     * When the host page is outside the module "public" folder (for example, at webapp root), the module MUST be
-     * specified (using a single &lt;module&gt; in configuration or by setting <code>-Dgwt.module=..</code>) and the
+     * When the host page is outside the module "public" folder (for example, at
+     * webapp root), the module MUST be specified (using a single &lt;module&gt;
+     * in configuration or by setting <code>-Dgwt.module=..</code>) and the
      * runTarget parameter can only contain the host page URI.
      * <p>
-     * When the GWT module host page is part of the module "public" folder, the runTarget MAY define the full GWT module
-     * path (<code>com.myapp.gwt.Module/Module.html</code>) that will be automatically converted according to the
-     * <code>rename-to</code> directive into <code>renamed/Module.html</code>.
+     * When the GWT module host page is part of the module "public" folder, the
+     * runTarget MAY define the full GWT module path
+     * (<code>com.myapp.gwt.Module/Module.html</code>) that will be
+     * automatically converted according to the <code>rename-to</code> directive
+     * into <code>renamed/Module.html</code>.
      */
     @Parameter(property = "runTarget", required = true)
     private String runTarget;
 
     /**
-     * Forked process execution timeOut (in seconds). Primary used for integration-testing.
+     * Forked process execution timeOut (in seconds). Primary used for
+     * integration-testing.
      */
     @Parameter
     @SuppressWarnings("unused")
@@ -108,7 +113,8 @@ public class RunMojo extends AbstractGwtWebMojo {
     private File buildOutputDirectory;
 
     /**
-     * Prevents the embedded GWT Tomcat server from running (even if a port is specified).
+     * Prevents the embedded GWT Tomcat server from running (even if a port is
+     * specified).
      * <p>
      * Can be set from command line using '-Dgwt.noserver=...'
      */
@@ -116,7 +122,8 @@ public class RunMojo extends AbstractGwtWebMojo {
     private boolean noServer;
 
     /**
-     * Specifies a different embedded web server to run (must implement ServletContainerLauncher)
+     * Specifies a different embedded web server to run (must implement
+     * ServletContainerLauncher)
      */
     @Parameter(property = "gwt.server")
     private String server;
@@ -143,8 +150,8 @@ public class RunMojo extends AbstractGwtWebMojo {
     /**
      * set the appengine sdk to use
      * <p>
-     * Artifact will be downloaded with groupId : {@link #appEngineGroupId}
-     * and artifactId {@link #appEngineArtifactId}
+     * Artifact will be downloaded with groupId : {@link #appEngineGroupId} and
+     * artifactId {@link #appEngineArtifactId}
      * <p>
      *
      * @since 2.1.0-1
@@ -165,7 +172,8 @@ public class RunMojo extends AbstractGwtWebMojo {
 
     /**
      * <p>
-     * Location to find appengine sdk or to unzip downloaded one see {@link #appEngineVersion}
+     * Location to find appengine sdk or to unzip downloaded one see
+     * {@link #appEngineVersion}
      * </p>
      *
      * @since 2.1.0-1
@@ -191,6 +199,7 @@ public class RunMojo extends AbstractGwtWebMojo {
 
     /**
      * To look up Archiver/UnArchiver implementations
+     *
      * @since 2.1.0-1
      */
     @Component
@@ -200,6 +209,7 @@ public class RunMojo extends AbstractGwtWebMojo {
      * Set GWT shell bindAddress.
      * <p>
      * Can be set from command line using '-Dgwt.bindAddress=...'
+     *
      * @since 2.1.0-1
      */
     @Parameter(property = "gwt.bindAddress")
@@ -214,7 +224,8 @@ public class RunMojo extends AbstractGwtWebMojo {
     private boolean cacheGeneratorResults;
 
     /**
-     * The compiler's working directory for internal use (must be writeable; defaults to a system temp dir)
+     * The compiler's working directory for internal use (must be writeable;
+     * defaults to a system temp dir)
      *
      * @since 2.6.0-rc1
      */
@@ -264,7 +275,8 @@ public class RunMojo extends AbstractGwtWebMojo {
     private String jsInteropMode;
 
     /**
-     * EXPERIMENTAL: Emit extra information allow chrome dev tools to display Java identifiers in many places instead of JavaScript functions.
+     * EXPERIMENTAL: Emit extra information allow chrome dev tools to display
+     * Java identifiers in many places instead of JavaScript functions.
      * <p>
      * Value can be one of NONE, ONLY_METHOD_NAME, ABBREVIATED or FULL.
      *
@@ -423,7 +435,8 @@ public class RunMojo extends AbstractGwtWebMojo {
                 try {
                     if (!appEngineHome.exists()) {
                         appEngineHome.mkdirs();
-                        // force addition of appengine SDK in a exploded SDK repository location
+                        // force addition of appengine SDK in a exploded SDK
+                        // repository location
                         Artifact appEngineSdk =
                                 resolve(appEngineGroupId, appEngineArtifactId, appEngineVersion, "zip", "");
                         // sdk extraction
@@ -457,13 +470,16 @@ public class RunMojo extends AbstractGwtWebMojo {
                     classPath.add(appEngineAgent);
                     getLog().debug("add " + appEngineAgent.getPath() + " to the classpath");
                 } catch (MojoExecutionException e) {
-                    // FIXME add throws MojoExecutionException in postProcessClassPath
+                    // FIXME add throws MojoExecutionException in
+                    // postProcessClassPath
                     throw new RuntimeException(e.getMessage(), e);
                 } catch (ArchiverException e) {
-                    // FIXME add throws MojoExecutionException in postProcessClassPath
+                    // FIXME add throws MojoExecutionException in
+                    // postProcessClassPath
                     throw new RuntimeException(e.getMessage(), e);
                 } catch (NoSuchArchiverException e) {
-                    // FIXME add throws MojoExecutionException in postProcessClassPath
+                    // FIXME add throws MojoExecutionException in
+                    // postProcessClassPath
                     throw new RuntimeException(e.getMessage(), e);
                 }
             }
@@ -473,9 +489,13 @@ public class RunMojo extends AbstractGwtWebMojo {
     /**
      * Copied a directory structure with deafault exclusions (.svn, CVS, etc)
      *
-     * @param sourceDir The source directory to copy, must not be <code>null</code>.
-     * @param destDir The target directory to copy to, must not be <code>null</code>.
-     * @throws java.io.IOException If the directory structure could not be copied.
+     * @param sourceDir
+     *            The source directory to copy, must not be <code>null</code>.
+     * @param destDir
+     *            The target directory to copy to, must not be
+     *            <code>null</code>.
+     * @throws java.io.IOException
+     *             If the directory structure could not be copied.
      */
     private void copyDirectoryStructureIfModified(File sourceDir, File destDir) throws IOException {
 
@@ -485,7 +505,8 @@ public class RunMojo extends AbstractGwtWebMojo {
         scanner.scan();
 
         /*
-         * NOTE: Make sure the destination directory is always there (even if empty) to support POM-less ITs.
+         * NOTE: Make sure the destination directory is always there (even if
+         * empty) to support POM-less ITs.
          */
         destDir.mkdirs();
         String[] includedDirs = scanner.getIncludedDirectories();
@@ -507,7 +528,8 @@ public class RunMojo extends AbstractGwtWebMojo {
 
         if (copyWebapp && !warSourceDirectory.getAbsolutePath().equals(hostedWebapp.getAbsolutePath())) {
             try {
-                // can't use FileUtils.copyDirectoryStructureIfModified because it does not
+                // can't use FileUtils.copyDirectoryStructureIfModified because
+                // it does not
                 // excludes the DEFAULTEXCLUDES
                 copyDirectoryStructureIfModified(warSourceDirectory, hostedWebapp);
             } catch (IOException e) {
@@ -534,7 +556,8 @@ public class RunMojo extends AbstractGwtWebMojo {
         Collection<Artifact> artifacts = getProjectRuntimeArtifacts();
         for (Artifact artifact : artifacts) {
             try {
-                // Using m2eclipse with "resolve workspace dependencies" the artifact is the buildOutputDirectory
+                // Using m2eclipse with "resolve workspace dependencies" the
+                // artifact is the buildOutputDirectory
                 if (!artifact.getFile().isDirectory()) {
                     FileUtils.copyFileToDirectory(artifact.getFile(), lib);
                 }
@@ -549,7 +572,8 @@ public class RunMojo extends AbstractGwtWebMojo {
     }
 
     /**
-     * @param runTimeOut the runTimeOut to set
+     * @param runTimeOut
+     *            the runTimeOut to set
      */
     public void setRunTimeOut(int runTimeOut) {
         setTimeOut(runTimeOut);

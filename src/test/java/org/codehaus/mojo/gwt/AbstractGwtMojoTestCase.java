@@ -35,7 +35,9 @@ public abstract class AbstractGwtMojoTestCase extends AbstractMojoTestCase {
 
     /**
      *
-     * @param pDir path to the pomDirectory, relative to the baseDir of this project
+     * @param pDir
+     *            path to the pomDirectory, relative to the baseDir of this
+     *            project
      * @return the GwtMojo corresponding with the goal
      * @throws Exception
      */
@@ -44,7 +46,8 @@ public abstract class AbstractGwtMojoTestCase extends AbstractMojoTestCase {
         ArtifactResolver vm = (ArtifactResolver) lookupMojo(getGoal(), new File(testRoot, "pom.xml"));
 
         MavenProject project = new MavenProjectStub();
-        // addCompileSourceRoot will generate singletonList if null, which doesn't support a second add.
+        // addCompileSourceRoot will generate singletonList if null, which
+        // doesn't support a second add.
         setVariableValueToObject(project, "compileSourceRoots", new ArrayList<String>());
         project.addCompileSourceRoot(new File(testRoot, "src/main/java").getAbsolutePath());
 

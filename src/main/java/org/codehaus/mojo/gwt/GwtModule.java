@@ -113,8 +113,9 @@ public class GwtModule {
     }
 
     /**
-     * Build the set of inhertied modules. Due to xml inheritence mecanism, there may be cicles in the inheritence
-     * graph, so we build a set of inherited modules
+     * Build the set of inhertied modules. Due to xml inheritence mecanism,
+     * there may be cicles in the inheritence graph, so we build a set of
+     * inherited modules
      */
     public Set<GwtModule> getInherits() throws GwtModuleReaderException {
         if (inherits != null) {
@@ -136,7 +137,8 @@ public class GwtModule {
     private void addInheritedModules(Set<GwtModule> set, Set<GwtModule> modules) throws GwtModuleReaderException {
         for (GwtModule module : modules) {
             if (set.add(module)) {
-                // if module is allready in the set, don't re-parse it's inherits
+                // if module is allready in the set, don't re-parse it's
+                // inherits
                 addInheritedModules(set, module.getLocalInherits());
             }
         }

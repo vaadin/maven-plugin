@@ -44,7 +44,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
         threadSafe = true)
 public class I18NMojo extends AbstractGwtShellMojo {
     /**
-     * List of resourceBundles that should be used to generate i18n Messages interfaces.
+     * List of resourceBundles that should be used to generate i18n Messages
+     * interfaces.
      */
     @Parameter(alias = "i18nMessagesNames")
     private String[] i18nMessagesBundles;
@@ -56,7 +57,8 @@ public class I18NMojo extends AbstractGwtShellMojo {
     private String i18nMessagesBundle;
 
     /**
-     * List of resourceBundles that should be used to generate i18n Constants interfaces.
+     * List of resourceBundles that should be used to generate i18n Constants
+     * interfaces.
      */
     @Parameter(alias = "i18nConstantsNames")
     private String[] i18nConstantsBundles;
@@ -68,7 +70,8 @@ public class I18NMojo extends AbstractGwtShellMojo {
     private String i18nConstantsBundle;
 
     /**
-     * List of resourceBundles that should be used to generate i18n ConstantsWithLookup interfaces.
+     * List of resourceBundles that should be used to generate i18n
+     * ConstantsWithLookup interfaces.
      */
     @Parameter
     private String[] i18nConstantsWithLookupBundles;

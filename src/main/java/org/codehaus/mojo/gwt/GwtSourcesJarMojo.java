@@ -35,8 +35,8 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 
 /**
- * Add GWT java source code and module descriptor as resources to project jar. Alternative
- * to gwt:resources for better Eclipse projects synchronization.
+ * Add GWT java source code and module descriptor as resources to project jar.
+ * Alternative to gwt:resources for better Eclipse projects synchronization.
  *
  * @author <a href="mailto:vlads@pyx4j.com">Vlad Skarzhevskyy</a>
  */
@@ -59,8 +59,9 @@ public class GwtSourcesJarMojo extends GwtResourcesBaseMojo {
     private JarArchiver jarArchiver;
 
     /**
-     * The archive configuration to use. See <a
-     * href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
+     * The archive configuration to use. See
+     * <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
+     * Archiver Reference</a>.
      */
     @Parameter
     private final MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
@@ -93,16 +94,19 @@ public class GwtSourcesJarMojo extends GwtResourcesBaseMojo {
         Collection<ResourceFile> files = getAllResourceFiles();
         try {
 
-            // Avoid annoying messages in log "com/package/Ccc.java already added, skipping"
+            // Avoid annoying messages in log "com/package/Ccc.java already
+            // added, skipping"
             List<String> jarExcludes = new Vector<String>();
 
-            // Add Sources first since they may already be present in jar from previous run and changed.
+            // Add Sources first since they may already be present in jar from
+            // previous run and changed.
             for (ResourceFile file : files) {
                 jarArchiver.addFile(new File(file.basedir, file.fileRelativeName), file.fileRelativeName);
                 jarExcludes.add(file.fileRelativeName);
             }
 
-            // Add the context of original jar excluding resources that we just added base on GWT descriptors
+            // Add the context of original jar excluding resources that we just
+            // added base on GWT descriptors
             jarArchiver.addArchivedFileSet(origJarFile, null, jarExcludes.toArray(new String[jarExcludes.size()]));
 
             archiver.createArchive(getProject(), archive);

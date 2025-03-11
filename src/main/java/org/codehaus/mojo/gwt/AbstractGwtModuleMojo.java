@@ -54,13 +54,15 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
  */
 public abstract class AbstractGwtModuleMojo extends AbstractGwtMojo implements GwtModuleReader {
     /**
-     * The project GWT modules. If not set, the plugin will scan the project for <code>.gwt.xml</code> files.
+     * The project GWT modules. If not set, the plugin will scan the project for
+     * <code>.gwt.xml</code> files.
      */
     @Parameter(alias = "compileTargets")
     private String[] modules;
 
     /**
-     * A single GWT module. Shortcut for &lt;modules&gt; or option to specify a single module from command line
+     * A single GWT module. Shortcut for &lt;modules&gt; or option to specify a
+     * single module from command line
      */
     @Parameter(property = "gwt.module")
     private String module;
@@ -72,7 +74,8 @@ public abstract class AbstractGwtModuleMojo extends AbstractGwtMojo implements G
     }
 
     /**
-     * Return the configured modules or scan the project source/resources folder to find them
+     * Return the configured modules or scan the project source/resources folder
+     * to find them
      *
      * @return the modules
      */
@@ -83,7 +86,8 @@ public abstract class AbstractGwtModuleMojo extends AbstractGwtMojo implements G
             return new String[] {module};
         }
         if (modules == null) {
-            // Use a Set to avoid duplicate when user set src/main/java as <resource>
+            // Use a Set to avoid duplicate when user set src/main/java as
+            // <resource>
             Set<String> mods = new HashSet<String>();
 
             Collection<String> sourcePaths = getProject().getCompileSourceRoots();
