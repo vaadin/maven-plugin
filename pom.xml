@@ -4,7 +4,7 @@
     ~ use this file except in compliance with the License. You may obtain a copy of
     ~ the License at
     ~
-    ~ http://www.apache.org/licenses/LICENSE-2.0
+    ~ https://www.apache.org/licenses/LICENSE-2.0
     ~
     ~ Unless required by applicable law or agreed to in writing, software
     ~ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -13,13 +13,13 @@
     ~ the License.
 
     ~ NOTE: For help with the syntax of this file, see:
-    ~ http://maven.apache.org/doxia/references/apt-format.html
+    ~ https://maven.apache.org/doxia/references/apt-format.html
     ~
     ~
     ~ Based on the gwt-maven-plugin. 
     ~ See mojo.codehaus.org/gwt-maven-plugin/
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.codehaus.mojo</groupId>
@@ -45,7 +45,7 @@
   </prerequisites>
   <licenses>
     <license>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <name>Apache 2.0</name>
       <distribution>repo</distribution>
     </license>
@@ -90,7 +90,7 @@
     </contributor>
   </contributors>
   <scm>
-    <connection>scm:git:git://github.com/vaadin/maven-plugin.git</connection>
+    <connection>scm:git:https://github.com/vaadin/maven-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:vaadin/maven-plugin.git</developerConnection>
     <url>https://github.com/vaadin/maven-plugin</url>
   </scm>
@@ -98,16 +98,15 @@
     <system>GitHub Issues</system>
     <url>https://github.com/vaadin/maven-plugin/issues</url>
   </issueManagement>
-<!--  <ciManagement>
-    <system>buildhive</system>
-    <url>https://buildhive.cloudbees.com/job/gwt-maven-plugin/job/gwt-maven-plugin/</url>
-  </ciManagement>
--->
   <properties>
+    <!-- Set this to 'false' to have Spotless complain about formatting -->
     <spotless.check.skip>true</spotless.check.skip>
+
+    <!-- Set compiler options -->
     <maven.compiler.release>8</maven.compiler.release>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+
     <!-- TODO this would also be used in an archetype, currently broken -->
     <!-- This property is used in a filtered resources to check the version compatibility -->
     <vaadin.version>${project.version}</vaadin.version>
@@ -296,13 +295,7 @@
       <version>LATEST</version>
       <scope>test</scope>
     </dependency>
-<!--
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-client-compiler</artifactId>
-      <version>${vaadin.version}</version>
-    </dependency>
--->
+
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>license-checker</artifactId>
@@ -680,6 +673,34 @@
         <filtering>true</filtering>
       </resource>
     </resources>
+    <pluginManagement>
+      <plugins>
+          <plugin>
+              <groupId>com.diffplug.spotless</groupId>
+              <artifactId>spotless-maven-plugin</artifactId>
+              <configuration>
+                  <java>
+                      <endWithNewline />
+                      <removeUnusedImports />
+                      <importOrder>
+                          <wildcardsLast>true</wildcardsLast>
+                          <order>java|javax,org,com</order>
+                      </importOrder>
+                      <eclipse>
+                          <file>eclipse/VaadinJavaConventions.xml</file>
+                      </eclipse>
+                  </java>
+                  <pom>
+                      <sortPom>
+                          <expandEmptyElements>false</expandEmptyElements>
+                          <nrOfIndentSpace>4</nrOfIndentSpace>
+                          <sortDependencies>groupId,artifactId</sortDependencies>
+                      </sortPom>
+                  </pom>
+              </configuration>
+          </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -705,7 +726,7 @@
         <artifactId>maven-plugin-plugin</artifactId>
         <version>${mavenPluginPluginVersion}</version>
         <configuration>
-          <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
+          <!-- see https://jira.codehaus.org/browse/MNG-5346 -->
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           <requirements>
             <jdk>${maven.compiler.target}</jdk>
@@ -753,7 +774,7 @@
             <phase>process-classes</phase>
             <goals>
                 <!-- Disabled as WSCDN depends on some Java 8 classes -->
-<!--               <goal>check</goal> -->
+                <!-- <goal>check</goal> -->
             </goals>
           </execution>
         </executions>
