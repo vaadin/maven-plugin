@@ -112,12 +112,11 @@
             <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-    <!--  <ciManagement>
-    <system>buildhive</system>
-    <url>https://buildhive.cloudbees.com/job/gwt-maven-plugin/job/gwt-maven-plugin/</url>
-  </ciManagement>
--->
+
     <properties>
+        <!-- Set this to 'false' to have Spotless complain about formatting -->
+        <spotless.check.skip>true</spotless.check.skip>
+
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <!-- TODO this would also be used in an archetype, currently broken -->
@@ -133,9 +132,6 @@
         <doxia-sitetoolsVersion>1.6</doxia-sitetoolsVersion>
         <!--  to be able on powerfull ci machine to change it tru the cli :-) -->
         <it.localWorkers>-1</it.localWorkers>
-        <!--    <stagingSiteRepositoryId>codehaus</stagingSiteRepositoryId>
-    <stagingSiteURL>dav:https://dav.codehaus.org/mojo/${project.artifactId}-${project.version}</stagingSiteURL>
--->
         <invokerPluginVersion>1.5</invokerPluginVersion>
 
         <wscdn.version>0.9.2</wscdn.version>
@@ -153,13 +149,7 @@
             <artifactId>qdox</artifactId>
             <version>1.12.1</version>
         </dependency>
-        <!--
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-client-compiler</artifactId>
-      <version>${vaadin.version}</version>
-    </dependency>
--->
+
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>license-checker</artifactId>
@@ -442,7 +432,6 @@
                     <artifactId>spotless-maven-plugin</artifactId>
                     <configuration>
                         <java>
-                            <skip />
                             <endWithNewline />
                             <removeUnusedImports />
                             <importOrder>
@@ -624,7 +613,7 @@
                             <extraArtifacts>
                                 <extraArtifact>com.google.gwt:gwt-servlet:${gwtVersion}:jar</extraArtifact>
                                 <!-- for some reason, com.google.web.bindery:requestfactory isn't installed,
-                     whereas it's needed by com.google.gwt:gwt -->
+                                     whereas it's needed by com.google.gwt:gwt -->
                                 <extraArtifact>com.google.web.bindery:requestfactory:${gwtVersion}:pom</extraArtifact>
                             </extraArtifacts>
                         </configuration>
