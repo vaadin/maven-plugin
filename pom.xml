@@ -125,7 +125,7 @@
         <!--  apt filtering doesn't support dot -->
         <vaadinVersion>${vaadin.version}</vaadinVersion>
         <gwtVersion>${gwt.version}</gwtVersion>
-        <mavenVersion>3.0.5</mavenVersion>
+        <mavenVersion>3.8.1</mavenVersion>
         <mavenPluginPluginVersion>3.5</mavenPluginPluginVersion>
         <mojo.java.target>1.8</mojo.java.target>
         <doxia-sitetoolsVersion>1.6</doxia-sitetoolsVersion>
