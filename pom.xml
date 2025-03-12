@@ -684,7 +684,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <!--<version>1.9</version>_-->
                         <configuration>
                             <debug>true</debug>
                             <projectsDirectory>src/it</projectsDirectory>
@@ -697,7 +696,7 @@
                                 <gwt.compiler.localWorkers>${it.localWorkers}</gwt.compiler.localWorkers>
                             </properties>
                             <goals>
-                                <!--<goal>clean</goal>-->
+                                <goal>clean</goal>
                                 <goal>integration-test</goal>
                             </goals>
                             <settingsFile>src/it/settings.xml</settingsFile>
