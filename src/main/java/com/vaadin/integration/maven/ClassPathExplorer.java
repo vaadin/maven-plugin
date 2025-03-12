@@ -1,12 +1,12 @@
 /*
  * Copyright 2000-2014 Vaadin Ltd.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -72,6 +72,7 @@ public class ClassPathExplorer {
         public Map<String, URL> getAddonStyles() {
             return addonStyles;
         }
+
     }
 
     private static final boolean debug = true;
@@ -79,7 +80,8 @@ public class ClassPathExplorer {
     /**
      * No instantiation from outside, callable methods are static.
      */
-    private ClassPathExplorer() {}
+    private ClassPathExplorer() {
+    }
 
     /**
      * Finds the names and locations of widgetsets available on the class path.
@@ -87,8 +89,10 @@ public class ClassPathExplorer {
      * @param classpathLocations
      * @return map from widgetset classname to widgetset location URL
      */
-    public static Map<String, URL> getAvailableWidgetSets(Map<String, URL> classpathLocations) {
-        return getAvailableWidgetSetsAndStylesheets(classpathLocations).getWidgetsets();
+    public static Map<String, URL> getAvailableWidgetSets(
+            Map<String, URL> classpathLocations) {
+        return getAvailableWidgetSetsAndStylesheets(classpathLocations).
+                getWidgetsets();
     }
 
     /**
@@ -98,13 +102,15 @@ public class ClassPathExplorer {
      * @param classpathLocations
      * @return
      */
-    public static LocationInfo getAvailableWidgetSetsAndStylesheets(Map<String, URL> classpathLocations) {
+    public static LocationInfo getAvailableWidgetSetsAndStylesheets(
+            Map<String, URL> classpathLocations) {
         long start = System.currentTimeMillis();
         Map<String, URL> widgetsets = new HashMap<String, URL>();
         Map<String, URL> themes = new HashMap<String, URL>();
         Set<String> keySet = classpathLocations.keySet();
         for (String location : keySet) {
-            searchForWidgetSetsAndAddonStyles(location, classpathLocations, widgetsets, themes);
+            searchForWidgetSetsAndAddonStyles(location, classpathLocations,
+                    widgetsets, themes);
         }
         long end = System.currentTimeMillis();
 
@@ -133,23 +139,21 @@ public class ClassPathExplorer {
      * If the location is a JAR file, the comma-separated values of the
      * "Vaadin-Widgetsets" attribute in its manifest are added to widgetsets.
      *
-     * @param locationString
-     *            an entry in {@link #classpathLocations}
-     * @param widgetsets
-     *            a map from widgetset name (including package, with dots as
-     *            separators) to a URL (see {@link #classpathLocations}) - new
-     *            entries are added to this map
+     * @param locationString an entry in {@link #classpathLocations}
+     * @param widgetsets a map from widgetset name (including package, with dots
+     * as separators) to a URL (see {@link #classpathLocations}) - new entries
+     * are added to this map
      */
     private static void searchForWidgetSetsAndAddonStyles(
-            String locationString,
-            Map<String, URL> inClasspathLocations,
+            String locationString, Map<String, URL> inClasspathLocations,
             Map<String, URL> widgetsets,
             Map<String, URL> addonStyles) {
 
         URL location = inClasspathLocations.get(locationString);
         File directory = new File(location.getFile());
 
-        if (directory.exists() && directory.isDirectory() && !directory.isHidden()) {
+        if (directory.exists() && directory.isDirectory() && !directory.
+                isHidden()) {
             // Get the list of the files contained in the directory
             String[] files = directory.list();
             if (files != null) {
@@ -160,7 +164,8 @@ public class ClassPathExplorer {
                     }
                     // remove the .gwt.xml extension
                     String classname = file.substring(0, file.length() - 8);
-                    String packageName = locationString.substring(locationString.lastIndexOf("/") + 1);
+                    String packageName = locationString.substring(locationString
+                            .lastIndexOf("/") + 1);
                     classname = packageName + "." + classname;
                     if (!isWidgetset(classname)) {
                         // Only return widgetsets and not GWT modules to avoid
@@ -169,9 +174,12 @@ public class ClassPathExplorer {
                     }
                     if (!widgetsets.containsKey(classname)) {
                         String packagePath = packageName.replaceAll("\\.", "/");
-                        String basePath = location.getFile().replaceAll("/" + packagePath + "$", "");
+                        String basePath = location.getFile().replaceAll(
+                                "/" + packagePath + "$", "");
                         try {
-                            URL url = new URL(location.getProtocol(), location.getHost(), location.getPort(), basePath);
+                            URL url = new URL(location.getProtocol(),
+                                    location.getHost(), location.getPort(),
+                                    basePath);
                             widgetsets.put(classname, url);
                         } catch (MalformedURLException e) {
                             // should never happen as based on an existing URL,
@@ -204,7 +212,8 @@ public class ClassPathExplorer {
                 }
 
                 // Check for widgetset attribute
-                String value = manifest.getMainAttributes().getValue("Vaadin-Widgetsets");
+                String value = manifest.getMainAttributes().getValue(
+                        "Vaadin-Widgetsets");
                 if (value != null) {
                     String[] widgetsetNames = value.split(",");
                     for (int i = 0; i < widgetsetNames.length; i++) {
@@ -216,7 +225,8 @@ public class ClassPathExplorer {
                 }
 
                 // Check for theme attribute
-                value = manifest.getMainAttributes().getValue("Vaadin-Stylesheets");
+                value = manifest.getMainAttributes().getValue(
+                        "Vaadin-Stylesheets");
                 if (value != null) {
                     String[] stylesheets = value.split(",");
                     for (int i = 0; i < stylesheets.length; i++) {
@@ -229,6 +239,7 @@ public class ClassPathExplorer {
             } catch (IOException e) {
                 log("Error parsing jar file: " + location);
             }
+
         }
     }
 
@@ -258,7 +269,8 @@ public class ClassPathExplorer {
             String entry = it.next();
 
             File directory = new File(entry);
-            if (directory.exists() && !directory.isHidden() && directory.isDirectory()) {
+            if (directory.exists() && !directory.isHidden()
+                    && directory.isDirectory()) {
                 try {
                     return new URL("file://" + directory.getCanonicalPath());
                 } catch (MalformedURLException e) {
@@ -295,4 +307,5 @@ public class ClassPathExplorer {
     static boolean isWidgetset(String gwtModuleName) {
         return gwtModuleName.toLowerCase().contains("widgetset");
     }
+
 }

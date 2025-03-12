@@ -23,12 +23,16 @@ package org.codehaus.mojo.gwt;
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  * @since 2.1.0-1
  */
-public class ClasspathBuilderException extends Exception {
-    public ClasspathBuilderException(String message, Throwable t) {
-        super(message, t);
+public class ClasspathBuilderException
+    extends Exception
+{
+    public ClasspathBuilderException( String message, Throwable t )
+    {
+        super( message, t );
     }
 
-    public ClasspathBuilderException(String message) {
-        super(message);
+    public ClasspathBuilderException( String message )
+    {
+        super( message );
     }
 }

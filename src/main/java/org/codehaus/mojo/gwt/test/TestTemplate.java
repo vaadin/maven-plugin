@@ -18,9 +18,10 @@ package org.codehaus.mojo.gwt.test;
  * specific language governing permissions and limitations
  * under the License.
  */
-
+ 
 import java.io.File;
 import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -29,53 +30,54 @@ import org.codehaus.plexus.util.DirectoryScanner;
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  * @version $Id$
  */
-public class TestTemplate {
+public class TestTemplate
+{
     /**
      * Callback to do something with a test
      */
-    public interface CallBack {
+    public interface CallBack
+    {
         /**
-         * @param sourceDir
-         *            where the test was found
-         * @param test
-         *            the test name
-         * @throws MojoExecutionException
-         *             some error occured
+         * @param sourceDir where the test was found
+         * @param test the test name
+         * @throws MojoExecutionException some error occured
          */
-        void doWithTest(File sourceDir, String test) throws MojoExecutionException;
+        void doWithTest( File sourceDir, String test )
+            throws MojoExecutionException;
     }
 
     /**
-     * @param project
-     *            the maven project
-     * @param includes
-     *            inclusion patterns
-     * @param excludes
-     *            exclusion patterns
-     * @param callBack
-     *            what to do with thoses tests
-     * @throws MojoExecutionException
-     *             some error occured
+     * @param project the maven project
+     * @param includes inclusion patterns
+     * @param excludes exclusion patterns
+     * @param callBack what to do with thoses tests
+     * @throws MojoExecutionException some error occured
      */
-    public TestTemplate(MavenProject project, String includes, String excludes, CallBack callBack)
-            throws MojoExecutionException {
-        for (String root : (List<String>) project.getTestCompileSourceRoots()) {
-            File sourceDir = new File(root);
-            if (!sourceDir.exists()) {
+    public TestTemplate( MavenProject project, String includes, String excludes, CallBack callBack )
+        throws MojoExecutionException
+    {
+        for ( String root : ( List < String > ) project.getTestCompileSourceRoots() )
+        {
+            File sourceDir = new File( root );
+            if ( !sourceDir.exists() )
+            {
                 continue;
             }
             DirectoryScanner scanner = new DirectoryScanner();
-            scanner.setBasedir(sourceDir);
-            if (includes != null && !"".equals(includes)) {
-                scanner.setIncludes(includes.split(","));
+            scanner.setBasedir( sourceDir );
+            if ( includes != null && !"".equals( includes ) )
+            {
+                scanner.setIncludes( includes.split( "," ) );
             }
-            if (excludes != null && !"".equals(excludes)) {
-                scanner.setExcludes(excludes.split(","));
+            if ( excludes != null && !"".equals( excludes ) )
+            {
+                scanner.setExcludes( excludes.split( "," ) );
             }
             scanner.scan();
             String[] files = scanner.getIncludedFiles();
-            for (String file : files) {
-                callBack.doWithTest(sourceDir, file);
+            for ( String file : files )
+            {
+                callBack.doWithTest( sourceDir, file );
             }
         }
     }

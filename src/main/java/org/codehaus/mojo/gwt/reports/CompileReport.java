@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -41,22 +42,19 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * see
- * http://code.google.com/webtoolkit/doc/latest/DevGuideCompileReport.html#Usage
- *
+ * see http://code.google.com/webtoolkit/doc/latest/DevGuideCompileReport.html#Usage
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  * @since 2.1.0-1
  */
 @Mojo(name = "compile-report", threadSafe = true)
-public class CompileReport extends AbstractMavenReport {
+public class CompileReport
+    extends AbstractMavenReport
+{
 
     /**
      * The output directory of the gwt compiler reports.
      */
-    @Parameter(
-            defaultValue = "${project.reporting.outputDirectory}/gwtCompileReports",
-            required = true,
-            readonly = true)
+    @Parameter(defaultValue = "${project.reporting.outputDirectory}/gwtCompileReports", required = true, readonly = true)
     protected File reportingOutputDirectory;
 
     /**
@@ -74,10 +72,9 @@ public class CompileReport extends AbstractMavenReport {
     protected Renderer siteRenderer;
 
     /**
-     * The output directory for the report. Note that this parameter is only
-     * evaluated if the goal is run directly from the command line. If the goal
-     * is run indirectly as part of a site generation, the output directory
-     * configured in the Maven Site Plugin is used instead.
+     * The output directory for the report. Note that this parameter is only evaluated if the goal is run directly from
+     * the command line. If the goal is run indirectly as part of a site generation, the output directory configured in
+     * the Maven Site Plugin is used instead.
      *
      * @since 2.1.0-1
      */
@@ -102,8 +99,8 @@ public class CompileReport extends AbstractMavenReport {
      * @since 2.1.0-1
      */
     @Parameter(defaultValue = "false", property = "gwt.compilerReport.skip")
-    private boolean skip;
-
+    private boolean skip;    
+    
     /**
      * Internationalization component.
      *
@@ -117,7 +114,8 @@ public class CompileReport extends AbstractMavenReport {
      *
      * @see org.apache.maven.reporting.MavenReport#canGenerateReport()
      */
-    public boolean canGenerateReport() {
+    public boolean canGenerateReport()
+    {
         // TODO check the compiler has created the raw xml soyc file
         return true;
     }
@@ -127,7 +125,8 @@ public class CompileReport extends AbstractMavenReport {
      *
      * @see org.apache.maven.reporting.MavenReport#getCategoryName()
      */
-    public String getCategoryName() {
+    public String getCategoryName()
+    {
         return CATEGORY_PROJECT_REPORTS;
     }
 
@@ -136,7 +135,8 @@ public class CompileReport extends AbstractMavenReport {
      *
      * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
      */
-    public String getDescription(Locale locale) {
+    public String getDescription( Locale locale )
+    {
         return "GWT Compiler Report";
     }
 
@@ -145,7 +145,8 @@ public class CompileReport extends AbstractMavenReport {
      *
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
-    public String getName(Locale locale) {
+    public String getName( Locale locale )
+    {
         return "GWT Compiler Report";
     }
 
@@ -154,7 +155,8 @@ public class CompileReport extends AbstractMavenReport {
      *
      * @see org.apache.maven.reporting.MavenReport#getOutputName()
      */
-    public String getOutputName() {
+    public String getOutputName()
+    {
         return "gwt-compiler-reports";
     }
 
@@ -163,85 +165,111 @@ public class CompileReport extends AbstractMavenReport {
      *
      * @see org.apache.maven.reporting.MavenReport#isExternalReport()
      */
-    public boolean isExternalReport() {
+    public boolean isExternalReport()
+    {
         return false;
     }
 
     @Override
-    protected Renderer getSiteRenderer() {
+    protected Renderer getSiteRenderer()
+    {
         return siteRenderer;
     }
 
     @Override
-    protected String getOutputDirectory() {
+    protected String getOutputDirectory()
+    {
         return outputDirectory.getAbsolutePath();
     }
 
     @Override
-    protected MavenProject getProject() {
+    protected MavenProject getProject()
+    {
         return project;
-    }
-
+    }    
+   
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
     @Override
-    protected void executeReport(Locale locale) throws MavenReportException {
-
-        if (skip) {
-            getLog().info("Compiler Report is skipped");
+    protected void executeReport( Locale locale )
+        throws MavenReportException
+    {
+        
+        if ( skip )
+        {
+            getLog().info( "Compiler Report is skipped" );
             return;
-        }
-
-        if (!reportingOutputDirectory.exists()) {
+        }        
+        
+        if ( !reportingOutputDirectory.exists() )
+        {
             reportingOutputDirectory.mkdirs();
         }
         boolean compileReports = true;
 
-        // compile-report
+        //compile-report
         DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir(extra);
-        scanner.setIncludes(new String[] {"**/soycReport/compile-report/index.html"});
-
-        if (extra.exists()) {
+        scanner.setBasedir( extra );
+        scanner.setIncludes( new String[] { "**/soycReport/compile-report/index.html" } );
+        
+        if (extra.exists())
+        {
             scanner.scan();
-        } else {
+        } else
+        {
             compileReports = false;
         }
-
-        if (!compileReports || scanner.getIncludedFiles().length == 0) {
-            getLog().warn("No compile reports found, did you compile with compileReport option set ?");
+        
+        if (!compileReports || scanner.getIncludedFiles().length == 0 )
+        {
+            getLog().warn( "No compile reports found, did you compile with compileReport option set ?" );
             compileReports = false;
         }
-
+        
         String[] includeFiles = compileReports ? scanner.getIncludedFiles() : new String[0];
-
-        for (String path : includeFiles) {
-            String module = path.substring(0, path.indexOf(File.separatorChar));
-            File dirTarget = new File(reportingOutputDirectory.getAbsolutePath() + File.separatorChar + module);
-            getLog().debug("file in path " + path + " to target " + dirTarget.getAbsolutePath());
-            try {
-                FileUtils.copyDirectoryStructure(new File(extra, path).getParentFile(), dirTarget);
-            } catch (IOException e) {
-                throw new MavenReportException(e.getMessage(), e);
+        
+        for ( String path : includeFiles )
+        {
+            String module = path.substring( 0, path.indexOf( File.separatorChar ) );
+            File dirTarget = new File( reportingOutputDirectory.getAbsolutePath() + File.separatorChar + module );
+            getLog().debug( "file in path " + path + " to target " + dirTarget.getAbsolutePath());
+            try
+            {
+                FileUtils.copyDirectoryStructure( new File(extra, path).getParentFile(), dirTarget );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( e.getMessage(), e );
             }
         }
+        
+        try
+        {
 
-        try {
-
-            GwtModuleReader gwtModuleReader = new DefaultGwtModuleReader(this.project, getLog(), classpathBuilder);
+            GwtModuleReader gwtModuleReader = new DefaultGwtModuleReader( this.project, getLog(), classpathBuilder );
 
             List<GwtModule> gwtModules = new ArrayList<GwtModule>();
             List<String> moduleNames = gwtModuleReader.getGwtModules();
-            for (String name : moduleNames) {
-                gwtModules.add(gwtModuleReader.readModule(name));
+            for ( String name : moduleNames )
+            {
+                gwtModules.add( gwtModuleReader.readModule( name ) );
             }
             // add link in the page to all module reports
-            CompilationReportRenderer compilationReportRenderer = new CompilationReportRenderer(
-                    getSink(), gwtModules, getLog(), compileReports, "gwtCompileReports", true, i18n, locale);
+            CompilationReportRenderer compilationReportRenderer = new CompilationReportRenderer( getSink(), gwtModules,
+                                                                                                 getLog(),
+                                                                                                 compileReports,
+                                                                                                 "gwtCompileReports",
+                                                                                                 true, i18n, locale );
             compilationReportRenderer.render();
-        } catch (GwtModuleReaderException e) {
-            throw new MavenReportException(e.getMessage(), e);
         }
+        catch ( GwtModuleReaderException e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
+        }
+
     }
+
+
+
 }

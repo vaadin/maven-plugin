@@ -20,6 +20,7 @@ package org.codehaus.mojo.gwt;
  */
 
 import java.util.Set;
+
 import org.codehaus.mojo.gwt.servlets.HelloRemoteServlet;
 import org.codehaus.mojo.gwt.webxml.ServletAnnotationFinder;
 import org.codehaus.mojo.gwt.webxml.ServletDescriptor;
@@ -28,40 +29,53 @@ import org.codehaus.plexus.PlexusTestCase;
 /**
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  */
-public class ServletAnnotationFinderTest extends PlexusTestCase {
-    public void testFindServletEmptyPath() throws Exception {
-        ServletAnnotationFinder servletAnnotationFinder =
-                (ServletAnnotationFinder) lookup(ServletAnnotationFinder.class.getName());
-        Set<ServletDescriptor> servletDescriptors = servletAnnotationFinder.findServlets(
-                "org.codehaus.mojo.gwt", null, Thread.currentThread().getContextClassLoader());
+public class ServletAnnotationFinderTest
+    extends PlexusTestCase
+{
+    public void testFindServletEmptyPath()
+        throws Exception
+    {
+        ServletAnnotationFinder servletAnnotationFinder = (ServletAnnotationFinder) lookup( ServletAnnotationFinder.class
+            .getName() );
+        Set<ServletDescriptor> servletDescriptors = servletAnnotationFinder.findServlets( "org.codehaus.mojo.gwt",
+                                                                                          null, Thread.currentThread()
+                                                                                              .getContextClassLoader() );
 
-        assertEquals(1, servletDescriptors.size());
+        assertEquals( 1, servletDescriptors.size() );
         ServletDescriptor desc = servletDescriptors.iterator().next();
-        assertEquals(HelloRemoteServlet.class.getName(), desc.getClassName());
-        assertEquals("/HelloService", desc.getPath());
+        assertEquals( HelloRemoteServlet.class.getName(), desc.getClassName() );
+        assertEquals( "/HelloService", desc.getPath() );
     }
 
-    public void testFindServletWithPath() throws Exception {
-        ServletAnnotationFinder servletAnnotationFinder =
-                (ServletAnnotationFinder) lookup(ServletAnnotationFinder.class.getName());
-        Set<ServletDescriptor> servletDescriptors = servletAnnotationFinder.findServlets(
-                "org.codehaus.mojo.gwt", "foo", Thread.currentThread().getContextClassLoader());
+    public void testFindServletWithPath()
+        throws Exception
+    {
+        ServletAnnotationFinder servletAnnotationFinder = (ServletAnnotationFinder) lookup( ServletAnnotationFinder.class
+            .getName() );
+        Set<ServletDescriptor> servletDescriptors = servletAnnotationFinder.findServlets( "org.codehaus.mojo.gwt",
+                                                                                          "foo", Thread.currentThread()
+                                                                                              .getContextClassLoader() );
 
-        assertEquals(1, servletDescriptors.size());
+        assertEquals( 1, servletDescriptors.size() );
         ServletDescriptor desc = servletDescriptors.iterator().next();
-        assertEquals(HelloRemoteServlet.class.getName(), desc.getClassName());
-        assertEquals("/foo/HelloService", desc.getPath());
+        assertEquals( HelloRemoteServlet.class.getName(), desc.getClassName() );
+        assertEquals( "/foo/HelloService", desc.getPath() );
     }
 
-    public void testFindServletWithPrependPath() throws Exception {
-        ServletAnnotationFinder servletAnnotationFinder =
-                (ServletAnnotationFinder) lookup(ServletAnnotationFinder.class.getName());
-        Set<ServletDescriptor> servletDescriptors = servletAnnotationFinder.findServlets(
-                "org.codehaus.mojo.gwt", "/foo", Thread.currentThread().getContextClassLoader());
+    public void testFindServletWithPrependPath()
+        throws Exception
+    {
+        ServletAnnotationFinder servletAnnotationFinder = (ServletAnnotationFinder) lookup( ServletAnnotationFinder.class
+            .getName() );
+        Set<ServletDescriptor> servletDescriptors = servletAnnotationFinder.findServlets( "org.codehaus.mojo.gwt",
+                                                                                          "/foo", Thread
+                                                                                              .currentThread()
+                                                                                              .getContextClassLoader() );
 
-        assertEquals(1, servletDescriptors.size());
+        assertEquals( 1, servletDescriptors.size() );
         ServletDescriptor desc = servletDescriptors.iterator().next();
-        assertEquals(HelloRemoteServlet.class.getName(), desc.getClassName());
-        assertEquals("/foo/HelloService", desc.getPath());
-    }
+        assertEquals( HelloRemoteServlet.class.getName(), desc.getClassName() );
+        assertEquals( "/foo/HelloService", desc.getPath() );
+    }  
+
 }

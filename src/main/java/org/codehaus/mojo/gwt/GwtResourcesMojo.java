@@ -22,6 +22,7 @@ package org.codehaus.mojo.gwt;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -31,38 +32,47 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Copy GWT java source code and module descriptor as resources in the build
- * outputDirectory. Alternative to declaring a &lt;resource&gt; in the POM with
- * finer filtering as the module descriptor is read to detect sources to be
- * copied.
- *
+ * outputDirectory. Alternative to declaring a &lt;resource&gt; in the POM with finer
+ * filtering as the module descriptor is read to detect sources to be copied.
+ * 
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  */
 @Mojo(name = "resources", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true)
-public class GwtResourcesMojo extends GwtResourcesBaseMojo {
+public class GwtResourcesMojo
+    extends GwtResourcesBaseMojo
+{
     @Parameter(defaultValue = "${project.build.outputDirectory}", required = true, readonly = true)
     private File outputDirectory;
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see org.apache.maven.plugin.Mojo#execute()
      */
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
         Collection<ResourceFile> files = getAllResourceFiles();
-        for (ResourceFile file : files) {
-            File f = new File(file.basedir, file.fileRelativeName);
-            File target = new File(outputDirectory, file.fileRelativeName);
-            try {
-                getLog().debug("copy " + f + " to outputDirectory");
-                if (!target.getParentFile().exists()) {
-                    if (!target.getParentFile().mkdirs()) {
-                        throw new MojoExecutionException(
-                                "Failed to create destination directory " + target.getParentFile());
+        for ( ResourceFile file : files )
+        {
+            File f = new File( file.basedir, file.fileRelativeName );
+            File target = new File( outputDirectory, file.fileRelativeName );
+            try
+            {
+                getLog().debug( "copy " + f + " to outputDirectory" );
+                if ( !target.getParentFile().exists() )
+                {
+                    if ( !target.getParentFile().mkdirs() )
+                    {
+                        throw new MojoExecutionException( "Failed to create destination directory "
+                            + target.getParentFile() );
                     }
                 }
-                FileUtils.copyFile(f, target);
-            } catch (IOException e) {
-                throw new MojoExecutionException("Failed to copy GWT source " + f, e);
+                FileUtils.copyFile( f, target );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failed to copy GWT source " + f, e );
             }
         }
     }

@@ -19,14 +19,18 @@ package org.codehaus.mojo.gwt;
  * under the License.
  */
 
-import java.util.List;
+ import java.util.List;
+
 import org.codehaus.mojo.gwt.utils.GwtModuleReaderException;
+
 
 /**
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  */
-public interface GwtModuleReader {
-    GwtModule readModule(String name) throws GwtModuleReaderException;
-
+public interface GwtModuleReader
+{
+    GwtModule readModule( String name )
+		throws GwtModuleReaderException;
+    
     List<String> getGwtModules();
 }
