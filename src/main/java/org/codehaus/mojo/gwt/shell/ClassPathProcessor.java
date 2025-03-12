@@ -26,6 +26,7 @@ import java.util.List;
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  * @since 2.1.0-1
  */
-public interface ClassPathProcessor {
+public interface ClassPathProcessor
+{
     void postProcessClassPath(List<File> files);
 }

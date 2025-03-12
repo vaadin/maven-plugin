@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -26,7 +27,8 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
     private String theme;
 
     @Override
-    public final void doExecute() throws MojoExecutionException, MojoFailureException {
+    public final void doExecute()
+            throws MojoExecutionException, MojoFailureException {
         if ("pom".equals(getProject().getPackaging())) {
             getLog().info("Theme processing is skipped");
             return;
@@ -59,7 +61,8 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
     protected boolean isAtLeastVaadinVersion(int major, int minor) {
         // find "vaadin-shared" and check its version
         for (Artifact artifact : getProjectArtifacts()) {
-            if (VAADIN_GROUP_ID.equals(artifact.getGroupId()) && "vaadin-shared".equals(artifact.getArtifactId())) {
+            if (VAADIN_GROUP_ID.equals(artifact.getGroupId())
+                    && "vaadin-shared".equals(artifact.getArtifactId())) {
                 // TODO this is an ugly hack because Maven does not tolerate
                 // version numbers of the form "7.1.0.beta1"
                 String artifactVersion = artifact.getVersion();
@@ -73,14 +76,14 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
                             isNewer = true;
                         }
                     } catch (NumberFormatException e) {
-                        getLog().info("Failed to parse vaadin-shared version number " + artifactVersion);
+                        getLog().info("Failed to parse vaadin-shared version number "+artifactVersion);
                     }
                 }
                 if (!isNewer) {
-                    getLog().warn("Your project declares dependency on vaadin-shared "
-                            + artifactVersion
-                            + ". This goal requires at least Vaadin version "
-                            + major + "." + minor);
+                    getLog().warn(
+                            "Your project declares dependency on vaadin-shared "
+                                    + artifactVersion
+                                    + ". This goal requires at least Vaadin version "+major+"."+minor);
                 } else {
                     return true;
                 }
@@ -93,13 +96,10 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
 
     /**
      * Configure the classpath for theme update/compilation.
-     *
-     * @param cmd
-     *            command for which to configure the classpath
-     * @param theme
-     *            theme path relative to a resource directory
-     * @return the first suitable theme directory found (to be used as the
-     *         output directory)
+     * 
+     * @param cmd command for which to configure the classpath
+     * @param theme theme path relative to a resource directory 
+     * @return the first suitable theme directory found (to be used as the output directory)
      * @throws MojoExecutionException
      */
     protected File configureThemeClasspath(JavaCommand cmd, String theme) throws MojoExecutionException {
@@ -108,7 +108,9 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
         for (Resource res : getProject().getResources()) {
             File resourceDirectory = new File(res.getDirectory());
             if (new File(resourceDirectory, theme).exists()) {
-                getLog().debug("Adding resource directory to command classpath: " + resourceDirectory);
+                getLog().debug(
+                        "Adding resource directory to command classpath: "
+                                + resourceDirectory);
                 if (themeDir == null) {
                     themeDir = resourceDirectory;
                 }
@@ -135,8 +137,8 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
 
     /**
      * Return the available themes in the project source/resources folder. If a
-     * theme has been set by expression, only that theme is returned. It is
-     * possible to specify more themes, comma separated.
+     * theme has been set by expression, only that theme is returned.
+     * It is possible to specify more themes, comma separated.
      *
      * @return the theme names
      */
@@ -145,7 +147,7 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
         if (theme != null) {
             String[] themes = theme.split(",");
             String[] themesPaths = new String[themes.length];
-            for (int i = 0; i < themesPaths.length; i++) {
+            for(int i = 0; i < themesPaths.length ; i++) {
                 themesPaths[i] = "VAADIN/themes/" + themes[i].trim();
             }
             return themesPaths;
@@ -173,9 +175,10 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
         }
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(baseDir);
-        scanner.setIncludes(new String[] {"VAADIN/themes/*"});
+        scanner.setIncludes(new String[] { "VAADIN/themes/*" });
         scanner.scan();
 
         return Arrays.asList(scanner.getIncludedDirectories());
     }
+
 }

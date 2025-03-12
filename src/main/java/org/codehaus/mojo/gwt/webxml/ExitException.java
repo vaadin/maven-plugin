@@ -24,10 +24,14 @@ package org.codehaus.mojo.gwt.webxml;
  * @author cooper
  * @version $Id$
  */
-public class ExitException extends Exception {
+public class ExitException
+    extends Exception
+{
 
     /** Creates a new instance of ExitException */
-    public ExitException(String message) {
-        super(message);
+    public ExitException( String message )
+    {
+        super( message );
     }
+
 }

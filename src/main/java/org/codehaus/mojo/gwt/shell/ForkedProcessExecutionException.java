@@ -19,6 +19,7 @@ package org.codehaus.mojo.gwt.shell;
  * under the License.
  */
 
+
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
@@ -55,7 +56,9 @@ public class ForkedProcessExecutionException extends MojoExecutionException {
      * @param shortMessage
      * @param longMessage
      */
-    public ForkedProcessExecutionException(Object source, String shortMessage, String longMessage) {
+    public ForkedProcessExecutionException(Object source, String shortMessage,
+            String longMessage) {
         super(source, shortMessage, longMessage);
     }
+
 }

@@ -23,141 +23,157 @@ import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
+
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
+import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.type.ClassMetadata;
 import org.springframework.util.ClassUtils;
 
+
+
 /**
- * The goal is to find classed annotated with RemoteServiceRelativePath to
- * generated {@link ServletDescriptor}
- *
+ * The goal is to find classed annotated with RemoteServiceRelativePath
+ * to generated {@link ServletDescriptor}
+ * 
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  * @since 2.1.0-1
  */
 @Component(role = ServletAnnotationFinder.class)
-public class ServletAnnotationFinder extends AbstractLogEnabled {
+public class ServletAnnotationFinder
+    extends AbstractLogEnabled
+{
 
-    private static final String REMOTE_SERVICE_RELATIVE_PATH_ANNOTATION_NAME =
-            "com.google.gwt.user.client.rpc.RemoteServiceRelativePath";
+    private static final String REMOTE_SERVICE_RELATIVE_PATH_ANNOTATION_NAME = "com.google.gwt.user.client.rpc.RemoteServiceRelativePath";
 
-    public ServletAnnotationFinder() {
+    public ServletAnnotationFinder()
+    {
         // no op
     }
 
-    private MetadataReader getMetadataReader(
-            String className, MetadataReaderFactory factory, PathMatchingResourcePatternResolver resourceResolver)
-            throws IOException {
-        String resourcePath = ClassUtils.convertClassNameToResourcePath(className);
-        Resource resource = resourceResolver.getResource(resourcePath + ".class");
-        if (resource.exists()) {
-            return factory.getMetadataReader(resource);
-        }
-        return null;
-    }
-
-    private boolean extendsRemoteServlet(
-            ClassMetadata classMetadata,
-            MetadataReaderFactory factory,
-            PathMatchingResourcePatternResolver resourceResolver)
-            throws IOException {
-        if (classMetadata.hasSuperClass()) {
-            String name = classMetadata.getSuperClassName();
-            if (name.equals("com.google.gwt.user.server.rpc.RemoteServiceServlet")) {
-                return true;
-            }
-            MetadataReader r = getMetadataReader(classMetadata.getSuperClassName(), factory, resourceResolver);
-            return extendsRemoteServlet(r.getClassMetadata(), factory, resourceResolver);
-        }
-        return false;
-    }
-
-    private AnnotationMetadata getAnnotationMetadataIfServlet(
-            MetadataReader metadataReader,
-            MetadataReaderFactory factory,
-            PathMatchingResourcePatternResolver resourceResolver) {
-        ClassMetadata classMetadata = metadataReader.getClassMetadata();
-
-        try {
-            if (classMetadata.isConcrete() && extendsRemoteServlet(classMetadata, factory, resourceResolver)) {
-                for (String i : metadataReader.getClassMetadata().getInterfaceNames()) {
-                    MetadataReader r = getMetadataReader(i, factory, resourceResolver);
-                    if (r != null
-                            && r.getAnnotationMetadata().hasAnnotation(REMOTE_SERVICE_RELATIVE_PATH_ANNOTATION_NAME)) {
-                        return r.getAnnotationMetadata();
-                    }
+        private MetadataReader getMetadataReader(String className,
+                                                                                         MetadataReaderFactory factory,
+                                                                                         PathMatchingResourcePatternResolver resourceResolver)
+                throws IOException
+        {
+                String resourcePath = ClassUtils.convertClassNameToResourcePath(className);
+                Resource resource = resourceResolver.getResource(resourcePath + ".class");
+                if (resource.exists()) {
+                        return factory.getMetadataReader(resource);
                 }
-            }
-        } catch (IOException e) {
-            getLogger().warn("Failed to read class metadata: " + e);
+                return null;
         }
-        return null;
-    }
+
+        private boolean extendsRemoteServlet(ClassMetadata classMetadata,
+                                                                                 MetadataReaderFactory factory,
+                                                                                 PathMatchingResourcePatternResolver resourceResolver)
+                throws IOException
+        {
+                if (classMetadata.hasSuperClass()) {
+                        String name = classMetadata.getSuperClassName();
+                        if (name.equals("com.google.gwt.user.server.rpc.RemoteServiceServlet")) {
+                                return true;
+                        }
+                        MetadataReader r = getMetadataReader(classMetadata.getSuperClassName(), factory, resourceResolver);
+                        return extendsRemoteServlet(r.getClassMetadata(), factory, resourceResolver);
+                }
+                return false;
+        }
+
+        private AnnotationMetadata getAnnotationMetadataIfServlet(MetadataReader metadataReader,
+                                                                                                                          MetadataReaderFactory factory,
+                                                                                                                          PathMatchingResourcePatternResolver resourceResolver)
+        {
+                ClassMetadata classMetadata = metadataReader.getClassMetadata();
+
+                try {
+                        if (classMetadata.isConcrete() && extendsRemoteServlet(classMetadata, factory, resourceResolver)) {
+                                for (String i : metadataReader.getClassMetadata().getInterfaceNames()) {
+                                        MetadataReader r = getMetadataReader(i, factory, resourceResolver);
+                                        if (r != null && r.getAnnotationMetadata()
+                                                .hasAnnotation( REMOTE_SERVICE_RELATIVE_PATH_ANNOTATION_NAME )) {
+                                                return r.getAnnotationMetadata();
+                                        }
+                                }
+                        }
+                } catch (IOException e) {
+                        getLogger().warn("Failed to read class metadata: " + e);
+                }
+                return null;
+        }
 
     /**
      * @param packageName
      * @return cannot return <code>null</null>
      * @throws IOException
      */
-    public Set<ServletDescriptor> findServlets(String packageName, String startPath, ClassLoader classLoader)
-            throws IOException {
+    public Set<ServletDescriptor> findServlets( String packageName, String startPath, ClassLoader classLoader )
+        throws IOException
+    {
         Set<ServletDescriptor> servlets = new LinkedHashSet<ServletDescriptor>();
-        PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver =
-                new PathMatchingResourcePatternResolver(classLoader);
+        PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver(
+                                                                                                                           classLoader );
         String patternFinder = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
-                + ClassUtils.convertClassNameToResourcePath(packageName)
-                + "/**/*.class";
+            + ClassUtils.convertClassNameToResourcePath( packageName ) + "/**/*.class";
 
-        Resource[] resources = pathMatchingResourcePatternResolver.getResources(patternFinder);
+        Resource[] resources = pathMatchingResourcePatternResolver.getResources( patternFinder );
         SimpleMetadataReaderFactory simpleMetadataReaderFactory = new SimpleMetadataReaderFactory();
-        getLogger().debug("springresource " + resources.length + " for pattern " + patternFinder);
-        for (Resource resource : resources) {
-            getLogger().debug("springresource " + resource.getFilename());
-            MetadataReader metadataReader = simpleMetadataReaderFactory.getMetadataReader(resource);
+        getLogger().debug( "springresource " + resources.length + " for pattern " + patternFinder );
+        for ( Resource resource : resources )
+        {
+            getLogger().debug( "springresource " + resource.getFilename() );
+            MetadataReader metadataReader = simpleMetadataReaderFactory.getMetadataReader( resource );
 
             AnnotationMetadata annotationMetadata = getAnnotationMetadataIfServlet(
-                    metadataReader, simpleMetadataReaderFactory, pathMatchingResourcePatternResolver);
-            if (annotationMetadata != null) {
-                Map<String, Object> annotationAttributes =
-                        annotationMetadata.getAnnotationAttributes(REMOTE_SERVICE_RELATIVE_PATH_ANNOTATION_NAME);
-                getLogger()
-                        .debug("found RemoteServiceRelativePath annotation for class "
-                                + metadataReader.getClassMetadata().getClassName());
-                if (StringUtils.isNotBlank(startPath)) {
+                    metadataReader, simpleMetadataReaderFactory,
+                    pathMatchingResourcePatternResolver);
+            if ( annotationMetadata != null )
+            {
+                Map<String, Object> annotationAttributes = annotationMetadata
+                    .getAnnotationAttributes( REMOTE_SERVICE_RELATIVE_PATH_ANNOTATION_NAME );
+                getLogger().debug( "found RemoteServiceRelativePath annotation for class "
+                                       + metadataReader.getClassMetadata().getClassName() );
+                if ( StringUtils.isNotBlank( startPath ) )
+                {
                     StringBuilder path = new StringBuilder();
-                    if (!startPath.startsWith("/")) {
-                        path.append('/');
+                    if ( !startPath.startsWith( "/" ) )
+                    {
+                        path.append( '/' );
                     }
-                    path.append(startPath);
-                    String annotationPathValue = (String) annotationAttributes.get("value");
-                    if (!annotationPathValue.startsWith("/")) {
-                        path.append('/');
+                    path.append( startPath );
+                    String annotationPathValue = (String) annotationAttributes.get( "value" );
+                    if ( !annotationPathValue.startsWith( "/" ) )
+                    {
+                        path.append( '/' );
                     }
-                    path.append(annotationPathValue);
-                    ServletDescriptor servletDescriptor = new ServletDescriptor(
-                            path.toString(), metadataReader.getClassMetadata().getClassName());
-                    servlets.add(servletDescriptor);
-                } else {
+                    path.append( annotationPathValue );
+                    ServletDescriptor servletDescriptor = new ServletDescriptor( path.toString(), metadataReader
+                        .getClassMetadata().getClassName() );
+                    servlets.add( servletDescriptor );
+                }
+                else
+                {
                     StringBuilder path = new StringBuilder();
-                    String annotationPathValue = (String) annotationAttributes.get("value");
-                    if (!annotationPathValue.startsWith("/")) {
-                        path.append('/');
+                    String annotationPathValue = (String) annotationAttributes.get( "value" );
+                    if ( !annotationPathValue.startsWith( "/" ) )
+                    {
+                        path.append( '/' );
                     }
-                    path.append(annotationPathValue);
-                    ServletDescriptor servletDescriptor = new ServletDescriptor(
-                            path.toString(), metadataReader.getClassMetadata().getClassName());
-                    servlets.add(servletDescriptor);
+                    path.append( annotationPathValue );
+                    ServletDescriptor servletDescriptor = new ServletDescriptor( path.toString(), metadataReader
+                        .getClassMetadata().getClassName() );
+                    servlets.add( servletDescriptor );
                 }
             }
         }
         return servlets;
     }
+
 }

@@ -22,7 +22,8 @@ package org.codehaus.mojo.gwt.webxml;
 /**
  * @version $Id$
  */
-public class ServletDescriptor {
+public class ServletDescriptor
+{
 
     private String className;
 
@@ -30,39 +31,48 @@ public class ServletDescriptor {
 
     private String name;
 
-    public ServletDescriptor(String path, String className) {
+    public ServletDescriptor( String path, String className )
+    {
         this.path = path;
         this.className = className;
     }
 
-    public String getClassName() {
+    public String getClassName()
+    {
         return className;
     }
 
-    public void setClassName(String className) {
+    public void setClassName( String className )
+    {
         this.className = className;
     }
 
-    public String getPath() {
+    public String getPath()
+    {
         return path;
     }
 
-    public void setPath(String path) {
+    public void setPath( String path )
+    {
         this.path = path;
     }
 
-    public String toString() {
+    public String toString()
+    {
         return "Path:" + this.path + " Class:" + this.className;
     }
 
-    public String getName() {
-        if (name == null) {
+    public String getName()
+    {
+        if ( name == null )
+        {
             name = className + path;
         }
         return name;
     }
 
-    public void setName(String name) {
+    public void setName( String name )
+    {
         this.name = name;
     }
 }

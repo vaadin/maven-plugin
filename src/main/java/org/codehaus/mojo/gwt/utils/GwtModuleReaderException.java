@@ -23,12 +23,16 @@ package org.codehaus.mojo.gwt.utils;
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  * @since 2.1.0-1
  */
-public class GwtModuleReaderException extends Exception {
-    public GwtModuleReaderException(String message, Throwable t) {
-        super(message, t);
+public class GwtModuleReaderException
+    extends Exception
+{
+    public GwtModuleReaderException( String message, Throwable t )
+    {
+        super( message, t );
     }
 
-    public GwtModuleReaderException(String message) {
-        super(message);
+    public GwtModuleReaderException( String message )
+    {
+        super( message );
     }
 }
