@@ -23,7 +23,7 @@ package org.codehaus.mojo.gwt.reports;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
@@ -31,7 +31,7 @@ import org.codehaus.mojo.gwt.GwtModule;
 import org.codehaus.plexus.i18n.I18N;
 
 /**
- * project compilation report renderer to display links to 
+ * project compilation report renderer to display links to
  * all modules report
  * @author <a href="mailto:olamy@apache.org">Olivier Lamy</a>
  * @since 2.1.0-1
@@ -40,19 +40,19 @@ public class CompilationReportRenderer
     extends AbstractMavenReportRenderer
 {
     private final List<GwtModule> gwtModules;
-    
+
     private final Log log;
-    
+
     private boolean reportsAvailable;
-    
+
     private String compilerReportsPath;
-    
+
     private boolean compilerReport;
-    
+
     private final I18N i18n;
-    
+
     private final Locale locale;
-    
+
     public CompilationReportRenderer( final Sink sink, final List<GwtModule> gwtModules, Log log,
                                       boolean reportsAvailable, String compilerReportsPath, boolean compilerReport,
                                       I18N i18n, Locale locale )
@@ -97,7 +97,7 @@ public class CompilationReportRenderer
             sink.paragraph_();
 
         }
-        if ( !this.reportsAvailable )
+        if ( !reportsAvailable )
         {
             sink.paragraph();
             sink.bold();
@@ -115,7 +115,7 @@ public class CompilationReportRenderer
         else
         {
             sink.list();
-            for ( GwtModule gwtModule : this.gwtModules )
+            for ( GwtModule gwtModule : gwtModules )
             {
                 sink.listItem();
                 if ( StringUtils.isNotBlank( compilerReportsPath ) )
@@ -135,7 +135,7 @@ public class CompilationReportRenderer
         endSection();
         log.debug( "end renderBody" );
     }
-    
+
     protected String getI18nString( Locale locale, String key )
     {
         return i18n.getString( "compile-report", locale, key );

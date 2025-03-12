@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.mojo.gwt.utils.GwtModuleReaderException;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -48,7 +48,7 @@ public class GwtModule
     private Set<GwtModule> inherits;
 
     private GwtModuleReader reader;
-    
+
     private File sourceFile;
 
     public GwtModule( String name, Xpp3Dom xml, GwtModuleReader reader )
@@ -152,7 +152,7 @@ public class GwtModule
     }
 
     /**
-     * 
+     *
      * @param set
      * @param modules
      * @throws MojoExecutionException
@@ -247,11 +247,11 @@ public class GwtModule
     public File getSourceFile() {
     	return sourceFile;
     }
-    
+
     public void setSourceFile(File file) {
-		this.sourceFile = file;
+		sourceFile = file;
 	}
-	
+
     @Override
     public boolean equals( Object obj )
     {
