@@ -8,4 +8,5 @@ target/
 /.classpath
 /.project
 /.settings
+/.vscode
 .flattened-pom.xml
