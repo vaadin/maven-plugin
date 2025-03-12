@@ -1,5 +1,10 @@
 package org.codehaus.mojo.gwt.shell;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -20,7 +25,7 @@ package org.codehaus.mojo.gwt.shell;
  */
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -33,14 +38,9 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-
 /**
  * Creates CSS interfaces for css files.
- * Will use the utility tool provided in gwt sdk which create a corresponding Java interface for accessing 
+ * Will use the utility tool provided in gwt sdk which create a corresponding Java interface for accessing
  * the classnames used in the file.
  *
  * @author Stale Undheim <undheim@corporater.com>
@@ -74,6 +74,7 @@ public class CSSMojo
         return true;
     }
 
+    @Override
     public void doExecute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -104,7 +105,7 @@ public class CSSMojo
                         getLog().info( "Generating " + javaOutput + " with typeName " + typeName );
                         ensureTargetPackageExists( getGenerateDirectory(), typeName );
 
-                        
+
                         try
                         {
                             final StringBuilder content = new StringBuilder();
@@ -120,6 +121,7 @@ public class CSSMojo
                                 .addToClasspath( getGwtUserJar() )
                                 .setOut( new StreamConsumer()
                                     {
+                                        @Override
                                         public void consumeLine( String line )
                                         {
                                             content.append( line ).append( SystemUtils.LINE_SEPARATOR );

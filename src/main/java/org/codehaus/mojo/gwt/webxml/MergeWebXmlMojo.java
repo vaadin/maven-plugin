@@ -1,5 +1,13 @@
 package org.codehaus.mojo.gwt.webxml;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -20,7 +28,7 @@ package org.codehaus.mojo.gwt.webxml;
  */
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -31,20 +39,12 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.mojo.gwt.GwtModule;
 import org.codehaus.mojo.gwt.shell.AbstractGwtWebMojo;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Merges GWT servlet elements into deployment descriptor (and non GWT servlets into shell).
  * <p>
  * <b>If you use {@link #scanRemoteServiceRelativePathAnnotation} you must bind this mojo to at least compile phase</b>
  * Because the classpath scanner need to see compile classes
- * 
+ *
  * @author cooper
  * @version $Id$
  */
@@ -83,7 +83,8 @@ public class MergeWebXmlMojo
         return true;
     }
 
-    
+
+    @Override
     public void doExecute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -105,7 +106,7 @@ public class MergeWebXmlMojo
             FileUtils.copyFile( getWebXml(), mergedWebXml );
 
             Set<ServletDescriptor> servlets = new LinkedHashSet<ServletDescriptor>();
-            
+
 
             for ( String module : getModules() )
             {
@@ -151,7 +152,7 @@ public class MergeWebXmlMojo
             throw new MojoExecutionException( "Unable to merge web.xml", e );
         }
     }
-    
+
     private ClassLoader getAnnotationSearchClassLoader()
         throws MalformedURLException
     {

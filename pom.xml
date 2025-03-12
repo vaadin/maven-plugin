@@ -11,7 +11,7 @@
     ~ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
     ~ License for the specific language governing permissions and limitations under
     ~ the License.
-
+    ~
     ~ NOTE: For help with the syntax of this file, see:
     ~ https://maven.apache.org/doxia/references/apt-format.html
     ~
@@ -20,6 +20,7 @@
     ~ See mojo.codehaus.org/gwt-maven-plugin/
   -->
 <project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.codehaus.mojo</groupId>
@@ -28,10 +29,10 @@
     </parent>
     <groupId>com.vaadin</groupId>
     <artifactId>vaadin-maven-plugin</artifactId>
-    <version>8.1-SNAPSHOT</version>
+    <version>8.28-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>Vaadin Plug-in for Maven</name>
-    <description>Maven plugin for Vaadin.</description>
+    <description>Maven plugin for Vaadin, for Vaadin 8.28+</description>
     <url>https://vaadin.com</url>
     <inceptionYear>2012</inceptionYear>
     <organization>
@@ -55,6 +56,11 @@
             <id>henri.sara</id>
             <name>Henri Sara</name>
             <email>hesara@vaadin.com</email>
+        </developer>
+        <developer>
+            <id>patrik.lindstrom</id>
+            <name>Patrik Lindström</name>
+            <email>patrik@vaadin.com</email>
         </developer>
         <developer>
             <id>charlie.collins</id>
@@ -97,23 +103,11 @@
         <url>https://github.com/vaadin/maven-plugin/issues</url>
     </issueManagement>
 
-    <distributionManagement>
-        <repository>
-            <id>vaadin-staging</id>
-            <name>Vaadin release staging repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <snapshotRepository>
-            <id>vaadin-snapshots</id>
-            <name>Vaadin snapshot repository</name>
-            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
     <properties>
         <!-- Set this to 'false' to have Spotless complain about formatting -->
         <spotless.check.skip>true</spotless.check.skip>
 
-        <!-- Set compiler options -->
+        <!-- Set compiler options (Java 9+) -->
         <maven.compiler.release>8</maven.compiler.release>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -121,31 +115,37 @@
         <!-- TODO this would also be used in an archetype, currently broken -->
         <!-- This property is used in a filtered resources to check the version compatibility -->
         <vaadin.version>${project.version}</vaadin.version>
-        <gwt.version>2.8.2</gwt.version>
+        <gwt.version>2.11.0</gwt.version>
+        <sisu.version>0.3.5</sisu.version>
+        <maven.version>3.9.9</maven.version>
+        <resteasy.version>6.2.11.Final</resteasy.version>
+
         <!--  apt filtering doesn't support dot -->
         <vaadinVersion>${vaadin.version}</vaadinVersion>
         <gwtVersion>${gwt.version}</gwtVersion>
-        <mavenVersion>3.0.5</mavenVersion>
-        <mavenPluginPluginVersion>3.5</mavenPluginPluginVersion>
+        <sisuVersion>${sisu.version}</sisuVersion>
+        <mavenVersion>${maven.version}</mavenVersion>
+
+        <!-- for older tools -->
         <mojo.java.target>1.8</mojo.java.target>
-        <doxia-sitetoolsVersion>1.6</doxia-sitetoolsVersion>
+        <doxia-sitetoolsVersion>2.0.0</doxia-sitetoolsVersion>
+
         <!--  to be able on powerfull ci machine to change it tru the cli :-) -->
         <it.localWorkers>-1</it.localWorkers>
-        <!--    <stagingSiteRepositoryId>codehaus</stagingSiteRepositoryId>
-    <stagingSiteURL>dav:https://dav.codehaus.org/mojo/${project.artifactId}-${project.version}</stagingSiteURL>
--->
         <invokerPluginVersion>1.5</invokerPluginVersion>
 
         <wscdn.version>0.9.2</wscdn.version>
     </properties>
 
     <dependencies>
-        <!-- ICU 2.6.1 (inherited via jaxen) contains bad class files that break ASM (helpmojo java-annotations extractor and animal-sniffer) -->
+        <!-- ICU 2.6.1 (inherited via jaxen) contains bad class files that
+             break ASM (helpmojo java-annotations extractor and animal-sniffer) -->
         <dependency>
             <groupId>com.ibm.icu</groupId>
             <artifactId>icu4j</artifactId>
             <version>3.4.4</version>
         </dependency>
+
         <dependency>
             <groupId>com.thoughtworks.qdox</groupId>
             <artifactId>qdox</artifactId>
@@ -161,7 +161,7 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-client</artifactId>
-            <version>LATEST</version>
+            <version>${vaadin.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -173,12 +173,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
+            <version>2.18.0</version>
         </dependency>
 
         <dependency>
@@ -190,13 +185,18 @@
         <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
-            <version>1.1.1</version>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>4.13.2</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.17.0</version>
         </dependency>
         <dependency>
             <!--  used for GwtSourcesJarMojo -->
@@ -207,28 +207,70 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-artifact</artifactId>
-            <version>${mavenVersion}</version>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
         </dependency>
-        <!--  TODO: migrate our API usage and eventually remove that dependency -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-builder-support</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Needed to avoid deprecation of Artifact API -->
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-compat</artifactId>
-            <version>${mavenVersion}</version>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>${mavenVersion}</version>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-model</artifactId>
-            <version>${mavenVersion}</version>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model-builder</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>${mavenVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-registry</artifactId>
+            <version>2.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-repository-metadata</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-settings</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-settings-builder</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -237,21 +279,10 @@
             <version>${doxia-sitetoolsVersion}</version>
         </dependency>
 
-        <!-- Doxia-sitetools -->
         <dependency>
             <groupId>org.apache.maven.doxia</groupId>
             <artifactId>doxia-site-renderer</artifactId>
             <version>${doxia-sitetoolsVersion}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.codehaus.plexus</groupId>
-                    <artifactId>plexus-container-default</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.codehaus.plexus</groupId>
-                    <artifactId>plexus-component-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
@@ -262,19 +293,18 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>${mavenPluginPluginVersion}</version>
-            <!-- Not needed at runtime -->
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.maven.reporting</groupId>
             <artifactId>maven-reporting-api</artifactId>
-            <version>3.0</version>
+            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.reporting</groupId>
             <artifactId>maven-reporting-impl</artifactId>
-            <version>2.1</version>
+            <version>3.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.surefire</groupId>
@@ -313,17 +343,33 @@
 
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-container-default</artifactId>
-            <version>1.5.5</version>
+            <artifactId>plexus-i18n</artifactId>
+            <version>1.0-beta-10</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-utils</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-component-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
-            <version>3.0.18</version>
+            <version>4.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.sisu</groupId>
+            <artifactId>org.eclipse.sisu.plexus</artifactId>
+            <version>${sisu.version}</version>
         </dependency>
         <dependency>
-            <!-- used to generate eclipse .lanch files -->
+            <!-- used to generate eclipse .launch files -->
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>2.3.20</version>
@@ -333,27 +379,35 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
-            <version>3.0.10.Final</version>
+            <version>${resteasy.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jackson2-provider</artifactId>
-            <version>3.0.10.Final</version>
+            <version>${resteasy.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxb-provider</artifactId>
-            <version>3.0.10.Final</version>
+            <version>${resteasy.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
-            <version>3.0.10.Final</version>
+            <version>3.15.6.Final</version>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
             <version>2.0.6.1</version>
+        </dependency>
+
+        <!-- Needed for aether in tests -->
+        <dependency>
+            <groupId>org.sonatype.aether</groupId>
+            <artifactId>aether-api</artifactId>
+            <version>1.13.1</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.sonatype.plexus</groupId>
@@ -365,7 +419,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>4.3.20.RELEASE</version>
+            <version>5.3.19</version>
         </dependency>
         <dependency>
             <!-- required when running GWT 1.6 Hosted server to fix JAXP parser mismatches -->
@@ -380,6 +434,7 @@
             <version>1.4.01</version>
         </dependency>
     </dependencies>
+
     <repositories>
         <repository>
             <releases>
@@ -388,9 +443,20 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
-            <id>vaadin-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+            <id>vaadin-prereleases</id>
+            <url>https://maven.vaadin.com/vaadin-prereleases/</url>
         </repository>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>vaadin-addons</id>
+            <url>https://maven.vaadin.com/vaadin-addons</url>
+        </repository>
+
         <repository>
             <releases>
                 <enabled>false</enabled>
@@ -434,6 +500,7 @@
                     <artifactId>spotless-maven-plugin</artifactId>
                     <configuration>
                         <java>
+                            <toggleOffOn />
                             <endWithNewline />
                             <removeUnusedImports />
                             <importOrder>
@@ -453,20 +520,53 @@
                         </pom>
                     </configuration>
                 </plugin>
+
+                <!--This plugin's configuration is used to store Eclipse m2e settings
+                    only. It has no influence on the Maven build itself.-->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-plugin-plugin</artifactId>
+                                        <versionRange>[3.3,)</versionRange>
+                                        <goals>
+                                            <goal>helpmojo</goal>
+                                            <goal>descriptor</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.plexus</groupId>
+                                        <artifactId>plexus-component-metadata</artifactId>
+                                        <versionRange>[2.2.0,)</versionRange>
+                                        <goals>
+                                            <goal>generate-metadata</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-component-metadata</artifactId>
-                <version>1.5.5</version>
                 <executions>
                     <execution>
                         <goals>
@@ -478,13 +578,8 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>${mavenPluginPluginVersion}</version>
                 <configuration>
-                    <!-- see https://jira.codehaus.org/browse/MNG-5346 -->
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-                    <requirements>
-                        <jdk>${maven.compiler.target}</jdk>
-                    </requirements>
                 </configuration>
                 <executions>
                     <execution>
@@ -509,29 +604,6 @@
                     <stagingRepositoryId>${stagingSiteRepositoryId}</stagingRepositoryId>
                     <stagingSiteURL>${stagingSiteURL}</stagingSiteURL>
                 </configuration>
-            </plugin>
-            <!-- disabled: bug when dealing with ICU classes (from jaxen)-->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>animal-sniffer-maven-plugin</artifactId>
-                <version>1.11</version>
-                <configuration>
-                    <signature>
-                        <groupId>org.codehaus.mojo.signature</groupId>
-                        <artifactId>java16</artifactId>
-                        <version>1.1</version>
-                    </signature>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>check-java-1.6-compat</id>
-                        <goals>
-                            <!-- Disabled as WSCDN depends on some Java 8 classes -->
-                            <!-- <goal>check</goal> -->
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
             </plugin>
 
             <!-- POM flattener -->
@@ -578,8 +650,27 @@
     <reporting>
         <excludeDefaults>false</excludeDefaults>
     </reporting>
-    <profiles>
 
+    <profiles>
+        <profile>
+            <id>check-cve</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>12.1.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>run-its</id>
             <activation>
@@ -593,7 +684,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>1.9</version>
                         <configuration>
                             <debug>true</debug>
                             <projectsDirectory>src/it</projectsDirectory>
@@ -614,7 +704,7 @@
                             <extraArtifacts>
                                 <extraArtifact>com.google.gwt:gwt-servlet:${gwtVersion}:jar</extraArtifact>
                                 <!-- for some reason, com.google.web.bindery:requestfactory isn't installed,
-                     whereas it's needed by com.google.gwt:gwt -->
+                                     whereas it's needed by com.google.gwt:gwt -->
                                 <extraArtifact>com.google.web.bindery:requestfactory:${gwtVersion}:pom</extraArtifact>
                             </extraArtifacts>
                         </configuration>
@@ -833,7 +923,5 @@
                 </plugins>
             </build>
         </profile>
-
     </profiles>
-
 </project>
