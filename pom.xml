@@ -779,7 +779,45 @@
           </execution>
         </executions>
       </plugin>
-      <!-- -->
+
+      <!-- POM flattener -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <inherited>true</inherited>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <updatePomFile>true</updatePomFile>
+              <flattenMode>bom</flattenMode>
+              <!-- Uncomment this to get a full list of dependencies in the resulting POM -->
+              <!--<flattenDependencyMode>all</flattenDependencyMode>-->
+              <pomElements>
+                <parent>expand</parent>
+                <name>keep</name>
+                <description>keep</description>
+                <url>keep</url>
+                <properties>keep</properties>
+                <pluginManagement>keep</pluginManagement>
+                <dependencyManagement>keep</dependencyManagement>
+                <build>keep</build>
+              </pomElements>
+          </configuration>
+          </execution>
+          <execution>
+            <id>flatten-clean</id>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <phase>clean</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
