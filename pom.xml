@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.codehaus.mojo</groupId>
     <artifactId>mojo-parent</artifactId>
-    <version>34</version>
+    <version>87</version>
   </parent>
   <groupId>com.vaadin</groupId>
   <artifactId>vaadin-maven-plugin</artifactId>
@@ -104,6 +104,8 @@
   </ciManagement>
 -->
   <properties>
+    <spotless.check.skip>true</spotless.check.skip>
+    <maven.compiler.release>8</maven.compiler.release>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <!-- TODO this would also be used in an archetype, currently broken -->
