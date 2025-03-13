@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.codehaus.mojo</groupId>
     <artifactId>mojo-parent</artifactId>
-    <version>34</version>
+    <version>87</version>
   </parent>
   <groupId>com.vaadin</groupId>
   <artifactId>vaadin-maven-plugin</artifactId>
@@ -89,66 +89,56 @@
       <email>jieryn@gmail.com</email>
     </contributor>
   </contributors>
-  <scm>
-    <connection>scm:http:https://dev.vaadin.com/git/integration/maven/vaadin-maven-plugin.git</connection>
-    <developerConnection>scm:ssh:git@dev.vaadin.com/integration/maven/vaadin-maven-plugin</developerConnection>
-    <url>https://dev.vaadin.com/git/?p=integration/maven/vaadin-maven-plugin.git</url>
-  </scm>
-  <issueManagement>
-    <system>trac</system>
-    <url>https://dev.vaadin.com</url>
-  </issueManagement>
-<!--  <ciManagement>
-    <system>buildhive</system>
-    <url>https://buildhive.cloudbees.com/job/gwt-maven-plugin/job/gwt-maven-plugin/</url>
-  </ciManagement>
--->
+
   <properties>
-    <maven.compiler.source>1.6</maven.compiler.source>
-    <maven.compiler.target>1.6</maven.compiler.target>
+    <!-- Set this to 'false' to have Spotless complain about formatting -->
+    <spotless.check.skip>true</spotless.check.skip>
+
+    <!-- Set compiler options for Java 8 compat (for Java 9+ builds) -->
+    <maven.compiler.release>8</maven.compiler.release>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  
     <!-- TODO this would also be used in an archetype, currently broken -->
     <!-- This property is used in a filtered resources to check the version compatibility -->
     <vaadin.version>${project.version}</vaadin.version>
     <!--  apt filtering doesn't support dot -->
     <vaadinVersion>${vaadin.version}</vaadinVersion>
-    <mavenVersion>3.0.5</mavenVersion>
-    <gwt.version>2.7.0</gwt.version>
+    <mavenVersion>3.9.9</mavenVersion>
+    <gwt.version>2.8.2</gwt.version>
     <gwtVersion>${gwt.version}</gwtVersion>
-    <mavenPluginPluginVersion>3.5</mavenPluginPluginVersion>
-    <mojo.java.target>1.6</mojo.java.target>
-    <doxia-sitetoolsVersion>1.6</doxia-sitetoolsVersion>
+    <mojo.java.target>1.7</mojo.java.target>
+    <sisu.version>0.3.5</sisu.version>
+    <resteasy.version>6.2.11.Final</resteasy.version>
+    <doxia-sitetoolsVersion>2.0.0</doxia-sitetoolsVersion>
+
     <!--  to be able on powerfull ci machine to change it tru the cli :-) -->
     <it.localWorkers>-1</it.localWorkers>
-<!--    <stagingSiteRepositoryId>codehaus</stagingSiteRepositoryId>
-    <stagingSiteURL>dav:https://dav.codehaus.org/mojo/${project.artifactId}-${project.version}</stagingSiteURL>
--->
     <invokerPluginVersion>1.5</invokerPluginVersion>
 
     <wscdn.version>0.9.2</wscdn.version>
   </properties>
 
-  <distributionManagement>
-    <repository>
-      <id>vaadin-staging</id>
-      <name>Vaadin release staging repository</name>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-    <snapshotRepository>
-      <id>vaadin-snapshots</id>
-      <name>Vaadin snapshot repository</name>
-      <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
   <repositories>
     <repository>
-      <id>vaadin-snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+      <id>vaadin-prereleases</id>
+      <url>https://maven.vaadin.com/vaadin-prereleases/</url>
       <releases>
         <enabled>false</enabled>
       </releases>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>vaadin-addons</id>
+      <url>https://maven.vaadin.com/vaadin-addons</url>
     </repository>
     <repository>
       <id>codehaus-snapshots</id>
@@ -176,7 +166,6 @@
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginPluginVersion}</version>
       <!-- Not needed at runtime -->
       <scope>provided</scope>
     </dependency>
@@ -209,18 +198,12 @@
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
-      <version>3.0</version>
+      <version>3.1.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>2.1</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.5.5</version>
+      <version>3.2.0</version>
     </dependency>
     
     <dependency>
@@ -228,35 +211,49 @@
       <artifactId>doxia-sink-api</artifactId>
       <version>${doxia-sitetoolsVersion}</version>
     </dependency>
-    
-    <!-- Doxia-sitetools -->
+
+    <!-- Plexus-i18n *only* -->
     <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-site-renderer</artifactId>
-      <version>${doxia-sitetoolsVersion}</version>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-i18n</artifactId>
+      <version>1.0-beta-10</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-container-default</artifactId>
+          <artifactId>plexus-utils</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
           <artifactId>plexus-component-api</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <!-- Sisu is a plexus container replacement -->
+    <dependency>
+      <groupId>org.eclipse.sisu</groupId>
+      <artifactId>org.eclipse.sisu.plexus</artifactId>
+      <version>${sisu.version}</version>
+    </dependency>
+    
+    <!-- Doxia-sitetools -->
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-site-renderer</artifactId>
+      <version>${doxia-sitetoolsVersion}</version>
     </dependency>    
     
     <!-- TODO: get rid of this! -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>3.0.5.RELEASE</version>
+      <version>5.3.19</version>
     </dependency>
     
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0.18</version>
+      <version>4.0.2</version>
     </dependency>
     <dependency>
       <groupId>com.thoughtworks.qdox</groupId>
@@ -264,7 +261,7 @@
       <version>1.12.1</version>
     </dependency>
     <dependency>
-      <!-- used to generate eclipse .lanch files -->
+      <!-- used to generate eclipse .launch files -->
       <groupId>org.freemarker</groupId>
       <artifactId>freemarker</artifactId>
       <version>2.3.20</version>
@@ -299,22 +296,30 @@
     <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-client</artifactId>
-        <version>3.0.10.Final</version>
+        <version>${resteasy.version}</version>
     </dependency>
     <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-jaxrs</artifactId>
-        <version>3.0.10.Final</version>
+        <version>3.15.6.Final</version>
     </dependency>
     <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-jaxb-provider</artifactId>
-        <version>3.0.10.Final</version>
+        <version>${resteasy.version}</version>
     </dependency>       
     <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-jackson2-provider</artifactId>
-        <version>3.0.10.Final</version>
+        <version>${resteasy.version}</version>
+    </dependency>
+
+    <!-- Needed for aether in tests -->
+    <dependency>
+        <groupId>org.sonatype.aether</groupId>
+        <artifactId>aether-api</artifactId>
+        <version>1.13.1</version>
+        <scope>test</scope>
     </dependency>
 
     <!-- Dependencies of license checker..? -->
@@ -349,6 +354,7 @@
       <version>4.11</version>
       <scope>compile</scope>
     </dependency>
+    
     <dependency>
       <!-- used to run GWTTestCases -->
       <groupId>org.apache.maven.surefire</groupId>
@@ -363,13 +369,13 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.4</version>
+      <version>2.18.0</version>
     </dependency>
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
-    </dependency>    
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.17.0</version>
+    </dependency>
     <dependency>
       <groupId>org.jdom</groupId>
       <artifactId>jdom2</artifactId>
@@ -380,12 +386,14 @@
       <artifactId>jaxen</artifactId>
       <version>1.1.1</version>
     </dependency>
+
     <!-- ICU 2.6.1 (inherited via jaxen) contains bad class files that break ASM (helpmojo java-annotations extractor and animal-sniffer) -->
     <dependency>
       <groupId>com.ibm.icu</groupId>
       <artifactId>icu4j</artifactId>
       <version>3.4.4</version>
     </dependency>
+
     <dependency>
       <!-- required when running GWT 1.6 Hosted server to fix JAXP parser mismatches -->
       <groupId>xerces</groupId>
@@ -427,8 +435,8 @@
       <version>2.3</version>
     </dependency>
   </dependencies>
-  <profiles>
 
+  <profiles>
     <profile>
       <id>run-its</id>
       <activation>
@@ -619,6 +627,25 @@
       </build>
     </profile>
 
+    <profile>
+      <id>check-cve</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <version>12.1.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <build>
@@ -632,18 +659,39 @@
         <filtering>true</filtering>
       </resource>
     </resources>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <configuration>
+            <java>
+              <toggleOffOn />
+              <endWithNewline />
+              <removeUnusedImports />
+              <importOrder>
+                <wildcardsLast>true</wildcardsLast>
+                <order>java|javax,org,com</order>
+              </importOrder>
+              <eclipse>
+                <file>eclipse/VaadinJavaConventions.xml</file>
+              </eclipse>
+            </java>
+            <pom>
+              <sortPom>
+                <expandEmptyElements>false</expandEmptyElements>
+                <nrOfIndentSpace>4</nrOfIndentSpace>
+                <sortDependencies>groupId,artifactId</sortDependencies>
+              </sortPom>
+            </pom>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-component-metadata</artifactId>
-        <version>1.5.5</version>
         <executions>
           <execution>
             <goals>
@@ -655,7 +703,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>${mavenPluginPluginVersion}</version>
         <configuration>
           <!-- see https://jira.codehaus.org/browse/MNG-5346 -->
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
@@ -687,30 +734,45 @@
           <stagingSiteURL>${stagingSiteURL}</stagingSiteURL>
         </configuration>
       </plugin>
-      <!-- disabled: bug when dealing with ICU classes (from jaxen)-->
+
+      <!-- POM flattener -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.11</version>
-        <configuration>
-          <signature>
-            <groupId>org.codehaus.mojo.signature</groupId>
-            <artifactId>java16</artifactId>
-            <version>1.1</version>
-          </signature>
-        </configuration>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <inherited>true</inherited>
         <executions>
           <execution>
-            <id>check-java-1.6-compat</id>
-            <phase>process-classes</phase>
+            <id>flatten</id>
             <goals>
-                <!-- Disabled as WSCDN depends on some Java 8 classes -->
-<!--               <goal>check</goal> -->
+              <goal>flatten</goal>
             </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <updatePomFile>true</updatePomFile>
+              <flattenMode>bom</flattenMode>
+              <!-- Uncomment this to get a full list of dependencies in the resulting POM -->
+              <!--<flattenDependencyMode>all</flattenDependencyMode>-->
+              <pomElements>
+                <parent>expand</parent>
+                <name>keep</name>
+                <description>keep</description>
+                <url>keep</url>
+                <properties>keep</properties>
+                <pluginManagement>keep</pluginManagement>
+                <dependencyManagement>keep</dependencyManagement>
+                <build>keep</build>
+              </pomElements>
+          </configuration>
+          </execution>
+          <execution>
+            <id>flatten-clean</id>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <phase>clean</phase>
           </execution>
         </executions>
       </plugin>
-      <!-- -->
     </plugins>
   </build>
 
