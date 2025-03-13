@@ -32,8 +32,6 @@ import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import sun.net.www.protocol.file.FileURLConnection;
-
 /**
  * Utility class to collect widgetset related information from classpath.
  * Utility will seek all directories from classpaths, and jar files having
@@ -199,54 +197,50 @@ public class ClassPathExplorer {
             try {
                 // check files in jar file, entries will list all directories
                 // and files in jar
-
                 URLConnection openConnection = location.openConnection();
-                if (openConnection instanceof JarURLConnection || openConnection instanceof FileURLConnection) {
 
-                    JarFile jarFile;
-                    if (openConnection instanceof JarURLConnection) {
-                        JarURLConnection conn = (JarURLConnection) openConnection;
-                        jarFile = conn.getJarFile();
-                    } else {
-                        jarFile = new JarFile(location.getFile());
-                    }
+                JarFile jarFile;
+                if (openConnection instanceof JarURLConnection) {
+                    JarURLConnection conn = (JarURLConnection) openConnection;
+                    jarFile = conn.getJarFile();
+                } else {
+                    jarFile = new JarFile(location.getFile());
+                }
 
-                    Manifest manifest = jarFile.getManifest();
-                    if (manifest == null) {
-                        // No manifest so this is not a Vaadin Add-on
-                        return;
-                    }
+                Manifest manifest = jarFile.getManifest();
+                if (manifest == null) {
+                    // No manifest so this is not a Vaadin Add-on
+                    return;
+                }
 
-                    // Check for widgetset attribute
-                    String value = manifest.getMainAttributes().getValue(
-                            "Vaadin-Widgetsets");
-                    if (value != null) {
-                        String[] widgetsetNames = value.split(",");
-                        for (int i = 0; i < widgetsetNames.length; i++) {
-                            String widgetsetname = widgetsetNames[i].trim();
-                            if (!widgetsetname.equals("")) {
-                                widgetsets.put(widgetsetname, location);
-                            }
+                // Check for widgetset attribute
+                String value = manifest.getMainAttributes().getValue(
+                        "Vaadin-Widgetsets");
+                if (value != null) {
+                    String[] widgetsetNames = value.split(",");
+                    for (int i = 0; i < widgetsetNames.length; i++) {
+                        String widgetsetname = widgetsetNames[i].trim();
+                        if (!widgetsetname.equals("")) {
+                            widgetsets.put(widgetsetname, location);
                         }
                     }
+                }
 
-                    // Check for theme attribute
-                    value = manifest.getMainAttributes().getValue(
-                            "Vaadin-Stylesheets");
-                    if (value != null) {
-                        String[] stylesheets = value.split(",");
-                        for (int i = 0; i < stylesheets.length; i++) {
-                            String stylesheet = stylesheets[i].trim();
-                            if (!stylesheet.equals("")) {
-                                addonStyles.put(stylesheet, location);
-                            }
+                // Check for theme attribute
+                value = manifest.getMainAttributes().getValue(
+                        "Vaadin-Stylesheets");
+                if (value != null) {
+                    String[] stylesheets = value.split(",");
+                    for (int i = 0; i < stylesheets.length; i++) {
+                        String stylesheet = stylesheets[i].trim();
+                        if (!stylesheet.equals("")) {
+                            addonStyles.put(stylesheet, location);
                         }
                     }
                 }
             } catch (IOException e) {
                 log("Error parsing jar file: " + location);
             }
-
         }
     }
 

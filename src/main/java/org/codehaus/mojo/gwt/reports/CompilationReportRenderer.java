@@ -23,7 +23,7 @@ package org.codehaus.mojo.gwt.reports;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
