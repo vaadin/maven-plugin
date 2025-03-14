@@ -115,6 +115,7 @@
         <!-- TODO this would also be used in an archetype, currently broken -->
         <!-- This property is used in a filtered resources to check the version compatibility -->
         <vaadin.version>${project.version}</vaadin.version>
+        <vaadin.version.latest>8.28-SNAPSHOT</vaadin.version.latest> <!-- Set by CI environment -->
         <gwt.version>2.11.0</gwt.version>
         <sisu.version>0.3.5</sisu.version>
         <maven.version>3.9.9</maven.version>
@@ -161,7 +162,7 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-client</artifactId>
-            <version>LATEST</version>
+            <version>${vaadin.version.latest}</version>
             <scope>test</scope>
         </dependency>
 
