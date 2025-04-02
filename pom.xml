@@ -645,6 +645,34 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>4.6</version>
+                <configuration>
+                    <quiet>false</quiet>
+                    <failIfMissing>true</failIfMissing>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                    <useDefaultMapping>true</useDefaultMapping>
+                    <encoding>UTF-8</encoding>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>header</header>
+                            <includes>
+                                <include>src/main/java/com/vaadin/**/*.java</include>
+                                <include>src/test/java/com/vaadin/**/*.java</include>
+                            </includes>
+                        </licenseSet>
+                    </licenseSets>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
