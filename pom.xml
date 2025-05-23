@@ -625,11 +625,6 @@
 
     <profile>
       <id>release</id>
-      <properties>
-	<central.publishing.maven.plugin.version>0.7.0</central.publishing.maven.plugin.version>
-        <central.auto.publish>true</central.auto.publish>
-        <central.waitUntil.status>published</central.waitUntil.status>
-      </properties>
       <build>
         <plugins>
         <plugin>
@@ -664,16 +659,15 @@
           </executions>
         </plugin>
         <plugin>
-              <groupId>org.sonatype.central</groupId>
-              <artifactId>central-publishing-maven-plugin</artifactId>
-              <version>${central.publishing.maven.plugin.version}</version>
-              <extensions>true</extensions>
-              <configuration>
-                  <publishingServerId>central</publishingServerId>
-                  <autoPublish>${central.auto.publish}</autoPublish>
-                  <waitUntil>${central.waitUntil.status}</waitUntil>
-              </configuration>
-          </plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>1.6.8</version>
+          <extensions>true</extensions>
+          <configuration>
+            <nexusUrl>${staging.server.url}</nexusUrl>
+            <serverId>${staging.server.id}</serverId>
+          </configuration>
+        </plugin>
         </plugins>
       </build>
     </profile>
