@@ -43,7 +43,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * Will use the utility tool provided in gwt sdk which create a corresponding Java interface for accessing
  * the classnames used in the file.
  *
- * @author Stale Undheim <undheim@corporater.com>
+ * @author Stale Undheim undheim@corporater.com
  * @author olamy
  * @since 2.1.0-1
  */
