@@ -438,10 +438,9 @@ public class CompileMojo
                     "not found in project dependencies.");
         }
 
-        // Always check for Vaadin license
         try {
-            BuildType bt = null;  // Accept any license type
-            LicenseChecker.checkLicense(FRAMEWORK_PRODUCT, vaadinVersion, bt);
+            // Always check for Vaadin Framework Development license
+            LicenseChecker.checkLicense(FRAMEWORK_PRODUCT, vaadinVersion, BuildType.DEVELOPMENT);
         } catch (LicenseException ex) {
             getLog().error("Vaadin version check failed", ex);
             throw new MojoFailureException(ex, ex.getMessage(),
