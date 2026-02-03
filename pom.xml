@@ -19,7 +19,9 @@
     ~ Based on the gwt-maven-plugin. 
     ~ See mojo.codehaus.org/gwt-maven-plugin/
   -->
-<project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="https://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -29,7 +31,7 @@
     </parent>
     <groupId>com.vaadin</groupId>
     <artifactId>vaadin-maven-plugin</artifactId>
-    <version>8.28-SNAPSHOT</version>
+    <version>8.31-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>Vaadin Plug-in for Maven</name>
     <description>Maven plugin for Vaadin, for Vaadin 8.28+</description>
@@ -115,7 +117,7 @@
         <!-- TODO this would also be used in an archetype, currently broken -->
         <!-- This property is used in a filtered resources to check the version compatibility -->
         <vaadin.version>${project.version}</vaadin.version>
-        <vaadin.version.latest>8.28-SNAPSHOT</vaadin.version.latest> <!-- Set by CI environment -->
+        <vaadin.version.latest>8.30.0</vaadin.version.latest> <!-- Set by CI environment -->
         <gwt.version>2.11.0</gwt.version>
         <sisu.version>0.3.5</sisu.version>
         <maven.version>3.9.9</maven.version>
@@ -522,7 +524,8 @@
                     </configuration>
                 </plugin>
 
-                <!--This plugin's configuration is used to store Eclipse m2e settings
+                <!--This
+                plugin's configuration is used to store Eclipse m2e settings
                     only. It has no influence on the Maven build itself.-->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -581,6 +584,7 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <configuration>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                    <requiredJavaVersion>1.8</requiredJavaVersion>
                 </configuration>
                 <executions>
                     <execution>
@@ -606,7 +610,6 @@
                     <stagingSiteURL>${stagingSiteURL}</stagingSiteURL>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -656,7 +659,8 @@
                         <configuration>
                             <updatePomFile>true</updatePomFile>
                             <flattenMode>bom</flattenMode>
-                            <!-- Uncomment this to get a full list of dependencies in the resulting POM -->
+                            <!-- Uncomment this to get a full list of dependencies in the resulting
+                            POM -->
                             <!--<flattenDependencyMode>all</flattenDependencyMode>-->
                             <pomElements>
                                 <parent>expand</parent>
@@ -766,9 +770,11 @@
                             <cloneProjectsTo>${project.build.directory}/it-tests</cloneProjectsTo>
                             <extraArtifacts>
                                 <extraArtifact>com.google.gwt:gwt-servlet:${gwtVersion}:jar</extraArtifact>
-                                <!-- for some reason, com.google.web.bindery:requestfactory isn't installed,
+                                <!-- for some reason, com.google.web.bindery:requestfactory isn't
+                                installed,
                                      whereas it's needed by com.google.gwt:gwt -->
-                                <extraArtifact>com.google.web.bindery:requestfactory:${gwtVersion}:pom</extraArtifact>
+                                <extraArtifact>
+                                    com.google.web.bindery:requestfactory:${gwtVersion}:pom</extraArtifact>
                             </extraArtifacts>
                         </configuration>
                         <executions>
@@ -865,7 +871,8 @@
             <id>maven-3</id>
             <activation>
                 <file>
-                    <!-- This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+                    <!-- This employs that the basedir expression is only recognized by Maven 3.x
+                    (see MNG-2363) -->
                     <exists>${basedir}</exists>
                 </file>
             </activation>
@@ -874,7 +881,8 @@
             </properties>
         </profile>
 
-        <!-- maven plug-in does not inherit vaadin-parent, so need to duplicate some of these profiles -->
+        <!-- maven plug-in does not inherit vaadin-parent, so need to duplicate some of these
+        profiles -->
         <profile>
             <id>release</id>
             <properties>
