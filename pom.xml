@@ -104,7 +104,7 @@
     <vaadin.version>${project.version}</vaadin.version>
     
     <!-- Overridden in CI environment at build time -->
-    <vaadin.version.latest>7.7-SNAPSHOT</vaadin.version.latest>
+    <vaadin.version.latest>7.7.50</vaadin.version.latest>
 
     <!-- Set Maven version for all core modules -->
     <maven.version>3.9.9</maven.version>
@@ -751,6 +751,7 @@
         <configuration>
           <!-- see https://jira.codehaus.org/browse/MNG-5346 -->
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          <requiredJavaVersion>1.8</requiredJavaVersion>
           <requirements>
             <jdk>${maven.compiler.target}</jdk>
           </requirements>
