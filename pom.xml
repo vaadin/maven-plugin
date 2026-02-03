@@ -31,7 +31,7 @@
     </parent>
     <groupId>com.vaadin</groupId>
     <artifactId>vaadin-maven-plugin</artifactId>
-    <version>8.31-SNAPSHOT</version>
+    <version>8.40-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>Vaadin Plug-in for Maven</name>
     <description>Maven plugin for Vaadin, for Vaadin 8.28+</description>
@@ -584,6 +584,7 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <configuration>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                    <requiredJavaVersion>1.8</requiredJavaVersion>
                 </configuration>
                 <executions>
                     <execution>
@@ -607,22 +608,6 @@
                 <configuration>
                     <stagingRepositoryId>${stagingSiteRepositoryId}</stagingRepositoryId>
                     <stagingSiteURL>${stagingSiteURL}</stagingSiteURL>
-                </configuration>
-            </plugin>
-            <!-- Jar plugin required to set constant JDK version in the manifest -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <index>false</index>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                        <manifestEntries>
-                            <Build-Jdk>8</Build-Jdk>
-                        </manifestEntries>
-                    </archive>
                 </configuration>
             </plugin>
             <plugin>
