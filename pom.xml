@@ -31,7 +31,7 @@
     </parent>
     <groupId>com.vaadin</groupId>
     <artifactId>vaadin-maven-plugin</artifactId>
-    <version>8.40-SNAPSHOT</version>
+    <version>8.31-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>Vaadin Plug-in for Maven</name>
     <description>Maven plugin for Vaadin, for Vaadin 8.28+</description>
