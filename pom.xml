@@ -93,7 +93,7 @@
         </contributor>
     </contributors>
     <prerequisites>
-        <maven>3</maven>
+        <maven>3.5.0</maven>
     </prerequisites>
     <scm>
         <connection>scm:git:https://github.com/vaadin/maven-plugin.git</connection>
@@ -118,15 +118,14 @@
         <!-- This property is used in a filtered resources to check the version compatibility -->
         <vaadin.version>${project.version}</vaadin.version>
         <vaadin.version.latest>8.30.0</vaadin.version.latest> <!-- Set by CI environment -->
-        <gwt.version>2.11.0</gwt.version>
-        <sisu.version>0.3.5</sisu.version>
+        <gwt.version>2.11.0</gwt.version>  <!-- GWT-SERVLET is hardcoded to 2.10.0 -->
+        <gwt.servlet.version>2.10.0</gwt.servlet.version>
         <maven.version>3.9.9</maven.version>
         <resteasy.version>6.2.11.Final</resteasy.version>
 
         <!--  apt filtering doesn't support dot -->
         <vaadinVersion>${vaadin.version}</vaadinVersion>
         <gwtVersion>${gwt.version}</gwtVersion>
-        <sisuVersion>${sisu.version}</sisuVersion>
         <mavenVersion>${maven.version}</mavenVersion>
 
         <!-- for older tools -->
@@ -287,12 +286,21 @@
             <artifactId>doxia-site-renderer</artifactId>
             <version>${doxia-sitetoolsVersion}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-container-default</artifactId>
+            <version>2.1.1</version>
+            <scope>test</scope>
+        </dependency>
+        
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>2.1</version>
+            <version>3.5.0</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
@@ -366,11 +374,6 @@
             <version>4.0.2</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.eclipse.sisu</groupId>
-            <artifactId>org.eclipse.sisu.plexus</artifactId>
-            <version>${sisu.version}</version>
-        </dependency>
         <dependency>
             <!-- used to generate eclipse .launch files -->
             <groupId>org.freemarker</groupId>
@@ -769,12 +772,12 @@
                             <settingsFile>src/it/settings.xml</settingsFile>
                             <cloneProjectsTo>${project.build.directory}/it-tests</cloneProjectsTo>
                             <extraArtifacts>
-                                <extraArtifact>com.google.gwt:gwt-servlet:${gwtVersion}:jar</extraArtifact>
+                                <extraArtifact>com.google.gwt:gwt-servlet:${gwt.servlet.version}:jar</extraArtifact>
                                 <!-- for some reason, com.google.web.bindery:requestfactory isn't
                                 installed,
                                      whereas it's needed by com.google.gwt:gwt -->
                                 <extraArtifact>
-                                    com.google.web.bindery:requestfactory:${gwtVersion}:pom</extraArtifact>
+                                    com.google.web.bindery:requestfactory:${gwt.servlet.version}:pom</extraArtifact>
                             </extraArtifacts>
                         </configuration>
                         <executions>
