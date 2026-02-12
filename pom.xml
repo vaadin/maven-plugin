@@ -119,7 +119,6 @@
         <vaadin.version>${project.version}</vaadin.version>
         <vaadin.version.latest>8.30.0</vaadin.version.latest> <!-- Set by CI environment -->
         <gwt.version>2.11.0</gwt.version>  <!-- GWT-SERVLET is hardcoded to 2.10.0 -->
-        <gwt.servlet.version>2.10.0</gwt.servlet.version>
         <maven.version>3.9.9</maven.version>
         <resteasy.version>6.2.11.Final</resteasy.version>
 
@@ -772,12 +771,9 @@
                             <settingsFile>src/it/settings.xml</settingsFile>
                             <cloneProjectsTo>${project.build.directory}/it-tests</cloneProjectsTo>
                             <extraArtifacts>
-                                <extraArtifact>com.google.gwt:gwt-servlet:${gwt.servlet.version}:jar</extraArtifact>
-                                <!-- for some reason, com.google.web.bindery:requestfactory isn't
-                                installed,
-                                     whereas it's needed by com.google.gwt:gwt -->
+                                <extraArtifact>org.gwtproject:gwt-servlet:${gwt.version}:jar</extraArtifact>
                                 <extraArtifact>
-                                    com.google.web.bindery:requestfactory:${gwt.servlet.version}:pom</extraArtifact>
+                                    org.gwtproject.web.bindery:requestfactory-server:${gwt.version}:pom</extraArtifact>
                             </extraArtifacts>
                         </configuration>
                         <executions>
