@@ -37,9 +37,9 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Mimic surefire to run GWTTestCases during integration-test phase, until SUREFIRE-508 is fixed
- *
+ * 
+ * See <a href="http://code.google.com/intl/fr/webtoolkit/doc/latest/DevGuideTesting.html">GWT Testing</a> for more details on GWT testing.
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
- * @see http://code.google.com/intl/fr/webtoolkit/doc/latest/DevGuideTesting.html
  * @version $Id: TestMojo.java 9466 2009-04-16 12:03:15Z ndeloof $
  */
 @Mojo(name = "test", defaultPhase = LifecyclePhase.INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
