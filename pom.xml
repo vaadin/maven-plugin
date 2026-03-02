@@ -773,6 +773,7 @@
         <configuration>
           <!-- see https://jira.codehaus.org/browse/MNG-5346 -->
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          <requiredJavaVersion>1.8</requiredJavaVersion>
           <requirements>
             <jdk>${maven.compiler.target}</jdk>
           </requirements>
