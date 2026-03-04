@@ -81,6 +81,9 @@ public class UpdateWidgetsetMojo extends AbstractGwtShellMojo {
     @Override
     public final void doExecute() throws MojoExecutionException,
     MojoFailureException {
+
+        ProductLifecycle.validate(this);
+
         if ("pom".equals(getProject().getPackaging())) {
             getLog().info("GWT compilation is skipped");
             return;

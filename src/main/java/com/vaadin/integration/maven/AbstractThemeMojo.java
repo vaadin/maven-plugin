@@ -107,7 +107,7 @@ public abstract class AbstractThemeMojo extends AbstractGwtShellMojo {
         return false;
     }
 
-    protected abstract void processTheme(String theme) throws MojoExecutionException;
+    protected abstract void processTheme(String theme) throws MojoExecutionException, MojoFailureException;
 
     /**
      * Configure the classpath for theme update/compilation.

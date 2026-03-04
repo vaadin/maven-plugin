@@ -46,6 +46,8 @@ import org.codehaus.mojo.gwt.utils.GwtModuleReaderException;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 
+import com.vaadin.integration.maven.ProductLifecycle;
+
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -159,6 +161,8 @@ public class EclipseMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        ProductLifecycle.validate(this);
+
         if ( !noserver )
         {
             // Jetty requires an exploded webapp

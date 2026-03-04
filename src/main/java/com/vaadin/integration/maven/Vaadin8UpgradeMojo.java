@@ -85,6 +85,9 @@ public class Vaadin8UpgradeMojo extends AbstractGwtShellMojo {
                     + vaadinVersion
                     + "). Upgrade the project to Vaadin 8 or use -Dvaadin.version=<version> with a version starting with 8");
         }
+
+        ProductLifecycle.validate(this);
+
         try {
             JavaCommand cmd = createJavaCommand();
 
