@@ -44,6 +44,9 @@ import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.FileUtils;
+
+import com.vaadin.integration.maven.ProductLifecycle;
+
 import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
@@ -315,6 +318,8 @@ public class RunMojo
     public void doExecute( )
         throws MojoExecutionException, MojoFailureException
     {
+        ProductLifecycle.validate(this);
+
         JavaCommand cmd = createJavaCommand()
             .setMainClass( "com.google.gwt.dev.DevMode" );
 
