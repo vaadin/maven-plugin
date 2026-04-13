@@ -3,6 +3,7 @@ package com.vaadin.integration.maven;
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -39,7 +40,7 @@ public class CompileThemeMojo extends AbstractThemeMojo {
     }
 
     @Override
-    protected void processTheme(String theme) throws MojoExecutionException {
+    protected void processTheme(String theme) throws MojoExecutionException, MojoFailureException {
         getLog().info("Updating theme " + theme);
 
         JavaCommand cmd = createJavaCommand();
@@ -60,6 +61,8 @@ public class CompileThemeMojo extends AbstractThemeMojo {
 
         cmd.arg(scssFile.getAbsolutePath());
         cmd.arg(cssFile.getAbsolutePath());
+
+        ProductLifecycle.validate(this);
 
         try {
             cmd.execute();

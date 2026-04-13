@@ -45,6 +45,7 @@ import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SingleTargetSourceMapping;
 import org.codehaus.plexus.util.StringUtils;
 
+import com.vaadin.integration.maven.ProductLifecycle;
 import com.vaadin.pro.licensechecker.BuildType;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.pro.licensechecker.LicenseException;
@@ -68,7 +69,6 @@ public class CompileMojo
 {
 
     private static final String DEVELOPER_LICENSE_SUFFIX = ".developer.license";
-    private static final String FRAMEWORK_PRODUCT = "vaadin-framework";
 
     @Parameter(property = "gwt.compiler.skip", defaultValue = "false")
     private boolean skip;
@@ -421,29 +421,8 @@ public class CompileMojo
     public void doExecute( )
         throws MojoExecutionException, MojoFailureException
     {
-        // Figure out Vaadin version
-        String vaadinVersion = null;
-        Set<Artifact> artifacts = getProject().getArtifacts();
-        for (Artifact artifact : artifacts) {
-            // Store the vaadin version
-            if (artifact.getArtifactId().equals("vaadin-server")) {
-                vaadinVersion = artifact.getVersion();
-            }
-        }
-
-        try {
-            // Always check for Vaadin Framework license
-            BuildType bt = null;
-            LicenseChecker.checkLicense(FRAMEWORK_PRODUCT, vaadinVersion, bt);
-        } catch (LicenseException ex) {
-            getLog().error("Vaadin version check failed", ex);
-            throw new MojoFailureException(ex, ex.getMessage(),
-            "Vaadin license checking failed. Make sure you have a valid " +
-            "Vaadin development license, and that it is accessible to the " +
-            "license checker. For more information, see " + 
-            "https://vaadin.com/licensing-faq-and-troubleshooting");
-        }
-
+        ProductLifecycle.validate(this);
+        
         if ( skip || "pom".equals( getProject().getPackaging() ) || "cdn".equals(widgetsetMode) )
         {
             getLog().info( "GWT compilation is skipped" );
