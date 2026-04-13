@@ -168,6 +168,11 @@ public class SuperDevModeMojo extends AbstractGwtShellMojo
         cmd.arg( failOnError, "-failOnError" );
         cmd.arg( !incremental, "-noincremental" );
 
+        if ( style != null && style.length() > 0 )
+        {
+            cmd.arg( "-style", style );
+        }
+
         if ( jsInteropMode != null && jsInteropMode.length() > 0 && !jsInteropMode.equals( "NONE" ) )
         {
             cmd.arg( "-XjsInteropMode", jsInteropMode );
