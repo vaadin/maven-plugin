@@ -31,13 +31,13 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.1</version>
         <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>gwt-maven-plugin</artifactId>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-maven-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
           <genParam>false</genParam>
@@ -53,23 +53,23 @@
           <deploy>${project.build.directory}/deploy</deploy>
           <persistentunitcache>true</persistentunitcache>
           <persistentunitcachedir>${project.build.directory}/persistentunitcache</persistentunitcachedir>
-          <enableClosureCompiler>true</enableClosureCompiler>
-          <disableAggressiveOptimization>true</disableAggressiveOptimization>
+          <!--<enableClosureCompiler>true</enableClosureCompiler>-->
+          <!--<disableAggressiveOptimization>true</disableAggressiveOptimization>-->
           <compilerMetrics>true</compilerMetrics>
           <fragmentCount>2</fragmentCount>
           <clusterFunctions>false</clusterFunctions>
-          <enforceStrictResources>true</enforceStrictResources>
+          <!--<enforceStrictResources>true</enforceStrictResources>-->
           <inlineLiteralParameters>false</inlineLiteralParameters>
           <optimizeDataflow>false</optimizeDataflow>
           <ordinalizeEnums>false</ordinalizeEnums>
           <removeDuplicateFunctions>false</removeDuplicateFunctions>
           <saveSource>true</saveSource>
           <saveSourceOutput>${project.build.directory}/savedSources</saveSourceOutput>
-          <incrementalCompileWarnings>true</incrementalCompileWarnings>
-          <missingDepsFile>${project.build.directory}/missingDeps</missingDepsFile>
-          <jsInteropMode>JS</jsInteropMode>
+          <!--<incrementalCompileWarnings>true</incrementalCompileWarnings>-->
+          <!--<missingDepsFile>${project.build.directory}/missingDeps</missingDepsFile>-->
+          <!--<jsInteropMode>JS</jsInteropMode>-->
           <namespace>NONE</namespace>
-          <overlappingSourceWarnings>true</overlappingSourceWarnings>
+          <!--<overlappingSourceWarnings>true</overlappingSourceWarnings>-->
           <methodNameDisplayMode>FULL</methodNameDisplayMode>
         </configuration>
         <executions>
@@ -86,7 +86,12 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.google.gwt</groupId>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-server</artifactId>
+      <version>@vaadin.version@</version>
+    </dependency>
+    <dependency>
+      <groupId>org.gwtproject</groupId>
       <artifactId>gwt-user</artifactId>
       <version>@gwt.version@</version>
     </dependency>
